@@ -3,70 +3,54 @@ package main
 import (
 	"fmt"
 	"log"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/cors"
+	"net/http"
+	"time"
 
 	"timebride/internal/config"
-	"timebride/internal/pkg/database"
+	"timebride/internal/repositories"
+	"timebride/internal/router"
+	"timebride/internal/services"
+	"timebride/pkg/database"
 )
 
 func main() {
-	// Завантаження конфігурації
+	// Завантажуємо конфігурацію
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatal("Cannot load config:", err)
+		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	// Підключення до бази даних
-	db, err := database.NewPostgresConnection(cfg)
+	// Підключаємося до бази даних
+	db, err := database.Connect(cfg.Database)
 	if err != nil {
-		log.Fatal("Cannot connect to database:", err)
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	defer db.Close()
 
-	// Створення Fiber app
-	app := fiber.New(fiber.Config{
-		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			code := fiber.StatusInternalServerError
-			if e, ok := err.(*fiber.Error); ok {
-				code = e.Code
-			}
-			return c.Status(code).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		},
-	})
+	// Створюємо репозиторії
+	userRepo := repositories.NewUserRepository(db)
+	bookingRepo := repositories.NewBookingRepository(db)
+	templateRepo := repositories.NewTemplateRepository(db)
 
-	// Middleware
-	app.Use(logger.New())
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept",
-	}))
+	// Створюємо сервіси
+	userService := services.NewUserService(userRepo)
+	bookingService := services.NewBookingService(bookingRepo)
+	templateService := services.NewTemplateService(templateRepo)
 
-	// Базові роути
-	api := app.Group("/api/v1")
+	// Створюємо роутер
+	handler := router.Router(cfg, userService, bookingService, templateService)
 
-	// Роут перевірки здоров'я системи
-	api.Get("/health", func(c *fiber.Ctx) error {
-		// Перевіряємо також підключення до бази даних
-		if err := db.HealthCheck(); err != nil {
-			return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{
-				"status": "error",
-				"error":  "Database connection failed",
-			})
-		}
+	// Налаштовуємо сервер
+	server := &http.Server{
+		Addr:         fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port),
+		Handler:      handler,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
 
-		return c.JSON(fiber.Map{
-			"status":      "ok",
-			"environment": cfg.Server.Env,
-			"database":    "connected",
-		})
-	})
-
-	// Запуск сервера
-	log.Printf("Starting server on port %d in %s mode", cfg.Server.Port, cfg.Server.Env)
-	log.Fatal(app.Listen(fmt.Sprintf(":%d", cfg.Server.Port)))
+	// Запускаємо сервер
+	log.Printf("Server starting on %s:%d", cfg.Server.Host, cfg.Server.Port)
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }

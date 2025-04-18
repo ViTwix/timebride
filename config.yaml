@@ -1,6 +1,8 @@
 server:
-  port: 3000
-  env: development
+  port: 8080
+  host: localhost
+  environment: development
+  allow_origins: "*"
   read_timeout: 10s
   write_timeout: 10s
   shutdown_timeout: 5s
@@ -8,9 +10,10 @@ server:
 database:
   host: localhost
   port: 5432
-  name: timebride
   user: postgres
   password: secret
+  dbname: timebride
+  sslmode: disable
   max_open_conns: 25
   max_idle_conns: 25
   conn_max_lifetime: 5m
@@ -22,9 +25,8 @@ redis:
   pool_size: 10
 
 jwt:
-  secret: your-secret-key
-  expires_in: 24h
-  refresh_expires_in: 720h
+  secret_key: "your-secret-key-here"
+  token_duration: "24h"
 
 cors:
   allowed_origins:

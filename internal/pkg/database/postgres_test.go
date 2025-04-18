@@ -14,7 +14,7 @@ func TestNewPostgresConnection(t *testing.T) {
 	cfg.Database.Port = 5432
 	cfg.Database.User = "postgres"
 	cfg.Database.Password = "secret"
-	cfg.Database.Name = "timebride"
+	cfg.Database.DBName = "timebride"
 
 	db, err := NewPostgresConnection(cfg)
 	if err != nil {
@@ -33,7 +33,7 @@ func TestDatabase_Transaction(t *testing.T) {
 	cfg.Database.Port = 5432
 	cfg.Database.User = "postgres"
 	cfg.Database.Password = "secret"
-	cfg.Database.Name = "timebride"
+	cfg.Database.DBName = "timebride"
 
 	db, err := NewPostgresConnection(cfg)
 	if err != nil {

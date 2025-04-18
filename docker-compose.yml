@@ -31,6 +31,21 @@ services:
       timeout: 5s
       retries: 5
 
+  app:
+    build: .
+    container_name: timebride-app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DB_HOST=db
+      - REDIS_HOST=redis
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
 volumes:
   pgdata:
   redis_data:

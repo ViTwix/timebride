@@ -1,50 +1,67 @@
 package config
 
 import (
-    "fmt"
-    "github.com/spf13/viper"
+	"time"
+
+	"github.com/spf13/viper"
 )
 
+// Config містить всі налаштування програми
 type Config struct {
-    Server struct {
-        Port int    `mapstructure:"port"`
-        Env  string `mapstructure:"env"`
-    } `mapstructure:"server"`
-
-    Database struct {
-        Host     string `mapstructure:"host"`
-        Port     int    `mapstructure:"port"`
-        Name     string `mapstructure:"name"`
-        User     string `mapstructure:"user"`
-        Password string `mapstructure:"password"`
-    } `mapstructure:"database"`
-
-    Redis struct {
-        Host string `mapstructure:"host"`
-        Port int    `mapstructure:"port"`
-    } `mapstructure:"redis"`
-
-    JWT struct {
-        Secret    string `mapstructure:"secret"`
-        ExpiresIn string `mapstructure:"expires_in"`
-    } `mapstructure:"jwt"`
+	Server   ServerConfig   `mapstructure:"server"`
+	Database DatabaseConfig `mapstructure:"database"`
+	JWT      JWTConfig      `mapstructure:"jwt"`
 }
 
+// ServerConfig містить налаштування сервера
+type ServerConfig struct {
+	Port         int    `mapstructure:"port"`
+	Host         string `mapstructure:"host"`
+	Environment  string `mapstructure:"environment"`
+	AllowOrigins string `mapstructure:"allow_origins"`
+}
+
+// DatabaseConfig містить налаштування бази даних
+type DatabaseConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
+	DBName   string `mapstructure:"dbname"`
+	SSLMode  string `mapstructure:"sslmode"`
+}
+
+// JWTConfig містить налаштування JWT
+type JWTConfig struct {
+	SecretKey     string        `mapstructure:"secret_key"`
+	TokenDuration time.Duration `mapstructure:"token_duration"`
+}
+
+// Load завантажує конфігурацію з файлу
 func Load() (*Config, error) {
-    viper.SetConfigName("config")
-    viper.SetConfigType("yaml")
-    viper.AddConfigPath(".")
-    
-    viper.AutomaticEnv()
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("./config")
 
-    if err := viper.ReadInConfig(); err != nil {
-        return nil, fmt.Errorf("error reading config file: %w", err)
-    }
+	// Встановлюємо значення за замовчуванням
+	viper.SetDefault("server.port", 8080)
+	viper.SetDefault("server.host", "localhost")
+	viper.SetDefault("server.environment", "development")
+	viper.SetDefault("server.allow_origins", "*")
+	viper.SetDefault("database.host", "localhost")
+	viper.SetDefault("database.port", 5432)
+	viper.SetDefault("database.sslmode", "disable")
+	viper.SetDefault("jwt.token_duration", "24h")
 
-    var config Config
-    if err := viper.Unmarshal(&config); err != nil {
-        return nil, fmt.Errorf("error unmarshaling config: %w", err)
-    }
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, err
+	}
 
-    return &config, nil
+	var config Config
+	if err := viper.Unmarshal(&config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
 }

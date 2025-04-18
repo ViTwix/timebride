@@ -5,8 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-	_ "github.com/lib/pq"
 	"timebride/internal/config"
+
+	_ "github.com/lib/pq"
 )
 
 // Database представляє обгортку навколо sql.DB з додатковими методами
@@ -31,8 +32,8 @@ func NewPostgresConnection(cfg *config.Config) (*Database, error) {
 		Port:     cfg.Database.Port,
 		User:     cfg.Database.User,
 		Password: cfg.Database.Password,
-		DBName:   cfg.Database.Name,
-		SSLMode:  "disable", // для розробки
+		DBName:   cfg.Database.DBName,
+		SSLMode:  cfg.Database.SSLMode,
 	}
 
 	connStr := fmt.Sprintf(
