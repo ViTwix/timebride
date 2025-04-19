@@ -1,0 +1,26 @@
+:root {
+  /* Основна палітра кольорів */
+  --color-background: #ffffff;
+  --color-section-bg: #F8F5F2;
+  --color-light-accent: #E3D5CA;
+  --color-neutral-accent: #D6CCC2;
+  --color-contrast-accent: #D5BDAF;
+  
+  /* Текстові кольори */
+  --color-text-primary: #2A2A2A;
+  --color-text-secondary: #4A4744;
+  --color-text-muted: #6C757D;
+  
+  /* Шрифт */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  /* Тіні */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 3px 8px rgba(0, 0, 0, 0.1);
+  
+  /* Радіуси */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+} 

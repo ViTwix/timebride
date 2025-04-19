@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>Новий клієнт - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                Новий клієнт
+                            </h2>
+                            <div class="text-muted mt-1">
+                                Додайте інформацію про нового клієнта
+                            </div>
+                        </div>
+                        <div class="col-auto ms-auto">
+                            <div class="btn-list">
+                                <a href="/clients" class="btn btn-outline-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"></path>
+                                    </svg>
+                                    Повернутися до списку
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <form method="post" action="/clients" class="card">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        <div class="card-header">
+                            <h3 class="card-title">Інформація про клієнта</h3>
+                        </div>
+                        <div class="card-body">
+                            {{if .Error}}
+                            <div class="alert alert-danger" role="alert">
+                                {{.Error}}
+                            </div>
+                            {{end}}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Повне ім'я</label>
+                                    <input type="text" class="form-control" name="full_name" required value="{{.Client.FullName}}">
+                                    <small class="form-hint">Введіть повне ім'я або назву організації</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Компанія / Організація</label>
+                                    <input type="text" class="form-control" name="company" value="{{.Client.Company}}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" value="{{.Client.Email}}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Телефон</label>
+                                    <input type="tel" class="form-control" name="phone" value="{{.Client.Phone}}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Категорія</label>
+                                    <select name="category" class="form-select">
+                                        <option value="">Виберіть категорію</option>
+                                        <option value="Наречена" {{if eq .Client.Category "Наречена"}}selected{{end}}>Наречена</option>
+                                        <option value="Наречений" {{if eq .Client.Category "Наречений"}}selected{{end}}>Наречений</option>
+                                        <option value="Фотограф" {{if eq .Client.Category "Фотограф"}}selected{{end}}>Фотограф</option>
+                                        <option value="Відеограф" {{if eq .Client.Category "Відеограф"}}selected{{end}}>Відеограф</option>
+                                        <option value="Агенція" {{if eq .Client.Category "Агенція"}}selected{{end}}>Агенція</option>
+                                        <option value="Локація" {{if eq .Client.Category "Локація"}}selected{{end}}>Локація</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Джерело</label>
+                                    <select name="source" class="form-select">
+                                        <option value="">Виберіть джерело</option>
+                                        <option value="Сайт" {{if eq .Client.Source "Сайт"}}selected{{end}}>Сайт</option>
+                                        <option value="Рекомендація" {{if eq .Client.Source "Рекомендація"}}selected{{end}}>Рекомендація</option>
+                                        <option value="Соціальні мережі" {{if eq .Client.Source "Соціальні мережі"}}selected{{end}}>Соціальні мережі</option>
+                                        <option value="Виставка" {{if eq .Client.Source "Виставка"}}selected{{end}}>Виставка</option>
+                                        <option value="Партнери" {{if eq .Client.Source "Партнери"}}selected{{end}}>Партнери</option>
+                                        <option value="Інше" {{if eq .Client.Source "Інше"}}selected{{end}}>Інше</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Адреса</label>
+                                <textarea class="form-control" name="address" rows="2">{{.Client.Address}}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Примітки</label>
+                                <textarea class="form-control" name="notes" rows="3">{{.Client.Notes}}</textarea>
+                                <small class="form-hint">Додаткова інформація про клієнта</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="is_active" {{if .Client.IsActive}}checked{{end}}>
+                                    <span class="form-check-label">Активний клієнт</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="card-footer text-end">
+                            <a href="/clients" class="btn btn-link">Скасувати</a>
+                            <button type="submit" class="btn btn-primary ms-auto">Зберегти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {{template "footer" .}}
+        </div>
+    </div>
+</body>
+</html> 

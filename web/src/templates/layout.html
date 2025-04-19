@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>{{ if .PageTitle }}{{ .PageTitle }} - TimeBride{{ else }}TimeBride - Фотосесії та Бронювання{{ end }}</title>
+</head>
+<body class="{{ if .BodyClass }}{{ .BodyClass }}{{ else }}d-flex flex-column{{ end }}">
+    <div class="page">
+        {{template "sidebar" .}}
+        
+        <div class="page-wrapper">
+            <!-- Основний контент -->
+            {{ template "content" . }}
+            
+            <!-- Футер -->
+            {{template "footer" .}}
+        </div>
+    </div>
+    
+    <!-- JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/tabler.min.js"></script>
+    
+    <!-- Additional Scripts -->
+    {{ if .ExtraScripts }}{{ .ExtraScripts }}{{ end }}
+</body>
+</html> 

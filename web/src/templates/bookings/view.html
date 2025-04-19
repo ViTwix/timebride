@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>{{.Booking.Title}} - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <div class="page-pretitle">
+                                Бронювання
+                            </div>
+                            <h2 class="page-title">
+                                {{.Booking.Title}}
+                            </h2>
+                        </div>
+                        <div class="col-auto ms-auto d-print-none">
+                            <div class="btn-list">
+                                <a href="/bookings" class="btn d-none d-md-inline-flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M5 12l14 0"></path>
+                                        <path d="M5 12l6 6"></path>
+                                        <path d="M5 12l6 -6"></path>
+                                    </svg>
+                                    Список бронювань
+                                </a>
+                                <a href="/bookings/{{.Booking.ID}}/edit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                        <path d="M16 5l3 3"></path>
+                                    </svg>
+                                    Редагувати
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h3 class="card-title">Деталі бронювання</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="datagrid">
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Тип події</div>
+                                            <div class="datagrid-content">
+                                                <span class="badge bg-blue-lt">{{.Booking.EventType}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Статус</div>
+                                            <div class="datagrid-content">
+                                                <span class="badge {{if eq .Booking.Status "Підтверджено"}}bg-green-lt{{else if eq .Booking.Status "Заплановано"}}bg-azure-lt{{else if eq .Booking.Status "Скасовано"}}bg-red-lt{{else}}bg-yellow-lt{{end}}">{{.Booking.Status}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Дата початку</div>
+                                            <div class="datagrid-content">
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                                                        <path d="M16 3l0 4"></path>
+                                                        <path d="M8 3l0 4"></path>
+                                                        <path d="M4 11l16 0"></path>
+                                                        <path d="M8 15h2v2h-2z"></path>
+                                                    </svg>
+                                                    {{.Booking.StartDate}} {{.Booking.StartTime}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Дата завершення</div>
+                                            <div class="datagrid-content">
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                                                        <path d="M16 3l0 4"></path>
+                                                        <path d="M8 3l0 4"></path>
+                                                        <path d="M4 11l16 0"></path>
+                                                        <path d="M8 15h2v2h-2z"></path>
+                                                    </svg>
+                                                    {{.Booking.EndDate}} {{.Booking.EndTime}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Тривалість</div>
+                                            <div class="datagrid-content">{{.Booking.Duration}}</div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Подія на весь день</div>
+                                            <div class="datagrid-content">
+                                                {{if .Booking.IsAllDay}}
+                                                <span class="status status-green">Так</span>
+                                                {{else}}
+                                                <span class="status status-muted">Ні</span>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Локація</div>
+                                            <div class="datagrid-content">
+                                                {{if .Booking.Location}}
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-map-pin text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
+                                                        <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"></path>
+                                                    </svg>
+                                                    {{.Booking.Location}}
+                                                </div>
+                                                {{else}}
+                                                <span class="text-muted">—</span>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {{if .Booking.Description}}
+                                    <div class="mt-4">
+                                        <h4>Опис</h4>
+                                        <div class="text-muted">{{.Booking.Description}}</div>
+                                    </div>
+                                    {{end}}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h3 class="card-title">Клієнт</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <span class="avatar me-3 {{if not .Client.IsActive}}avatar-gray{{end}}" style="background-image: url(/static/img/clients/{{.Client.ID}}.jpg)">
+                                            {{if not .Client.AvatarExists}}
+                                            {{slice .Client.FullName 0 1}}
+                                            {{end}}
+                                        </span>
+                                        <div>
+                                            <div class="font-weight-medium">
+                                                <a href="/clients/{{.Client.ID}}" class="text-reset">{{.Client.FullName}}</a>
+                                            </div>
+                                            {{if .Client.Company}}
+                                            <div class="text-muted">{{.Client.Company}}</div>
+                                            {{end}}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <div class="list-group list-group-flush">
+                                            {{if .Client.Email}}
+                                            <div class="list-group-item">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"></path>
+                                                            <path d="M3 7l9 6l9 -6"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="col text-truncate">
+                                                        <a href="mailto:{{.Client.Email}}" class="text-reset">{{.Client.Email}}</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{end}}
+                                            
+                                            {{if .Client.Phone}}
+                                            <div class="list-group-item">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-phone text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="col text-truncate">
+                                                        <a href="tel:{{.Client.Phone}}" class="text-reset">{{.Client.Phone}}</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{end}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="/clients/{{.Client.ID}}" class="btn btn-link">Переглянути профіль клієнта</a>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h3 class="card-title">Фінансова інформація</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="datagrid">
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Вартість</div>
+                                            <div class="datagrid-content">
+                                                {{if gt .Booking.Price 0}}
+                                                <span class="text-green">{{formatMoney .Booking.Price}} грн</span>
+                                                {{else}}
+                                                <span class="text-muted">—</span>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Внесена передоплата</div>
+                                            <div class="datagrid-content">
+                                                {{if gt .Booking.Deposit 0}}
+                                                <span class="text-green">{{formatMoney .Booking.Deposit}} грн</span>
+                                                {{else}}
+                                                <span class="text-muted">—</span>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Залишок</div>
+                                            <div class="datagrid-content">
+                                                {{if gt .Booking.Balance 0}}
+                                                <span class="text-yellow">{{formatMoney .Booking.Balance}} грн</span>
+                                                {{else}}
+                                                <span class="text-green">Оплачено повністю</span>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Нагадування</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush">
+                                        {{if .Booking.EmailReminder}}
+                                        <div class="list-group-item">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"></path>
+                                                        <path d="M3 7l9 6l9 -6"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="font-weight-medium">Email-нагадування</div>
+                                                    <div class="text-muted">
+                                                        За {{formatReminderTime .Booking.ReminderTime}} до події
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{end}}
+                                        
+                                        {{if .Booking.SMSReminder}}
+                                        <div class="list-group-item">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M8 9h8"></path>
+                                                        <path d="M8 13h6"></path>
+                                                        <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="font-weight-medium">SMS-нагадування</div>
+                                                    <div class="text-muted">
+                                                        За {{formatReminderTime .Booking.ReminderTime}} до події
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{end}}
+                                        
+                                        {{if and (not .Booking.EmailReminder) (not .Booking.SMSReminder)}}
+                                        <div class="list-group-item">
+                                            <div class="row align-items-center">
+                                                <div class="col text-center">
+                                                    <span class="text-muted">Нагадування не налаштовані</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{end}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {{template "footer" .}}
+        </div>
+    </div>
+</body>
+</html> 

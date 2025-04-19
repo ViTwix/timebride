@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>{{.Client.FullName}} - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <div class="page-pretitle">
+                                Клієнт
+                            </div>
+                            <h2 class="page-title">
+                                {{.Client.FullName}}
+                            </h2>
+                        </div>
+                        <div class="col-auto ms-auto d-print-none">
+                            <div class="btn-list">
+                                <a href="/clients" class="btn d-none d-md-inline-flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M5 12l14 0"></path>
+                                        <path d="M5 12l6 6"></path>
+                                        <path d="M5 12l6 -6"></path>
+                                    </svg>
+                                    Список клієнтів
+                                </a>
+                                <a href="/bookings/new?client_id={{.Client.ID}}" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"></path>
+                                        <path d="M16 3v4"></path>
+                                        <path d="M8 3v4"></path>
+                                        <path d="M4 11h16"></path>
+                                        <path d="M16 19h6"></path>
+                                        <path d="M19 16v6"></path>
+                                    </svg>
+                                    Нове бронювання
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <span class="avatar avatar-xl mb-3 {{if not .Client.IsActive}}avatar-gray{{end}}" style="background-image: url(/static/img/clients/{{.Client.ID}}.jpg)">
+                                            {{if not .Client.AvatarExists}}
+                                            {{slice .Client.FullName 0 1}}
+                                            {{end}}
+                                        </span>
+                                        <h2 class="mb-1">{{.Client.FullName}}</h2>
+                                        {{if .Client.Company}}
+                                        <div class="text-muted mb-2">{{.Client.Company}}</div>
+                                        {{end}}
+                                        
+                                        <div class="list-inline mt-2 mb-3">
+                                            {{if .Client.Category}}
+                                            <span class="badge bg-blue-lt">{{.Client.Category}}</span>
+                                            {{end}}
+                                            {{if .Client.Source}}
+                                            <span class="badge bg-azure-lt">{{.Client.Source}}</span>
+                                            {{end}}
+                                            <span class="badge {{if .Client.IsActive}}bg-green-lt{{else}}bg-secondary-lt{{end}}">
+                                                {{if .Client.IsActive}}Активний{{else}}Неактивний{{end}}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="btn-list">
+                                            <a href="/clients/{{.Client.ID}}/edit" class="btn">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                                    <path d="M16 5l3 3"></path>
+                                                </svg>
+                                                Редагувати
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h3 class="card-title">Контактна інформація</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="datagrid">
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Email</div>
+                                                <div class="datagrid-content">
+                                                    {{if .Client.Email}}
+                                                    <a href="mailto:{{.Client.Email}}" class="text-reset d-flex align-items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"></path>
+                                                            <path d="M3 7l9 6l9 -6"></path>
+                                                        </svg>
+                                                        {{.Client.Email}}
+                                                    </a>
+                                                    {{else}}
+                                                    <span class="text-muted">—</span>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Телефон</div>
+                                                <div class="datagrid-content">
+                                                    {{if .Client.Phone}}
+                                                    <a href="tel:{{.Client.Phone}}" class="text-reset d-flex align-items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-phone text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path>
+                                                        </svg>
+                                                        {{.Client.Phone}}
+                                                    </a>
+                                                    {{else}}
+                                                    <span class="text-muted">—</span>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Адреса</div>
+                                                <div class="datagrid-content">
+                                                    {{if .Client.Address}}
+                                                    <div class="d-flex align-items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-map-pin text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
+                                                            <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"></path>
+                                                        </svg>
+                                                        {{.Client.Address}}
+                                                    </div>
+                                                    {{else}}
+                                                    <span class="text-muted">—</span>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {{if .Client.Notes}}
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h3 class="card-title">Нотатки</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <p class="mb-0">{{.Client.Notes}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                        
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 class="card-title">Бронювання</h3>
+                                        <a href="/bookings/new?client_id={{.Client.ID}}" class="btn btn-primary btn-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"></path>
+                                                <path d="M16 3v4"></path>
+                                                <path d="M8 3v4"></path>
+                                                <path d="M4 11h16"></path>
+                                                <path d="M16 19h6"></path>
+                                                <path d="M19 16v6"></path>
+                                            </svg>
+                                            Нове бронювання
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-vcenter card-table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Назва</th>
+                                                <th>Дата</th>
+                                                <th>Статус</th>
+                                                <th class="w-1"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{if eq (len .Bookings) 0}}
+                                            <tr>
+                                                <td colspan="4" class="text-center py-4">
+                                                    <div class="empty">
+                                                        <div class="empty-icon">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                                                                <path d="M16 3l0 4"></path>
+                                                                <path d="M8 3l0 4"></path>
+                                                                <path d="M4 11l16 0"></path>
+                                                                <path d="M11 15l1 0"></path>
+                                                                <path d="M12 15l0 3"></path>
+                                                            </svg>
+                                                        </div>
+                                                        <p class="empty-title">Немає бронювань</p>
+                                                        <p class="empty-subtitle text-muted">
+                                                            У клієнта ще немає бронювань
+                                                        </p>
+                                                        <div class="empty-action">
+                                                            <a href="/bookings/new?client_id={{.Client.ID}}" class="btn btn-primary">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                    <path d="M12 5l0 14"></path>
+                                                                    <path d="M5 12l14 0"></path>
+                                                                </svg>
+                                                                Створити бронювання
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{else}}
+                                            {{range .Bookings}}
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <a href="/bookings/{{.ID}}" class="text-reset d-block">{{.Title}}</a>
+                                                        {{if .Description}}
+                                                        <div class="text-muted text-truncate" style="max-width: 250px;">{{.Description}}</div>
+                                                        {{end}}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <div class="d-flex align-items-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                                                                <path d="M16 3l0 4"></path>
+                                                                <path d="M8 3l0 4"></path>
+                                                                <path d="M4 11l16 0"></path>
+                                                                <path d="M8 15h2v2h-2z"></path>
+                                                            </svg>
+                                                            {{.StartDate}}
+                                                        </div>
+                                                        <div class="d-flex align-items-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                                                                <path d="M12 7v5l3 3"></path>
+                                                            </svg>
+                                                            {{.StartTime}} - {{.EndTime}}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge {{if eq .Status "Підтверджено"}}bg-green-lt{{else if eq .Status "Заплановано"}}bg-azure-lt{{else if eq .Status "Скасовано"}}bg-red-lt{{else}}bg-yellow-lt{{end}}">{{.Status}}</span>
+                                                </td>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                                <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                                <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                            </svg>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <a href="/bookings/{{.ID}}" class="dropdown-item">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                    <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                                    <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
+                                                                </svg>
+                                                                Переглянути
+                                                            </a>
+                                                            <a href="/bookings/{{.ID}}/edit" class="dropdown-item">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                                                    <path d="M16 5l3 3"></path>
+                                                                </svg>
+                                                                Редагувати
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{end}}
+                                            {{end}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{template "footer" .}}
+        </div>
+    </div>
+</body>
+</html> 

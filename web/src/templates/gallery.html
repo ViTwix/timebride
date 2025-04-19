@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - TimeBride</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/utilities.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/gallery.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <nav class="nav">
+                <a href="/" class="nav-logo">TimeBride</a>
+                <div class="nav-links">
+                    <a href="/calendar" class="nav-link">Calendar</a>
+                    <a href="/gallery" class="nav-link active">Gallery</a>
+                    <a href="/bookings" class="nav-link">Bookings</a>
+                    <a href="/templates" class="nav-link">Templates</a>
+                </div>
+                <div class="nav-user">
+                    <a href="/profile" class="nav-link">Profile</a>
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="main">
+            <div class="gallery-container">
+                <div class="gallery-header">
+                    <h1>Gallery</h1>
+                    <div class="gallery-actions">
+                        <button class="btn btn-primary" onclick="uploadFiles()">Upload Files</button>
+                        <button class="btn btn-outline" onclick="createAlbum()">New Album</button>
+                    </div>
+                </div>
+
+                <div class="gallery-filters">
+                    <div class="filter-group">
+                        <label for="album">Album</label>
+                        <select id="album" onchange="filterGallery()">
+                            <option value="">All Albums</option>
+                            <!-- Albums will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="tags">Tags</label>
+                        <select id="tags" multiple onchange="filterGallery()">
+                            <!-- Tags will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateRange">Date Range</label>
+                        <input type="date" id="dateFrom" onchange="filterGallery()">
+                        <input type="date" id="dateTo" onchange="filterGallery()">
+                    </div>
+                </div>
+
+                <div id="gallery"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for file upload -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Files</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="album">Album</label>
+                        <select id="album" name="album" required>
+                            <!-- Albums will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="files">Files</label>
+                        <input type="file" id="files" name="files" multiple accept="image/*,video/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <input type="text" id="tags" name="tags" placeholder="Add tags separated by commas">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+                <div class="upload-progress">
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill"></div>
+                    </div>
+                    <div class="progress-text">0%</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="startUpload()">Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for creating new album -->
+    <div id="albumModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Album</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="albumForm">
+                    <div class="form-group">
+                        <label for="albumName">Album Name</label>
+                        <input type="text" id="albumName" name="albumName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="albumDescription">Description</label>
+                        <textarea id="albumDescription" name="albumDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveAlbum()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/gallery.js"></script>
+    <script>
+        // Initialize gallery
+        const gallery = new Gallery(document.getElementById('gallery'), {
+            columns: 3,
+            gap: 1,
+            onItemClick: (item) => {
+                openFileDetails(item);
+            },
+            onLoadMore: () => {
+                loadMoreFiles();
+            }
+        });
+
+        // Load initial files
+        async function loadFiles() {
+            try {
+                const response = await fetch('/api/v1/files');
+                const files = await response.json();
+                gallery.updateItems(files);
+            } catch (error) {
+                console.error('Failed to load files:', error);
+            }
+        }
+
+        // Load more files
+        async function loadMoreFiles() {
+            gallery.setLoading(true);
+            try {
+                const response = await fetch('/api/v1/files?page=' + (currentPage + 1));
+                const files = await response.json();
+                gallery.updateItems(files, true);
+                currentPage++;
+            } catch (error) {
+                console.error('Failed to load more files:', error);
+            } finally {
+                gallery.setLoading(false);
+            }
+        }
+
+        // Filter gallery
+        function filterGallery() {
+            const album = document.getElementById('album').value;
+            const tags = Array.from(document.getElementById('tags').selectedOptions).map(option => option.value);
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            
+            // Implement filtering logic
+        }
+
+        // Upload files
+        function uploadFiles() {
+            openModal('uploadModal');
+        }
+
+        // Create new album
+        function createAlbum() {
+            openModal('albumModal');
+        }
+
+        // Open modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        // Start file upload
+        async function startUpload() {
+            const form = document.getElementById('uploadForm');
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/api/v1/files', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    closeModal();
+                    loadFiles();
+                } else {
+                    throw new Error('Failed to upload files');
+                }
+            } catch (error) {
+                console.error('Error uploading files:', error);
+            }
+        }
+
+        // Save album
+        async function saveAlbum() {
+            const form = document.getElementById('albumForm');
+            const formData = new FormData(form);
+            const album = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/v1/albums', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(album)
+                });
+                
+                if (response.ok) {
+                    closeModal();
+                    loadAlbums();
+                } else {
+                    throw new Error('Failed to create album');
+                }
+            } catch (error) {
+                console.error('Error creating album:', error);
+            }
+        }
+
+        // Load albums
+        async function loadAlbums() {
+            try {
+                const response = await fetch('/api/v1/albums');
+                const albums = await response.json();
+                
+                const albumSelect = document.getElementById('album');
+                albumSelect.innerHTML = '<option value="">All Albums</option>';
+                albums.forEach(album => {
+                    const option = document.createElement('option');
+                    option.value = album.id;
+                    option.textContent = album.name;
+                    albumSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Failed to load albums:', error);
+            }
+        }
+
+        // Load tags
+        async function loadTags() {
+            try {
+                const response = await fetch('/api/v1/tags');
+                const tags = await response.json();
+                
+                const tagsSelect = document.getElementById('tags');
+                tags.forEach(tag => {
+                    const option = document.createElement('option');
+                    option.value = tag.id;
+                    option.textContent = tag.name;
+                    tagsSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Failed to load tags:', error);
+            }
+        }
+
+        // Logout
+        function logout() {
+            // Implement logout logic
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFiles();
+            loadAlbums();
+            loadTags();
+        });
+    </script>
+</body>
+</html> 

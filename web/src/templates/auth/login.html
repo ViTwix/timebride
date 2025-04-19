@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід - TimeBride</title>
+    
+    <!-- CSS Tabler -->
+    <link href="/css/tabler.min.css" rel="stylesheet"/>
+    <link href="/css/tabler-icons.min.css" rel="stylesheet"/>
+    
+    <!-- Custom CSS -->
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column">
+    <div class="page page-center">
+        <div class="container container-tight py-4">
+            <div class="text-center mb-4">
+                <a href="/" class="navbar-brand navbar-brand-autodark">
+                    <img src="/img/logo.svg" height="36" alt="TimeBride">
+                </a>
+            </div>
+            <div class="card card-md auth-card">
+                <div class="card-body">
+                    <h2 class="h2 text-center mb-4">Вхід до системи</h2>
+                    
+                    {{if .Error}}
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-title">Помилка</h4>
+                        <div class="text-muted">{{.Error}}</div>
+                    </div>
+                    {{end}}
+                    
+                    <form action="/login" method="POST" autocomplete="off">
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" placeholder="your@email.com" autocomplete="off" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">
+                                Пароль
+                                <span class="form-label-description">
+                                    <a href="/forgot-password">Забули пароль?</a>
+                                </span>
+                            </label>
+                            <div class="input-group input-group-flat">
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Ваш пароль" autocomplete="off" required>
+                                <span class="input-group-text">
+                                    <a href="#" class="link-secondary" title="Показати пароль" data-bs-toggle="tooltip" 
+                                        onclick="var inp=document.getElementById('password');if(inp.type==='password'){inp.type='text';}else{inp.type='password';}">
+                                        <i class="ti ti-eye"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-check">
+                                <input type="checkbox" class="form-check-input" name="remember" />
+                                <span class="form-check-label">Запам'ятати мене</span>
+                            </label>
+                        </div>
+                        <div class="form-footer">
+                            <button type="submit" class="btn btn-primary w-100">Увійти</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="hr-text">або</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col"><a href="#" class="btn w-100">
+                            <i class="ti ti-brand-google"></i>
+                            Увійти через Google
+                        </a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center text-muted mt-3">
+                Ще немає облікового запису? <a href="/register" tabindex="-1">Зареєструватися</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/tabler.min.js"></script>
+</body>
+</html> 

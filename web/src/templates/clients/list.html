@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>Клієнти - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                Клієнти
+                            </h2>
+                        </div>
+                        <div class="col-auto ms-auto">
+                            <div class="btn-list">
+                                <a href="/clients/new" class="btn btn-primary d-none d-sm-inline-block">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12 5l0 14"></path>
+                                        <path d="M5 12l14 0"></path>
+                                    </svg>
+                                    Додати клієнта
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                                                <path d="M21 21l-6 -6"></path>
+                                            </svg>
+                                        </span>
+                                        <input type="text" id="search-input" class="form-control" placeholder="Пошук клієнтів...">
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="dropdown">
+                                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Фільтри
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <div class="dropdown-item">
+                                                <div class="form-check">
+                                                    <input class="form-check-input filter-checkbox" type="checkbox" value="Активні" id="filter-active" checked>
+                                                    <label class="form-check-label" for="filter-active">
+                                                        Активні
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <div class="form-check">
+                                                    <input class="form-check-input filter-checkbox" type="checkbox" value="Неактивні" id="filter-inactive">
+                                                    <label class="form-check-label" for="filter-inactive">
+                                                        Неактивні
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-divider"></div>
+                                            <div class="dropdown-item">
+                                                <label class="form-label">Категорія</label>
+                                                <select class="form-select" id="filter-category">
+                                                    <option value="">Усі</option>
+                                                    <option value="Індивідуальний">Індивідуальний</option>
+                                                    <option value="Корпоративний">Корпоративний</option>
+                                                    <option value="Агенція">Агенція</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn" id="export-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                            <path d="M8 11h8"></path>
+                                            <path d="M8 15h4"></path>
+                                            <path d="M11 15v-4"></path>
+                                        </svg>
+                                        Експорт
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-vcenter card-table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Клієнт</th>
+                                        <th>Контакти</th>
+                                        <th>Категорія</th>
+                                        <th>Джерело</th>
+                                        <th>Статус</th>
+                                        <th class="w-1"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clients-table-body">
+                                    {{range .Clients}}
+                                    <tr data-client-id="{{.ID}}" data-active="{{.IsActive}}" data-category="{{.Category}}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="avatar rounded me-2 bg-blue-lt">{{index (split .FullName " ") 0 | firstChar}}</span>
+                                                <div>
+                                                    <div class="font-weight-medium">{{.FullName}}</div>
+                                                    {{if .Company}}
+                                                    <div class="text-muted">{{.Company}}</div>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                {{if .Email}}
+                                                <div>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail icon-xs text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"></path>
+                                                        <path d="M3 7l9 6l9 -6"></path>
+                                                    </svg>
+                                                    <span class="text-muted">{{.Email}}</span>
+                                                </div>
+                                                {{end}}
+                                                {{if .Phone}}
+                                                <div>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-phone icon-xs text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path>
+                                                    </svg>
+                                                    <span class="text-muted">{{.Phone}}</span>
+                                                </div>
+                                                {{end}}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{if .Category}}
+                                            <span>{{.Category}}</span>
+                                            {{else}}
+                                            <span class="text-muted">—</span>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            {{if .Source}}
+                                            <span>{{.Source}}</span>
+                                            {{else}}
+                                            <span class="text-muted">—</span>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            {{if .IsActive}}
+                                            <span class="status status-green">Активний</span>
+                                            {{else}}
+                                            <span class="status status-muted">Неактивний</span>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            <div class="btn-list flex-nowrap">
+                                                <a href="/clients/{{.ID}}" class="btn btn-icon btn-ghost-primary">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                        <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
+                                                    </svg>
+                                                </a>
+                                                <a href="/clients/{{.ID}}/edit" class="btn btn-icon btn-ghost-primary">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                                        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                                        <path d="M16 5l3 3"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{else}}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <div class="empty">
+                                                <div class="empty-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mood-sad" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                                                        <path d="M9 10l.01 0"></path>
+                                                        <path d="M15 10l.01 0"></path>
+                                                        <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0"></path>
+                                                    </svg>
+                                                </div>
+                                                <p class="empty-title">Клієнтів не знайдено</p>
+                                                <p class="empty-subtitle text-muted">
+                                                    Почніть додавати клієнтів, щоб вони з'явилися тут
+                                                </p>
+                                                <div class="empty-action">
+                                                    <a href="/clients/new" class="btn btn-primary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M12 5l0 14"></path>
+                                                            <path d="M5 12l14 0"></path>
+                                                        </svg>
+                                                        Додати клієнта
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{end}}
+                                </tbody>
+                            </table>
+                        </div>
+                        {{if gt .Pagination.TotalPages 1}}
+                        <div class="card-footer d-flex align-items-center">
+                            <p class="m-0 text-muted">Показано <span>{{.Pagination.FirstItem}}</span> - <span>{{.Pagination.LastItem}}</span> із <span>{{.Pagination.TotalItems}}</span> клієнтів</p>
+                            <ul class="pagination m-0 ms-auto">
+                                <li class="page-item {{if eq .Pagination.CurrentPage 1}}disabled{{end}}">
+                                    <a class="page-link" href="?page={{subtract .Pagination.CurrentPage 1}}" tabindex="-1" aria-disabled="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M15 6l-6 6l6 6"></path>
+                                        </svg>
+                                        Назад
+                                    </a>
+                                </li>
+                                {{$current := .Pagination.CurrentPage}}
+                                {{range $i := seq 1 .Pagination.TotalPages}}
+                                <li class="page-item {{if eq $i $current}}active{{end}}">
+                                    <a class="page-link" href="?page={{$i}}">{{$i}}</a>
+                                </li>
+                                {{end}}
+                                <li class="page-item {{if eq .Pagination.CurrentPage .Pagination.TotalPages}}disabled{{end}}">
+                                    <a class="page-link" href="?page={{add .Pagination.CurrentPage 1}}">
+                                        Далі
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M9 6l6 6l-6 6"></path>
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            
+            {{template "footer" .}}
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Пошук клієнтів
+        const searchInput = document.getElementById('search-input');
+        const tableBody = document.getElementById('clients-table-body');
+        const clientRows = tableBody.querySelectorAll('tr[data-client-id]');
+        
+        // Фільтри
+        const activeFilter = document.getElementById('filter-active');
+        const inactiveFilter = document.getElementById('filter-inactive');
+        const categoryFilter = document.getElementById('filter-category');
+        
+        function filterClients() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const showActive = activeFilter.checked;
+            const showInactive = inactiveFilter.checked;
+            const selectedCategory = categoryFilter.value;
+            
+            clientRows.forEach(row => {
+                const clientName = row.querySelector('.font-weight-medium').textContent.toLowerCase();
+                const companyElem = row.querySelector('.text-muted');
+                const company = companyElem ? companyElem.textContent.toLowerCase() : '';
+                const isActive = row.dataset.active === 'true';
+                const category = row.dataset.category;
+                
+                // Перевіряємо статус активності
+                const statusMatch = (isActive && showActive) || (!isActive && showInactive);
+                
+                // Перевіряємо категорію
+                const categoryMatch = !selectedCategory || category === selectedCategory;
+                
+                // Перевіряємо пошуковий запит
+                const searchMatch = clientName.includes(searchTerm) || company.includes(searchTerm);
+                
+                // Показуємо або приховуємо рядок
+                row.style.display = (statusMatch && categoryMatch && searchMatch) ? '' : 'none';
+            });
+        }
+        
+        // Додаємо слухачі подій до фільтрів
+        searchInput.addEventListener('input', filterClients);
+        activeFilter.addEventListener('change', filterClients);
+        inactiveFilter.addEventListener('change', filterClients);
+        categoryFilter.addEventListener('change', filterClients);
+        
+        // Експорт даних у CSV
+        document.getElementById('export-button').addEventListener('click', function() {
+            const visibleRows = Array.from(clientRows).filter(row => row.style.display !== 'none');
+            
+            if (visibleRows.length === 0) {
+                alert('Немає даних для експорту');
+                return;
+            }
+            
+            let csvContent = 'Ім\'я,Компанія,Email,Телефон,Категорія,Джерело,Статус\n';
+            
+            visibleRows.forEach(row => {
+                const name = row.querySelector('.font-weight-medium').textContent;
+                const companyElem = row.querySelector('.text-muted');
+                const company = companyElem ? companyElem.textContent : '';
+                
+                const emailContainer = row.querySelectorAll('td')[1];
+                const email = emailContainer.querySelector('svg.icon-tabler-mail') ? 
+                    emailContainer.textContent.trim().split('\n')[0].trim() : '';
+                const phone = emailContainer.querySelector('svg.icon-tabler-phone') ? 
+                    emailContainer.textContent.trim().split('\n')[1]?.trim() || '' : emailContainer.textContent.trim();
+                
+                const category = row.querySelectorAll('td')[2].textContent.trim();
+                const source = row.querySelectorAll('td')[3].textContent.trim();
+                const status = row.dataset.active === 'true' ? 'Активний' : 'Неактивний';
+                
+                csvContent += `"${name}","${company}","${email}","${phone}","${category}","${source}","${status}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'clients.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    });
+    </script>
+</body>
+</html> 

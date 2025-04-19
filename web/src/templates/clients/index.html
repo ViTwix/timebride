@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>Клієнти - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                Клієнти
+                            </h2>
+                            <div class="text-muted mt-1">
+                                Всього <span class="text-primary">{{.Pagination.TotalCount}}</span> клієнтів
+                            </div>
+                        </div>
+                        <div class="col-auto ms-auto d-print-none">
+                            <div class="d-flex">
+                                <a href="/clients/new" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12 5l0 14"></path>
+                                        <path d="M5 12l14 0"></path>
+                                    </svg>
+                                    Новий клієнт
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center">
+                                <div class="me-auto">
+                                    <div class="input-icon">
+                                        <form id="search-form" method="get" action="/clients">
+                                            <input type="text" class="form-control" name="q" placeholder="Пошук клієнтів..." value="{{.Query}}">
+                                            <span class="input-icon-addon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                                                    <path d="M21 21l-6 -6"></path>
+                                                </svg>
+                                            </span>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="dropdown">
+                                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            Фільтри
+                                            {{if or .Category .Source .OnlyActive}}
+                                            <span class="badge bg-azure ms-2">{{if .OnlyActive}}1{{else}}0{{end}}{{if .Category}}1{{else}}0{{end}}{{if .Source}}1{{else}}0{{end}}</span>
+                                            {{end}}
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <form method="get" action="/clients">
+                                                <input type="hidden" name="q" value="{{.Query}}">
+                                                
+                                                <div class="dropdown-item">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Категорія</label>
+                                                        <select class="form-select" name="category">
+                                                            <option value="">Всі категорії</option>
+                                                            {{range .Categories}}
+                                                            <option value="{{.}}" {{if eq $.Category .}}selected{{end}}>{{.}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="dropdown-item">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Джерело</label>
+                                                        <select class="form-select" name="source">
+                                                            <option value="">Всі джерела</option>
+                                                            {{range .Sources}}
+                                                            <option value="{{.}}" {{if eq $.Source .}}selected{{end}}>{{.}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="dropdown-item">
+                                                    <label class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="only_active" value="true" {{if .OnlyActive}}checked{{end}}>
+                                                        <span class="form-check-label">Тільки активні</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="dropdown-divider"></div>
+                                                <div class="dropdown-item">
+                                                    <div class="btn-list justify-content-end">
+                                                        <a href="/clients" class="btn btn-link btn-sm">Скинути</a>
+                                                        <button type="submit" class="btn btn-primary btn-sm">Застосувати</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-vcenter card-table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Клієнт</th>
+                                        <th>Категорія</th>
+                                        <th>Контакти</th>
+                                        <th>Джерело</th>
+                                        <th>Бронювання</th>
+                                        <th class="w-1"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{if eq (len .Clients) 0}}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <div class="empty">
+                                                <div class="empty-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+                                                        <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+                                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                        <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
+                                                    </svg>
+                                                </div>
+                                                <p class="empty-title">Клієнтів не знайдено</p>
+                                                <p class="empty-subtitle text-muted">
+                                                    {{if or .Query .Category .Source}}
+                                                    Спробуйте змінити параметри пошуку або фільтри
+                                                    {{else}}
+                                                    Почніть додавати клієнтів, щоб вони з'явилися у списку
+                                                    {{end}}
+                                                </p>
+                                                <div class="empty-action">
+                                                    {{if or .Query .Category .Source}}
+                                                    <a href="/clients" class="btn btn-primary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747"></path>
+                                                            <path d="M20 4v5h-5"></path>
+                                                        </svg>
+                                                        Скинути фільтри
+                                                    </a>
+                                                    {{else}}
+                                                    <a href="/clients/new" class="btn btn-primary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M12 5l0 14"></path>
+                                                            <path d="M5 12l14 0"></path>
+                                                        </svg>
+                                                        Додати клієнта
+                                                    </a>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{else}}
+                                    {{range .Clients}}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="avatar me-2 {{if not .IsActive}}avatar-gray{{end}}" style="background-image: url(/static/img/clients/{{.ID}}.jpg)">
+                                                    {{if not .AvatarExists}}
+                                                    {{slice .FullName 0 1}}
+                                                    {{end}}
+                                                </span>
+                                                <div>
+                                                    <a href="/clients/{{.ID}}" class="text-reset d-block">{{.FullName}}</a>
+                                                    {{if .Company}}
+                                                    <div class="text-muted text-truncate" style="max-width: 200px;">{{.Company}}</div>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{if .Category}}
+                                            <span class="badge bg-blue-lt">{{.Category}}</span>
+                                            {{else}}
+                                            <span class="text-muted">—</span>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column gap-1">
+                                                {{if .Email}}
+                                                <a href="mailto:{{.Email}}" class="text-reset d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"></path>
+                                                        <path d="M3 7l9 6l9 -6"></path>
+                                                    </svg>
+                                                    <span class="text-truncate" style="max-width: 180px;">{{.Email}}</span>
+                                                </a>
+                                                {{end}}
+                                                {{if .Phone}}
+                                                <a href="tel:{{.Phone}}" class="text-reset d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-phone text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path>
+                                                    </svg>
+                                                    {{.Phone}}
+                                                </a>
+                                                {{end}}
+                                                {{if and (not .Email) (not .Phone)}}
+                                                <span class="text-muted">—</span>
+                                                {{end}}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{if .Source}}
+                                            <span class="badge bg-azure-lt">{{.Source}}</span>
+                                            {{else}}
+                                            <span class="text-muted">—</span>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-reset">{{.BookingsCount}}</span>
+                                                {{if gt .UpcomingBookingsCount 0}}
+                                                <span class="badge bg-green-lt ms-2">{{.UpcomingBookingsCount}} заплановано</span>
+                                                {{end}}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                        <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                        <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                    </svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a href="/clients/{{.ID}}" class="dropdown-item">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                            <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
+                                                        </svg>
+                                                        Переглянути
+                                                    </a>
+                                                    <a href="/clients/{{.ID}}/edit" class="dropdown-item">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                                            <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                                            <path d="M16 5l3 3"></path>
+                                                        </svg>
+                                                        Редагувати
+                                                    </a>
+                                                    <a href="/bookings/new?client_id={{.ID}}" class="dropdown-item">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"></path>
+                                                            <path d="M16 3v4"></path>
+                                                            <path d="M8 3v4"></path>
+                                                            <path d="M4 11h16"></path>
+                                                            <path d="M16 19h6"></path>
+                                                            <path d="M19 16v6"></path>
+                                                        </svg>
+                                                        Нове бронювання
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{end}}
+                                    {{end}}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        {{if gt .Pagination.TotalPages 1}}
+                        <div class="card-footer d-flex align-items-center">
+                            <p class="m-0 text-muted">
+                                Показано <span>{{.Pagination.From}}</span> - <span>{{.Pagination.To}}</span> з <span>{{.Pagination.TotalCount}}</span> клієнтів
+                            </p>
+                            <ul class="pagination m-0 ms-auto">
+                                <li class="page-item {{if eq .Pagination.CurrentPage 1}}disabled{{end}}">
+                                    <a class="page-link" href="{{.Pagination.PrevPageURL}}" tabindex="-1" aria-disabled="{{if eq .Pagination.CurrentPage 1}}true{{else}}false{{end}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M15 6l-6 6l6 6" />
+                                        </svg>
+                                        Назад
+                                    </a>
+                                </li>
+                                
+                                {{range .Pagination.Pages}}
+                                {{if eq . 0}}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+                                </li>
+                                {{else}}
+                                <li class="page-item {{if eq . $.Pagination.CurrentPage}}active{{end}}">
+                                    <a class="page-link" href="{{$.Pagination.PageURL .}}">{{.}}</a>
+                                </li>
+                                {{end}}
+                                {{end}}
+                                
+                                <li class="page-item {{if eq .Pagination.CurrentPage .Pagination.TotalPages}}disabled{{end}}">
+                                    <a class="page-link" href="{{.Pagination.NextPageURL}}">
+                                        Далі
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M9 6l6 6l-6 6" />
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{template "footer" .}}
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Автоматичне відправлення форми пошуку при введенні тексту
+            const searchInput = document.querySelector('input[name="q"]');
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    document.getElementById('search-form').submit();
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html> 

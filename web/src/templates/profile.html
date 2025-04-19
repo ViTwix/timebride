@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>Профіль - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                Профіль
+                            </h2>
+                            <div class="text-muted mt-1">
+                                Налаштування облікового запису
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a href="#tabs-profile" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">Профіль</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a href="#tabs-password" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">Пароль</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a href="#tabs-notifications" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">Сповіщення</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a href="#tabs-settings" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">Налаштування</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <!-- Вкладка профілю -->
+                                <div class="tab-pane active show" id="tabs-profile" role="tabpanel">
+                                    <form method="post" action="/profile" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                                        <input type="hidden" name="_action" value="update_profile">
+                                        
+                                        {{if .SuccessMessage}}
+                                        <div class="alert alert-success" role="alert">
+                                            {{.SuccessMessage}}
+                                        </div>
+                                        {{end}}
+                                        
+                                        {{if .ErrorMessage}}
+                                        <div class="alert alert-danger" role="alert">
+                                            {{.ErrorMessage}}
+                                        </div>
+                                        {{end}}
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-auto">
+                                                <span class="avatar avatar-xl" style="background-image: url({{if .User.Avatar}}/static/img/users/{{.User.ID}}.jpg{{else}}/static/img/default-avatar.jpg{{end}})"></span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <div class="form-label">Фото профілю</div>
+                                                    <input type="file" name="avatar" class="form-control" accept="image/jpeg,image/png,image/webp">
+                                                    <small class="form-hint">Максимальний розмір файлу: 2MB. Підтримувані формати: JPEG, PNG, WebP.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Повне ім'я</label>
+                                                <input type="text" class="form-control {{if .Errors.FullName}}is-invalid{{end}}" name="full_name" placeholder="Ваше ім'я та прізвище" value="{{.User.FullName}}" required>
+                                                {{if .Errors.FullName}}
+                                                <div class="invalid-feedback">{{.Errors.FullName}}</div>
+                                                {{end}}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Email</label>
+                                                <input type="email" class="form-control {{if .Errors.Email}}is-invalid{{end}}" name="email" placeholder="email@example.com" value="{{.User.Email}}" required>
+                                                {{if .Errors.Email}}
+                                                <div class="invalid-feedback">{{.Errors.Email}}</div>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Телефон</label>
+                                                <input type="tel" class="form-control {{if .Errors.Phone}}is-invalid{{end}}" name="phone" placeholder="+380501234567" value="{{.User.Phone}}">
+                                                {{if .Errors.Phone}}
+                                                <div class="invalid-feedback">{{.Errors.Phone}}</div>
+                                                {{end}}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Компанія</label>
+                                                <input type="text" class="form-control" name="company" placeholder="Назва компанії" value="{{.User.Company}}">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Про себе</label>
+                                            <textarea class="form-control" name="bio" rows="4" placeholder="Розкажіть трохи про себе та свою діяльність">{{.User.Bio}}</textarea>
+                                        </div>
+                                        
+                                        <div class="form-footer">
+                                            <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- Вкладка зміни пароля -->
+                                <div class="tab-pane" id="tabs-password" role="tabpanel">
+                                    <form method="post" action="/profile">
+                                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                                        <input type="hidden" name="_action" value="change_password">
+                                        
+                                        {{if .PasswordSuccessMessage}}
+                                        <div class="alert alert-success" role="alert">
+                                            {{.PasswordSuccessMessage}}
+                                        </div>
+                                        {{end}}
+                                        
+                                        {{if .PasswordErrorMessage}}
+                                        <div class="alert alert-danger" role="alert">
+                                            {{.PasswordErrorMessage}}
+                                        </div>
+                                        {{end}}
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label required">Поточний пароль</label>
+                                            <input type="password" class="form-control {{if .Errors.CurrentPassword}}is-invalid{{end}}" name="current_password" required>
+                                            {{if .Errors.CurrentPassword}}
+                                            <div class="invalid-feedback">{{.Errors.CurrentPassword}}</div>
+                                            {{end}}
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label required">Новий пароль</label>
+                                            <input type="password" class="form-control {{if .Errors.NewPassword}}is-invalid{{end}}" name="new_password" required>
+                                            {{if .Errors.NewPassword}}
+                                            <div class="invalid-feedback">{{.Errors.NewPassword}}</div>
+                                            {{end}}
+                                            <small class="form-hint">Пароль має бути не менше 8 символів та містити літери, цифри та спеціальні символи.</small>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label required">Підтвердження пароля</label>
+                                            <input type="password" class="form-control {{if .Errors.ConfirmPassword}}is-invalid{{end}}" name="confirm_password" required>
+                                            {{if .Errors.ConfirmPassword}}
+                                            <div class="invalid-feedback">{{.Errors.ConfirmPassword}}</div>
+                                            {{end}}
+                                        </div>
+                                        
+                                        <div class="form-footer">
+                                            <button type="submit" class="btn btn-primary">Змінити пароль</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- Вкладка сповіщень -->
+                                <div class="tab-pane" id="tabs-notifications" role="tabpanel">
+                                    <form method="post" action="/profile">
+                                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                                        <input type="hidden" name="_action" value="update_notifications">
+                                        
+                                        {{if .NotificationsSuccessMessage}}
+                                        <div class="alert alert-success" role="alert">
+                                            {{.NotificationsSuccessMessage}}
+                                        </div>
+                                        {{end}}
+                                        
+                                        <div class="form-label mb-2">Сповіщення електронною поштою</div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="email_notifications[]" value="new_booking" {{if contains .User.EmailNotifications "new_booking"}}checked{{end}}>
+                                                    <span class="form-check-label">Нові бронювання</span>
+                                                </label>
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="email_notifications[]" value="booking_reminder" {{if contains .User.EmailNotifications "booking_reminder"}}checked{{end}}>
+                                                    <span class="form-check-label">Нагадування про бронювання</span>
+                                                </label>
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="email_notifications[]" value="booking_changes" {{if contains .User.EmailNotifications "booking_changes"}}checked{{end}}>
+                                                    <span class="form-check-label">Зміни в бронюваннях</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="email_notifications[]" value="new_client" {{if contains .User.EmailNotifications "new_client"}}checked{{end}}>
+                                                    <span class="form-check-label">Нові клієнти</span>
+                                                </label>
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="email_notifications[]" value="system_notifications" {{if contains .User.EmailNotifications "system_notifications"}}checked{{end}}>
+                                                    <span class="form-check-label">Системні сповіщення</span>
+                                                </label>
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="email_notifications[]" value="marketing" {{if contains .User.EmailNotifications "marketing"}}checked{{end}}>
+                                                    <span class="form-check-label">Маркетингові розсилки</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-label mt-4 mb-2">SMS сповіщення</div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="sms_notifications[]" value="new_booking" {{if contains .User.SMSNotifications "new_booking"}}checked{{end}}>
+                                                    <span class="form-check-label">Нові бронювання</span>
+                                                </label>
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="sms_notifications[]" value="booking_reminder" {{if contains .User.SMSNotifications "booking_reminder"}}checked{{end}}>
+                                                    <span class="form-check-label">Нагадування про бронювання</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="sms_notifications[]" value="booking_changes" {{if contains .User.SMSNotifications "booking_changes"}}checked{{end}}>
+                                                    <span class="form-check-label">Зміни в бронюваннях</span>
+                                                </label>
+                                                <label class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="sms_notifications[]" value="system_notifications" {{if contains .User.SMSNotifications "system_notifications"}}checked{{end}}>
+                                                    <span class="form-check-label">Системні сповіщення</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-footer">
+                                            <button type="submit" class="btn btn-primary">Зберегти налаштування</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- Вкладка налаштувань -->
+                                <div class="tab-pane" id="tabs-settings" role="tabpanel">
+                                    <form method="post" action="/profile">
+                                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                                        <input type="hidden" name="_action" value="update_settings">
+                                        
+                                        {{if .SettingsSuccessMessage}}
+                                        <div class="alert alert-success" role="alert">
+                                            {{.SettingsSuccessMessage}}
+                                        </div>
+                                        {{end}}
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Мова</label>
+                                            <select class="form-select" name="language">
+                                                <option value="uk" {{if eq .User.Settings.Language "uk"}}selected{{end}}>Українська</option>
+                                                <option value="en" {{if eq .User.Settings.Language "en"}}selected{{end}}>English</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Часовий пояс</label>
+                                            <select class="form-select" name="timezone">
+                                                <option value="Europe/Kiev" {{if eq .User.Settings.Timezone "Europe/Kiev"}}selected{{end}}>Київ (UTC+2)</option>
+                                                <option value="Europe/London" {{if eq .User.Settings.Timezone "Europe/London"}}selected{{end}}>Лондон (UTC+0)</option>
+                                                <option value="America/New_York" {{if eq .User.Settings.Timezone "America/New_York"}}selected{{end}}>Нью-Йорк (UTC-5)</option>
+                                                <option value="America/Los_Angeles" {{if eq .User.Settings.Timezone "America/Los_Angeles"}}selected{{end}}>Лос-Анджелес (UTC-8)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Формат дати</label>
+                                            <select class="form-select" name="date_format">
+                                                <option value="DD.MM.YYYY" {{if eq .User.Settings.DateFormat "DD.MM.YYYY"}}selected{{end}}>31.12.2023</option>
+                                                <option value="MM/DD/YYYY" {{if eq .User.Settings.DateFormat "MM/DD/YYYY"}}selected{{end}}>12/31/2023</option>
+                                                <option value="YYYY-MM-DD" {{if eq .User.Settings.DateFormat "YYYY-MM-DD"}}selected{{end}}>2023-12-31</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Тема оформлення</label>
+                                            <select class="form-select" name="theme">
+                                                <option value="light" {{if eq .User.Settings.Theme "light"}}selected{{end}}>Світла</option>
+                                                <option value="dark" {{if eq .User.Settings.Theme "dark"}}selected{{end}}>Темна</option>
+                                                <option value="auto" {{if eq .User.Settings.Theme "auto"}}selected{{end}}>Автоматично (за налаштуваннями системи)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="two_factor_auth" value="true" {{if .User.Settings.TwoFactorAuth}}checked{{end}}>
+                                                <span class="form-check-label">Двофакторна аутентифікація</span>
+                                            </label>
+                                            <small class="form-hint">Увімкніть для підвищення безпеки вашого облікового запису.</small>
+                                        </div>
+                                        
+                                        <div class="form-footer">
+                                            <button type="submit" class="btn btn-primary">Зберегти налаштування</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {{template "footer" .}}
+        </div>
+    </div>
+</body>
+</html> 

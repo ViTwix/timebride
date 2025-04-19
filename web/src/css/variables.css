@@ -1,0 +1,357 @@
+/* 
+ * TimeBride - Змінні
+ * 
+ * Цей файл містить змінні для компонентів проекту.
+ */
+
+:root {
+  /* Кольори */
+  --color-primary: #0d6efd;
+  --color-primary-dark: #0b5ed7;
+  --color-secondary: #6c757d;
+  --color-secondary-dark: #5c636a;
+  --color-success: #198754;
+  --color-success-dark: #157347;
+  --color-danger: #dc3545;
+  --color-danger-dark: #bb2d3b;
+  --color-warning: #ffc107;
+  --color-warning-dark: #ffca2c;
+  --color-info: #0dcaf0;
+  --color-info-dark: #0aa2c0;
+  --color-light: #f8f9fa;
+  --color-light-dark: #f9fafb;
+  --color-dark: #212529;
+  --color-dark-light: #343a40;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-transparent: transparent;
+
+  /* Типографіка */
+  --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-size-base: 1rem;
+  --font-size-sm: 0.875rem;
+  --font-size-lg: 1.25rem;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-base: 1.5;
+  --line-height-sm: 1.25;
+  --line-height-lg: 2;
+
+  /* Відступи */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 1rem;
+  --spacing-4: 1.5rem;
+  --spacing-5: 3rem;
+
+  /* Розміри */
+  --border-width: 1px;
+  --border-radius: 0.375rem;
+  --border-radius-sm: 0.25rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-xl: 1rem;
+  --border-radius-2xl: 2rem;
+  --border-radius-pill: 50rem;
+
+  /* Тіні */
+  --shadow-sm: 0 .125rem .25rem rgba(0, 0, 0, .075);
+  --shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+  --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, .175);
+  --shadow-xl: 0 1.5rem 4rem rgba(0, 0, 0, .2);
+  --shadow-2xl: 0 2rem 5rem rgba(0, 0, 0, .225);
+  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, .075);
+
+  /* Переходи */
+  --transition-base: all .2s ease-in-out;
+  --transition-fade: opacity .15s linear;
+  --transition-collapse: height .35s ease;
+  --transition-fast: all .1s ease-in-out;
+  --transition-normal: all .2s ease-in-out;
+  --transition-slow: all .3s ease-in-out;
+
+  /* Z-індекси */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-sidebar: 1080;
+
+  /* Кнопки */
+  --button-padding-y: 0.375rem;
+  --button-padding-x: 0.75rem;
+  --button-padding-y-sm: 0.25rem;
+  --button-padding-x-sm: 0.5rem;
+  --button-padding-y-lg: 0.5rem;
+  --button-padding-x-lg: 1rem;
+  --button-font-size: var(--font-size-base);
+  --button-font-size-sm: var(--font-size-sm);
+  --button-font-size-lg: var(--font-size-lg);
+  --button-font-weight: var(--font-weight-normal);
+  --button-line-height: 1.5;
+  --button-border-width: var(--border-width);
+  --button-border-radius: var(--border-radius);
+  --button-border-radius-sm: var(--border-radius-sm);
+  --button-border-radius-lg: var(--border-radius-lg);
+  --button-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+
+  /* Форми */
+  --form-group-margin-bottom: 1rem;
+  --form-label-margin-bottom: 0.5rem;
+  --form-label-font-weight: var(--font-weight-medium);
+  --form-control-padding-y: 0.375rem;
+  --form-control-padding-x: 0.75rem;
+  --form-control-font-size: var(--font-size-base);
+  --form-control-font-weight: var(--font-weight-normal);
+  --form-control-line-height: 1.5;
+  --form-control-color: var(--color-dark);
+  --form-control-bg: var(--color-white);
+  --form-control-border-width: var(--border-width);
+  --form-control-border-color: #ced4da;
+  --form-control-border-radius: var(--border-radius);
+  --form-control-focus-color: var(--color-dark);
+  --form-control-focus-bg: var(--color-white);
+  --form-control-focus-border-color: #86b7fe;
+  --form-control-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --form-control-disabled-bg: #e9ecef;
+  --form-control-placeholder-color: #6c757d;
+  --form-check-min-height: 1.5rem;
+  --form-check-padding-start: 1.5rem;
+  --form-check-margin-bottom: 0.5rem;
+  --form-check-input-margin-top: 0.25rem;
+  --form-select-padding-y: 0.375rem;
+  --form-select-padding-x: 0.75rem;
+  --form-select-font-size: var(--font-size-base);
+  --form-select-font-weight: var(--font-weight-normal);
+  --form-select-line-height: 1.5;
+  --form-select-color: var(--color-dark);
+  --form-select-bg: var(--color-white);
+  --form-select-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  --form-select-bg-size: 16px 12px;
+  --form-select-border-width: var(--border-width);
+  --form-select-border-color: #ced4da;
+  --form-select-border-radius: var(--border-radius);
+  --form-select-focus-border-color: #86b7fe;
+  --form-select-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --form-select-disabled-bg: #e9ecef;
+
+  /* Картки */
+  --card-bg: var(--color-white);
+  --card-border-width: var(--border-width);
+  --card-border-color: rgba(0, 0, 0, 0.125);
+  --card-border-radius: var(--border-radius);
+  --card-border-radius-sm: var(--border-radius-sm);
+  --card-border-radius-lg: var(--border-radius-lg);
+  --card-header-padding-y: 0.5rem;
+  --card-header-padding-x: 1rem;
+  --card-header-bg: rgba(0, 0, 0, 0.03);
+  --card-header-border-width: var(--border-width);
+  --card-header-border-color: rgba(0, 0, 0, 0.125);
+  --card-body-padding-y: 1rem;
+  --card-body-padding-x: 1rem;
+  --card-footer-padding-y: 0.5rem;
+  --card-footer-padding-x: 1rem;
+  --card-footer-bg: rgba(0, 0, 0, 0.03);
+  --card-footer-border-width: var(--border-width);
+  --card-footer-border-color: rgba(0, 0, 0, 0.125);
+
+  /* Алерти */
+  --alert-padding-y: 0.75rem;
+  --alert-padding-x: 1.25rem;
+  --alert-margin-bottom: 1rem;
+  --alert-border-width: var(--border-width);
+  --alert-border-radius: var(--border-radius);
+  --alert-link-font-weight: var(--font-weight-bold);
+  --alert-primary-color: #084298;
+  --alert-primary-bg: #cfe2ff;
+  --alert-primary-border-color: #b6d4fe;
+  --alert-primary-link-color: #063970;
+  --alert-secondary-color: #41464b;
+  --alert-secondary-bg: #e2e3e5;
+  --alert-secondary-border-color: #d3d6d8;
+  --alert-secondary-link-color: #343a40;
+  --alert-success-color: #0f5132;
+  --alert-success-bg: #d1e7dd;
+  --alert-success-border-color: #badbcc;
+  --alert-success-link-color: #051b0d;
+  --alert-danger-color: #842029;
+  --alert-danger-bg: #f8d7da;
+  --alert-danger-border-color: #f5c2c7;
+  --alert-danger-link-color: #601a1a;
+  --alert-warning-color: #664d03;
+  --alert-warning-bg: #fff3cd;
+  --alert-warning-border-color: #ffecb5;
+  --alert-warning-link-color: #523e02;
+  --alert-info-color: #055160;
+  --alert-info-bg: #cff4fc;
+  --alert-info-border-color: #b6effb;
+  --alert-info-link-color: #044e5e;
+  --alert-light-color: #636464;
+  --alert-light-bg: #fcfcfd;
+  --alert-light-border-color: #fafafb;
+  --alert-light-link-color: #4f5050;
+  --alert-dark-color: #141619;
+  --alert-dark-bg: #d3d3d4;
+  --alert-dark-border-color: #bcbebf;
+  --alert-dark-link-color: #101214;
+
+  /* Таблиці */
+  --table-margin-bottom: 1rem;
+  --table-color: var(--color-dark);
+  --table-bg: var(--color-white);
+  --table-border-color: #dee2e6;
+  --table-border-width: var(--border-width);
+  --table-cell-padding: 0.75rem;
+  --table-cell-padding-sm: 0.3rem;
+  --table-head-bg: #f8f9fa;
+  --table-striped-bg: rgba(0, 0, 0, 0.05);
+  --table-hover-bg: rgba(0, 0, 0, 0.075);
+  --table-accent-bg: rgba(0, 0, 0, 0.05);
+
+  /* Пагінація */
+  --pagination-margin: 0.5rem 0;
+  --pagination-padding-y: 0.375rem;
+  --pagination-padding-x: 0.75rem;
+  --pagination-color: var(--color-primary);
+  --pagination-bg: var(--color-white);
+  --pagination-border-width: var(--border-width);
+  --pagination-border-color: #dee2e6;
+  --pagination-border-radius: var(--border-radius);
+  --pagination-hover-color: var(--color-primary-dark);
+  --pagination-hover-bg: #e9ecef;
+  --pagination-hover-border-color: #dee2e6;
+  --pagination-focus-color: var(--color-primary-dark);
+  --pagination-focus-bg: #e9ecef;
+  --pagination-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --pagination-active-color: var(--color-white);
+  --pagination-active-bg: var(--color-primary);
+  --pagination-active-border-color: var(--color-primary);
+  --pagination-disabled-color: #6c757d;
+  --pagination-disabled-bg: var(--color-white);
+  --pagination-disabled-border-color: #dee2e6;
+
+  /* Прогрес-бар */
+  --progress-height: 1rem;
+  --progress-font-size: 0.75rem;
+  --progress-bg: #e9ecef;
+  --progress-border-radius: var(--border-radius);
+  --progress-bar-color: var(--color-white);
+  --progress-bar-bg: var(--color-primary);
+
+  /* Спінери */
+  --spinner-width: 2rem;
+  --spinner-height: 2rem;
+  --spinner-border-width: 0.25em;
+
+  /* Тултіпи */
+  --tooltip-margin: 0;
+  --tooltip-font-family: var(--font-family);
+  --tooltip-font-style: normal;
+  --tooltip-font-weight: var(--font-weight-normal);
+  --tooltip-line-height: 1.5;
+  --tooltip-font-size: var(--font-size-sm);
+  --tooltip-opacity: 0.9;
+  --tooltip-arrow-width: 0.8rem;
+  --tooltip-arrow-height: 0.4rem;
+
+  /* Поповери */
+  --popover-max-width: 276px;
+  --popover-font-family: var(--font-family);
+  --popover-font-style: normal;
+  --popover-font-weight: var(--font-weight-normal);
+  --popover-line-height: 1.5;
+  --popover-font-size: var(--font-size-sm);
+  --popover-bg: var(--color-white);
+  --popover-border-width: var(--border-width);
+  --popover-border-color: rgba(0, 0, 0, 0.2);
+  --popover-border-radius: var(--border-radius);
+  --popover-box-shadow: var(--shadow-lg);
+  --popover-arrow-width: 1rem;
+  --popover-arrow-height: 0.5rem;
+
+  /* Аватари */
+  --avatar-size: 3rem;
+  --avatar-size-sm: 2rem;
+  --avatar-size-lg: 4rem;
+  --avatar-border-radius: 50%;
+
+  /* Дропдауни */
+  --dropdown-toggle-padding-x: 0.5rem;
+  --dropdown-toggle-padding-y: 0.25rem;
+  --dropdown-toggle-border-width: 0.25rem;
+  --dropdown-min-width: 10rem;
+  --dropdown-padding-y: 0.5rem;
+  --dropdown-font-size: var(--font-size-base);
+  --dropdown-color: var(--color-dark);
+  --dropdown-bg: var(--color-white);
+  --dropdown-border-width: var(--border-width);
+  --dropdown-border-color: rgba(0, 0, 0, 0.15);
+  --dropdown-border-radius: var(--border-radius);
+  --dropdown-box-shadow: var(--shadow-lg);
+  --dropdown-item-padding-y: 0.25rem;
+  --dropdown-item-padding-x: 1rem;
+  --dropdown-link-color: var(--color-dark);
+  --dropdown-link-hover-color: var(--color-dark);
+  --dropdown-link-hover-bg: #f8f9fa;
+  --dropdown-link-active-color: var(--color-white);
+  --dropdown-link-active-bg: var(--color-primary);
+  --dropdown-link-disabled-color: #6c757d;
+
+  /* Бейджі */
+  --badge-padding-y: 0.35em;
+  --badge-padding-x: 0.65em;
+  --badge-font-size: 0.75em;
+  --badge-font-weight: var(--font-weight-bold);
+  --badge-color: var(--color-white);
+  --badge-border-radius: var(--border-radius);
+  --badge-primary-color: var(--color-white);
+  --badge-primary-bg: var(--color-primary);
+  --badge-secondary-color: var(--color-white);
+  --badge-secondary-bg: var(--color-secondary);
+  --badge-success-color: var(--color-white);
+  --badge-success-bg: var(--color-success);
+  --badge-danger-color: var(--color-white);
+  --badge-danger-bg: var(--color-danger);
+  --badge-warning-color: var(--color-dark);
+  --badge-warning-bg: var(--color-warning);
+  --badge-info-color: var(--color-white);
+  --badge-info-bg: var(--color-info);
+  --badge-light-color: var(--color-dark);
+  --badge-light-bg: var(--color-light);
+  --badge-dark-color: var(--color-white);
+  --badge-dark-bg: var(--color-dark);
+
+  /* Футер */
+  --footer-padding-y: 2rem;
+  --footer-padding-x: 0;
+  --footer-bg: var(--color-light);
+  --footer-border-width: var(--border-width);
+  --footer-border-color: #dee2e6;
+
+  /* Хедер */
+  --header-padding-y: 1rem;
+  --header-padding-x: 0;
+  --header-bg: var(--color-white);
+  --header-border-width: var(--border-width);
+  --header-border-color: #dee2e6;
+
+  /* Сайдбар */
+  --sidebar-padding-y: 1rem;
+  --sidebar-padding-x: 1rem;
+  --sidebar-bg: var(--color-white);
+  --sidebar-border-width: var(--border-width);
+  --sidebar-border-color: #dee2e6;
+}
+
+/* Темна тема (для майбутнього використання) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Тут будуть змінні для темної теми */
+  }
+} 

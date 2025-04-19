@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TimeBride - Система управління весільними послугами">
+    <title>TimeBride - Демонстрація функцій</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/utilities.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="/js/main.js" defer></script>
+</head>
+<body class="antialiased">
+    <div class="page" x-data="{ sidebarOpen: false }">
+        <!-- Мобільне меню -->
+        <header class="navbar navbar-expand-md navbar-light d-lg-none">
+            <div class="container-fluid">
+                <button class="navbar-toggler" 
+                        type="button" 
+                        aria-label="Відкрити меню"
+                        x-on:click="sidebarOpen = !sidebarOpen"
+                        :aria-expanded="sidebarOpen">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <h1 class="navbar-brand navbar-brand-autodark">
+                    <a href="/" aria-label="TimeBride - На головну">TimeBride</a>
+                </h1>
+            </div>
+        </header>
+
+        <!-- Мобільне меню -->
+        <nav class="navbar navbar-vertical navbar-expand-lg navbar-dark"
+             :class="{ 'd-none': !sidebarOpen }"
+             x-show="sidebarOpen"
+             x-transition>
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="sidebar-menu">
+                    <ul class="navbar-nav pt-lg-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dashboard">
+                                <span class="nav-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
+                                </span>
+                                <span class="nav-link-title">Головна</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/bookings">
+                                <span class="nav-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M18 14v4h4" /><path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M15 3v4" /><path d="M7 3v4" /><path d="M3 11h16" /></svg>
+                                </span>
+                                <span class="nav-link-title">Бронювання</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Основний контент -->
+        <main class="page-wrapper">
+            <div class="page-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title">Демонстрація функцій</h2>
+                                </div>
+                                <div class="card-body">
+                                    <section>
+                                        <h3 class="mb-3">1. Мобільне меню</h3>
+                                        <p>Натисніть на кнопку меню у верхньому лівому куті, щоб відкрити мобільне меню.</p>
+                                    </section>
+                                    
+                                    <section>
+                                        <h3 class="mb-3 mt-4">2. Форма з валідацією</h3>
+                                        <form data-validate class="space-y-4" novalidate>
+                                            <div class="form-group">
+                                                <label for="name" class="form-label">Ім'я</label>
+                                                <input type="text" 
+                                                       id="name" 
+                                                       name="name" 
+                                                       required 
+                                                       class="form-input" 
+                                                       placeholder="Введіть ваше ім'я"
+                                                       aria-required="true">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email" class="form-label">Email</label>
+                                                <input type="email" 
+                                                       id="email" 
+                                                       name="email" 
+                                                       required 
+                                                       class="form-input" 
+                                                       placeholder="Введіть ваш email"
+                                                       aria-required="true">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="phone" class="form-label">Телефон</label>
+                                                <input type="tel" 
+                                                       id="phone" 
+                                                       name="phone" 
+                                                       class="form-input" 
+                                                       placeholder="Введіть ваш телефон"
+                                                       pattern="[0-9]{10}"
+                                                       title="Номер телефону у форматі: 0XXXXXXXXX">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="message" class="form-label">Повідомлення</label>
+                                                <textarea id="message" 
+                                                          name="message" 
+                                                          class="form-input" 
+                                                          rows="3" 
+                                                          placeholder="Введіть ваше повідомлення"></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Надіслати</button>
+                                        </form>
+                                    </section>
+                                    
+                                    <section>
+                                        <h3 class="mb-3 mt-4">3. Завантаження зображення з попереднім переглядом</h3>
+                                        <form class="space-y-4">
+                                            <div class="form-group">
+                                                <label for="photo" class="form-label">Фотографія</label>
+                                                <input type="file" 
+                                                       id="photo" 
+                                                       name="photo" 
+                                                       accept="image/*" 
+                                                       data-preview="photo-preview" 
+                                                       class="form-input"
+                                                       aria-describedby="photo-preview">
+                                                <div class="mt-2">
+                                                    <img id="photo-preview" 
+                                                         class="img-fluid rounded hidden" 
+                                                         style="max-height: 200px;"
+                                                         alt="Попередній перегляд фото">
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-primary">Завантажити</button>
+                                        </form>
+                                    </section>
+                                    
+                                    <section>
+                                        <h3 class="mb-3 mt-4">4. Демонстрація кольорової гами</h3>
+                                        <div class="row">
+                                            <div class="col-md-3 mb-3">
+                                                <div class="p-3 bg-primary rounded">
+                                                    <p class="mb-0">Основний фон</p>
+                                                    <small>#FFFFFF</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <div class="p-3 bg-section rounded">
+                                                    <p class="mb-0">Фон секцій</p>
+                                                    <small>#F5EBE0</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <div class="p-3 bg-accent rounded">
+                                                    <p class="mb-0">Світлий акцент</p>
+                                                    <small>#E3D5CA</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <div class="p-3" style="background-color: var(--color-neutral-accent); border-radius: var(--radius-md);">
+                                                    <p class="mb-0">Нейтральний акцент</p>
+                                                    <small>#D6CCC2</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <div class="p-3" style="background-color: var(--color-contrast-accent); border-radius: var(--radius-md);">
+                                                    <p class="mb-0">Контрастний акцент</p>
+                                                    <small>#D5BDAF</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <div class="p-3 text-primary rounded" style="background-color: #f8f9fa;">
+                                                    <p class="mb-0">Основний текст</p>
+                                                    <small>#000000</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <div class="p-3 text-secondary rounded" style="background-color: #f8f9fa;">
+                                                    <p class="mb-0">Альтернативний текст</p>
+                                                    <small>#4A4744</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="footer footer-transparent">
+                <div class="container-fluid">
+                    <div class="row text-center align-items-center flex-row-reverse">
+                        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                            <ul class="list-inline list-inline-dots mb-0">
+                                <li class="list-inline-item">
+                                    &copy; 2024 TimeBride. Всі права захищені.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Tabler Core -->
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+</body>
+</html> 

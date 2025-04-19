@@ -1,0 +1,479 @@
+{{ define "content" }}
+<!-- Page header -->
+<div class="page-header d-print-none">
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Керування розкладом</div>
+                <h2 class="page-title">Бронювання</h2>
+            </div>
+            <!-- Page title actions -->
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <span class="d-none d-sm-inline">
+                        <a href="/calendar" class="btn">
+                            <i class="ti ti-calendar"></i>
+                            Календар
+                        </a>
+                    </span>
+                    <a href="/bookings/create" class="btn btn-primary d-none d-sm-inline-block">
+                        <i class="ti ti-plus"></i>
+                        Нове бронювання
+                    </a>
+                    <a href="/bookings/create" class="btn btn-primary d-sm-none btn-icon">
+                        <i class="ti ti-plus"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page body -->
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Фільтри</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="filter-form" class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Тип події</label>
+                                <select class="form-select" name="event_type">
+                                    <option value="">Всі типи</option>
+                                    <option value="wedding">Весілля</option>
+                                    <option value="portrait">Портрет</option>
+                                    <option value="family">Сімейна</option>
+                                    <option value="event">Захід</option>
+                                    <option value="commercial">Комерційна</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Статус</label>
+                                <select class="form-select" name="status">
+                                    <option value="">Всі статуси</option>
+                                    <option value="active">Активні</option>
+                                    <option value="pending">Очікують</option>
+                                    <option value="completed">Завершені</option>
+                                    <option value="cancelled">Скасовані</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Період</label>
+                                <select class="form-select" name="period">
+                                    <option value="">Весь час</option>
+                                    <option value="future">Майбутні</option>
+                                    <option value="past">Минулі</option>
+                                    <option value="today">Сьогодні</option>
+                                    <option value="week">На цьому тижні</option>
+                                    <option value="month">У цьому місяці</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <div class="d-flex">
+                                    <a href="#" class="btn btn-outline-primary w-100 w-md-auto me-2" id="apply-filters">
+                                        <i class="ti ti-filter me-1"></i> 
+                                        Застосувати фільтри
+                                    </a>
+                                    <a href="#" class="btn btn-ghost-secondary w-100 w-md-auto" id="reset-filters">
+                                        Скинути фільтри
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Таблиця бронювань -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Список бронювань</h3>
+                        <div class="card-actions">
+                            <a href="#" class="btn btn-outline-success btn-sm" id="export-csv">
+                                <i class="ti ti-file-spreadsheet me-1"></i>
+                                Експорт CSV
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-vcenter table-hover card-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Клієнт</th>
+                                        <th>Тип події</th>
+                                        <th>Дата</th>
+                                        <th>Статус</th>
+                                        <th>Створено</th>
+                                        <th class="w-1"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookings-table-body">
+                                    {{ if .Bookings }}
+                                        {{ range .Bookings }}
+                                        <tr>
+                                            <td>{{ .ID }}</td>
+                                            <td>
+                                                <div class="d-flex py-1 align-items-center">
+                                                    <span class="avatar me-2">{{ index .ClientName 0 }}</span>
+                                                    <div class="flex-fill">
+                                                        <div class="font-weight-medium">{{ .ClientName }}</div>
+                                                        <div class="text-muted text-truncate small" style="max-width: 200px;">
+                                                            <a href="mailto:{{ .ClientEmail }}" class="text-reset">{{ .ClientEmail }}</a>
+                                                            {{ if .ClientPhone }} · {{ .ClientPhone }}{{ end }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-truncate">
+                                                    {{ if eq .EventType "wedding" }}
+                                                        <i class="ti ti-heart text-pink me-1"></i>
+                                                    {{ else if eq .EventType "portrait" }}
+                                                        <i class="ti ti-user text-cyan me-1"></i>
+                                                    {{ else if eq .EventType "family" }}
+                                                        <i class="ti ti-users text-blue me-1"></i>
+                                                    {{ else if eq .EventType "event" }}
+                                                        <i class="ti ti-confetti text-lime me-1"></i>
+                                                    {{ else if eq .EventType "commercial" }}
+                                                        <i class="ti ti-building-store text-yellow me-1"></i>
+                                                    {{ else }}
+                                                        <i class="ti ti-camera text-muted me-1"></i>
+                                                    {{ end }}
+                                                    {{ .EventTypeLabel }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-nowrap">{{ .StartDateFormatted }}</div>
+                                                <div class="text-muted small">{{ .StartTimeFormatted }} - {{ .EndTimeFormatted }}</div>
+                                            </td>
+                                            <td>
+                                                <span class="badge {{ .StatusClass }}">
+                                                    {{ .StatusLabel }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="text-muted">{{ .CreatedAtFormatted }}</div>
+                                            </td>
+                                            <td>
+                                                <div class="btn-list flex-nowrap">
+                                                    <a href="/bookings/{{ .ID }}" class="btn btn-sm btn-icon" title="Переглянути">
+                                                        <i class="ti ti-eye"></i>
+                                                    </a>
+                                                    <a href="/bookings/{{ .ID }}/edit" class="btn btn-sm btn-icon" title="Редагувати">
+                                                        <i class="ti ti-edit"></i>
+                                                    </a>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-icon dropdown-toggle" data-bs-toggle="dropdown" title="Більше">
+                                                            <i class="ti ti-dots-vertical"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <a class="dropdown-item" href="/bookings/{{ .ID }}/export">
+                                                                <i class="ti ti-file-export me-2"></i>
+                                                                Експорт
+                                                            </a>
+                                                            <a class="dropdown-item" href="/bookings/{{ .ID }}/invoice">
+                                                                <i class="ti ti-receipt me-2"></i>
+                                                                Рахунок
+                                                            </a>
+                                                            <a class="dropdown-item" href="/bookings/{{ .ID }}/duplicate">
+                                                                <i class="ti ti-copy me-2"></i>
+                                                                Дублювати
+                                                            </a>
+                                                            <div class="dropdown-divider"></div>
+                                                            {{ if eq .Status "active" }}
+                                                                <a class="dropdown-item text-success" href="#" data-booking-id="{{ .ID }}" data-action="complete" data-bs-toggle="modal" data-bs-target="#modal-status-change">
+                                                                    <i class="ti ti-check me-2"></i>
+                                                                    Позначити як завершене
+                                                                </a>
+                                                            {{ end }}
+                                                            {{ if ne .Status "cancelled" }}
+                                                                <a class="dropdown-item text-danger" href="#" data-booking-id="{{ .ID }}" data-action="cancel" data-bs-toggle="modal" data-bs-target="#modal-status-change">
+                                                                    <i class="ti ti-x me-2"></i>
+                                                                    Скасувати бронювання
+                                                                </a>
+                                                            {{ end }}
+                                                            <a class="dropdown-item text-danger" href="#" data-booking-id="{{ .ID }}" data-bs-toggle="modal" data-bs-target="#modal-danger">
+                                                                <i class="ti ti-trash me-2"></i>
+                                                                Видалити
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{ end }}
+                                    {{ else }}
+                                        <tr>
+                                            <td colspan="7" class="text-center py-5">
+                                                <div class="empty">
+                                                    <div class="empty-img">
+                                                        <i class="ti ti-calendar-off text-muted" style="font-size: 3rem"></i>
+                                                    </div>
+                                                    <p class="empty-title">Не знайдено жодного бронювання</p>
+                                                    <p class="empty-subtitle text-muted">
+                                                        Спробуйте змінити фільтри або створіть нове бронювання
+                                                    </p>
+                                                    <div class="empty-action">
+                                                        <a href="/bookings/create" class="btn btn-primary">
+                                                            <i class="ti ti-plus"></i>
+                                                            Нове бронювання
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {{ end }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {{ if .Pagination }}
+                    <div class="card-footer d-flex align-items-center">
+                        <p class="m-0 text-muted">Показано <span>{{ .Pagination.Start }}</span> - <span>{{ .Pagination.End }}</span> з <span>{{ .Pagination.Total }}</span> бронювань</p>
+                        <ul class="pagination m-0 ms-auto">
+                            <li class="page-item {{ if not .Pagination.HasPrev }}disabled{{ end }}">
+                                <a class="page-link" href="{{ .Pagination.PrevLink }}" tabindex="-1">
+                                    <i class="ti ti-chevron-left"></i>
+                                    <span class="sr-only">Попередня</span>
+                                </a>
+                            </li>
+                            {{ range .Pagination.Pages }}
+                                <li class="page-item {{ if .Active }}active{{ end }}">
+                                    <a class="page-link" href="{{ .Link }}">{{ .Number }}</a>
+                                </li>
+                            {{ end }}
+                            <li class="page-item {{ if not .Pagination.HasNext }}disabled{{ end }}">
+                                <a class="page-link" href="{{ .Pagination.NextLink }}">
+                                    <i class="ti ti-chevron-right"></i>
+                                    <span class="sr-only">Наступна</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно для зміни статусу -->
+<div class="modal modal-blur fade" id="modal-status-change" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-warning"></div>
+            <div class="modal-body text-center py-4">
+                <i class="ti ti-alert-triangle icon mb-2 text-warning icon-lg"></i>
+                <h3>Підтвердження дії</h3>
+                <div class="text-muted" id="status-change-message">
+                    Ви впевнені, що хочете змінити статус цього бронювання?
+                </div>
+                <input type="hidden" id="status-booking-id" value="">
+                <input type="hidden" id="status-action" value="">
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn w-100" data-bs-dismiss="modal">
+                                Скасувати
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="btn btn-warning w-100" id="confirm-status-change">
+                                Так, змінити
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно для видалення бронювання -->
+<div class="modal modal-blur fade" id="modal-danger" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-body text-center py-4">
+                <i class="ti ti-alert-triangle icon mb-2 text-danger icon-lg"></i>
+                <h3>Видалення бронювання</h3>
+                <div class="text-muted">
+                    Ви впевнені, що хочете видалити це бронювання? Цю дію неможливо скасувати.
+                </div>
+                <input type="hidden" id="delete-booking-id" value="">
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn w-100" data-bs-dismiss="modal">
+                                Скасувати
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="btn btn-danger w-100" id="confirm-delete">
+                                Так, видалити
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Встановлення значень фільтрів з URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventType = urlParams.get('event_type');
+        const status = urlParams.get('status');
+        const period = urlParams.get('period');
+        
+        if (eventType) document.querySelector('select[name="event_type"]').value = eventType;
+        if (status) document.querySelector('select[name="status"]').value = status;
+        if (period) document.querySelector('select[name="period"]').value = period;
+        
+        // Застосування фільтрів
+        document.getElementById('apply-filters').addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = document.getElementById('filter-form');
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            
+            for (const [key, value] of formData.entries()) {
+                if (value) params.append(key, value);
+            }
+            
+            window.location.href = '/bookings?' + params.toString();
+        });
+        
+        // Скидання фільтрів
+        document.getElementById('reset-filters').addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = document.getElementById('filter-form');
+            form.reset();
+            window.location.href = '/bookings';
+        });
+        
+        // Експорт в CSV
+        document.getElementById('export-csv').addEventListener('click', function(e) {
+            e.preventDefault();
+            const urlParams = new URLSearchParams(window.location.search);
+            window.location.href = '/bookings/export?' + urlParams.toString();
+        });
+        
+        // Модальне вікно зміни статусу
+        const statusModal = document.getElementById('modal-status-change');
+        if (statusModal) {
+            statusModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const bookingId = button.getAttribute('data-booking-id');
+                const action = button.getAttribute('data-action');
+                
+                document.getElementById('status-booking-id').value = bookingId;
+                document.getElementById('status-action').value = action;
+                
+                const statusBtn = document.getElementById('confirm-status-change');
+                const statusMessage = document.getElementById('status-change-message');
+                
+                if (action === 'complete') {
+                    statusMessage.textContent = 'Ви впевнені, що хочете позначити це бронювання як завершене?';
+                    statusBtn.classList.remove('btn-warning', 'btn-danger');
+                    statusBtn.classList.add('btn-success');
+                    statusBtn.textContent = 'Так, завершити';
+                    statusModal.querySelector('.modal-status').classList.remove('bg-warning', 'bg-danger');
+                    statusModal.querySelector('.modal-status').classList.add('bg-success');
+                    statusModal.querySelector('.icon').classList.remove('text-warning', 'text-danger');
+                    statusModal.querySelector('.icon').classList.add('text-success');
+                } else if (action === 'cancel') {
+                    statusMessage.textContent = 'Ви впевнені, що хочете скасувати це бронювання?';
+                    statusBtn.classList.remove('btn-warning', 'btn-success');
+                    statusBtn.classList.add('btn-danger');
+                    statusBtn.textContent = 'Так, скасувати';
+                    statusModal.querySelector('.modal-status').classList.remove('bg-warning', 'bg-success');
+                    statusModal.querySelector('.modal-status').classList.add('bg-danger');
+                    statusModal.querySelector('.icon').classList.remove('text-warning', 'text-success');
+                    statusModal.querySelector('.icon').classList.add('text-danger');
+                }
+            });
+            
+            document.getElementById('confirm-status-change').addEventListener('click', function(e) {
+                e.preventDefault();
+                const bookingId = document.getElementById('status-booking-id').value;
+                const action = document.getElementById('status-action').value;
+                
+                let url = `/api/bookings/${bookingId}/${action}`;
+                
+                // Відправляємо запит на зміну статусу
+                TimeBride.api.put(url, {})
+                    .then(data => {
+                        // Закриваємо модальне вікно
+                        const modalInstance = bootstrap.Modal.getInstance(statusModal);
+                        modalInstance.hide();
+                        
+                        // Показуємо повідомлення
+                        let message = action === 'complete' ? 
+                            'Бронювання позначено як завершене' : 
+                            'Бронювання скасовано';
+                        
+                        TimeBride.dom.showToast(message, 'success');
+                        
+                        // Перезавантажуємо сторінку
+                        setTimeout(() => window.location.reload(), 1000);
+                    })
+                    .catch(error => {
+                        console.error('Помилка:', error);
+                        TimeBride.dom.showToast(error.message || 'Помилка зміни статусу', 'danger');
+                    });
+            });
+        }
+        
+        // Модальне вікно видалення
+        const deleteModal = document.getElementById('modal-danger');
+        if (deleteModal) {
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const bookingId = button.getAttribute('data-booking-id');
+                document.getElementById('delete-booking-id').value = bookingId;
+            });
+            
+            document.getElementById('confirm-delete').addEventListener('click', function(e) {
+                e.preventDefault();
+                const bookingId = document.getElementById('delete-booking-id').value;
+                
+                // Відправляємо запит на видалення
+                TimeBride.api.delete(`/api/bookings/${bookingId}`)
+                    .then(data => {
+                        // Закриваємо модальне вікно
+                        const modalInstance = bootstrap.Modal.getInstance(deleteModal);
+                        modalInstance.hide();
+                        
+                        // Показуємо повідомлення
+                        TimeBride.dom.showToast('Бронювання успішно видалено', 'success');
+                        
+                        // Перезавантажуємо сторінку
+                        setTimeout(() => window.location.reload(), 1000);
+                    })
+                    .catch(error => {
+                        console.error('Помилка:', error);
+                        TimeBride.dom.showToast(error.message || 'Помилка видалення', 'danger');
+                    });
+            });
+        }
+    });
+</script>
+{{ end }} 

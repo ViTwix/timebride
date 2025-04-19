@@ -1,0 +1,1069 @@
+/* 
+ * TimeBride - Стилі компонентів
+ * 
+ * Цей файл містить стилі для компонентів проекту.
+ */
+
+/* Кнопки */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--button-padding-y) var(--button-padding-x);
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  line-height: var(--button-line-height);
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: var(--button-border-width) solid transparent;
+  border-radius: var(--button-border-radius);
+  transition: all var(--transition-fast);
+}
+
+.btn:focus {
+  outline: 0;
+  box-shadow: var(--button-focus-box-shadow);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* Розміри кнопок */
+.btn-sm {
+  padding: var(--button-padding-y-sm) var(--button-padding-x-sm);
+  font-size: var(--button-font-size-sm);
+  border-radius: var(--button-border-radius-sm);
+}
+
+.btn-lg {
+  padding: var(--button-padding-y-lg) var(--button-padding-x-lg);
+  font-size: var(--button-font-size-lg);
+  border-radius: var(--button-border-radius-lg);
+}
+
+/* Варіанти кнопок */
+.btn-primary {
+  color: var(--color-white);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+  color: var(--color-white);
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.btn-secondary {
+  color: var(--color-white);
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.btn-secondary:hover {
+  color: var(--color-white);
+  background-color: var(--color-secondary-dark);
+  border-color: var(--color-secondary-dark);
+}
+
+.btn-success {
+  color: var(--color-white);
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.btn-success:hover {
+  color: var(--color-white);
+  background-color: var(--color-success-dark);
+  border-color: var(--color-success-dark);
+}
+
+.btn-danger {
+  color: var(--color-white);
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.btn-danger:hover {
+  color: var(--color-white);
+  background-color: var(--color-danger-dark);
+  border-color: var(--color-danger-dark);
+}
+
+.btn-warning {
+  color: var(--color-dark);
+  background-color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.btn-warning:hover {
+  color: var(--color-dark);
+  background-color: var(--color-warning-dark);
+  border-color: var(--color-warning-dark);
+}
+
+.btn-info {
+  color: var(--color-white);
+  background-color: var(--color-info);
+  border-color: var(--color-info);
+}
+
+.btn-info:hover {
+  color: var(--color-white);
+  background-color: var(--color-info-dark);
+  border-color: var(--color-info-dark);
+}
+
+.btn-light {
+  color: var(--color-dark);
+  background-color: var(--color-light);
+  border-color: var(--color-light);
+}
+
+.btn-light:hover {
+  color: var(--color-dark);
+  background-color: var(--color-light-dark);
+  border-color: var(--color-light-dark);
+}
+
+.btn-dark {
+  color: var(--color-white);
+  background-color: var(--color-dark);
+  border-color: var(--color-dark);
+}
+
+.btn-dark:hover {
+  color: var(--color-white);
+  background-color: var(--color-dark-light);
+  border-color: var(--color-dark-light);
+}
+
+/* Контурні кнопки */
+.btn-outline-primary {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+  color: var(--color-white);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-outline-secondary {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+  color: var(--color-white);
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.btn-outline-success {
+  color: var(--color-success);
+  border-color: var(--color-success);
+  background-color: transparent;
+}
+
+.btn-outline-success:hover {
+  color: var(--color-white);
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.btn-outline-danger {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  color: var(--color-white);
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.btn-outline-warning {
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+  background-color: transparent;
+}
+
+.btn-outline-warning:hover {
+  color: var(--color-dark);
+  background-color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.btn-outline-info {
+  color: var(--color-info);
+  border-color: var(--color-info);
+  background-color: transparent;
+}
+
+.btn-outline-info:hover {
+  color: var(--color-white);
+  background-color: var(--color-info);
+  border-color: var(--color-info);
+}
+
+.btn-outline-light {
+  color: var(--color-light);
+  border-color: var(--color-light);
+  background-color: transparent;
+}
+
+.btn-outline-light:hover {
+  color: var(--color-dark);
+  background-color: var(--color-light);
+  border-color: var(--color-light);
+}
+
+.btn-outline-dark {
+  color: var(--color-dark);
+  border-color: var(--color-dark);
+  background-color: transparent;
+}
+
+.btn-outline-dark:hover {
+  color: var(--color-white);
+  background-color: var(--color-dark);
+  border-color: var(--color-dark);
+}
+
+/* Лінк-кнопки */
+.btn-link {
+  font-weight: var(--font-weight-normal);
+  color: var(--color-primary);
+  text-decoration: none;
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.btn-link:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* Група кнопок */
+.btn-group {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.btn-group > .btn {
+  position: relative;
+  flex: 1 1 auto;
+}
+
+.btn-group > .btn:not(:first-child) {
+  margin-left: calc(var(--button-border-width) * -1);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.btn-group > .btn:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Форми */
+.form-group {
+  margin-bottom: var(--form-group-margin-bottom);
+}
+
+.form-label {
+  display: inline-block;
+  margin-bottom: var(--form-label-margin-bottom);
+  font-weight: var(--form-label-font-weight);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: var(--form-control-padding-y) var(--form-control-padding-x);
+  font-size: var(--form-control-font-size);
+  font-weight: var(--form-control-font-weight);
+  line-height: var(--form-control-line-height);
+  color: var(--form-control-color);
+  background-color: var(--form-control-bg);
+  background-clip: padding-box;
+  border: var(--form-control-border-width) solid var(--form-control-border-color);
+  border-radius: var(--form-control-border-radius);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus {
+  color: var(--form-control-focus-color);
+  background-color: var(--form-control-focus-bg);
+  border-color: var(--form-control-focus-border-color);
+  outline: 0;
+  box-shadow: var(--form-control-focus-box-shadow);
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: var(--form-control-disabled-bg);
+  opacity: 1;
+}
+
+.form-control::placeholder {
+  color: var(--form-control-placeholder-color);
+  opacity: 1;
+}
+
+/* Чекбокси та радіо */
+.form-check {
+  display: block;
+  min-height: var(--form-check-min-height);
+  padding-left: var(--form-check-padding-start);
+  margin-bottom: var(--form-check-margin-bottom);
+}
+
+.form-check-input {
+  position: absolute;
+  margin-top: var(--form-check-input-margin-top);
+  margin-left: calc(var(--form-check-padding-start) * -1);
+}
+
+.form-check-label {
+  margin-bottom: 0;
+}
+
+/* Селекти */
+.form-select {
+  display: block;
+  width: 100%;
+  padding: var(--form-select-padding-y) var(--form-select-padding-x) var(--form-select-padding-y) var(--form-select-padding-x);
+  font-size: var(--form-select-font-size);
+  font-weight: var(--form-select-font-weight);
+  line-height: var(--form-select-line-height);
+  color: var(--form-select-color);
+  background-color: var(--form-select-bg);
+  background-image: var(--form-select-bg-image);
+  background-repeat: no-repeat;
+  background-position: right var(--form-select-padding-x) center;
+  background-size: var(--form-select-bg-size);
+  border: var(--form-select-border-width) solid var(--form-select-border-color);
+  border-radius: var(--form-select-border-radius);
+  appearance: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-select:focus {
+  border-color: var(--form-select-focus-border-color);
+  outline: 0;
+  box-shadow: var(--form-select-focus-box-shadow);
+}
+
+.form-select:disabled {
+  background-color: var(--form-select-disabled-bg);
+  opacity: 1;
+}
+
+/* Картки */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: var(--card-bg);
+  background-clip: border-box;
+  border: var(--card-border-width) solid var(--card-border-color);
+  border-radius: var(--card-border-radius);
+}
+
+.card-header {
+  padding: var(--card-header-padding-y) var(--card-header-padding-x);
+  margin-bottom: 0;
+  background-color: var(--card-header-bg);
+  border-bottom: var(--card-header-border-width) solid var(--card-header-border-color);
+}
+
+.card-header:first-child {
+  border-radius: calc(var(--card-border-radius) - var(--card-border-width));
+}
+
+.card-body {
+  flex: 1 1 auto;
+  padding: var(--card-body-padding-y) var(--card-body-padding-x);
+}
+
+.card-footer {
+  padding: var(--card-footer-padding-y) var(--card-footer-padding-x);
+  background-color: var(--card-footer-bg);
+  border-top: var(--card-footer-border-width) solid var(--card-footer-border-color);
+}
+
+.card-footer:last-child {
+  border-radius: calc(var(--card-border-radius) - var(--card-border-width));
+}
+
+/* Алерти */
+.alert {
+  position: relative;
+  padding: var(--alert-padding-y) var(--alert-padding-x);
+  margin-bottom: var(--alert-margin-bottom);
+  border: var(--alert-border-width) solid transparent;
+  border-radius: var(--alert-border-radius);
+}
+
+.alert-heading {
+  color: inherit;
+}
+
+.alert-link {
+  font-weight: var(--alert-link-font-weight);
+  color: inherit;
+}
+
+/* Варіанти алертів */
+.alert-primary {
+  color: var(--alert-primary-color);
+  background-color: var(--alert-primary-bg);
+  border-color: var(--alert-primary-border-color);
+}
+
+.alert-primary .alert-link {
+  color: var(--alert-primary-link-color);
+}
+
+.alert-secondary {
+  color: var(--alert-secondary-color);
+  background-color: var(--alert-secondary-bg);
+  border-color: var(--alert-secondary-border-color);
+}
+
+.alert-secondary .alert-link {
+  color: var(--alert-secondary-link-color);
+}
+
+.alert-success {
+  color: var(--alert-success-color);
+  background-color: var(--alert-success-bg);
+  border-color: var(--alert-success-border-color);
+}
+
+.alert-success .alert-link {
+  color: var(--alert-success-link-color);
+}
+
+.alert-danger {
+  color: var(--alert-danger-color);
+  background-color: var(--alert-danger-bg);
+  border-color: var(--alert-danger-border-color);
+}
+
+.alert-danger .alert-link {
+  color: var(--alert-danger-link-color);
+}
+
+.alert-warning {
+  color: var(--alert-warning-color);
+  background-color: var(--alert-warning-bg);
+  border-color: var(--alert-warning-border-color);
+}
+
+.alert-warning .alert-link {
+  color: var(--alert-warning-link-color);
+}
+
+.alert-info {
+  color: var(--alert-info-color);
+  background-color: var(--alert-info-bg);
+  border-color: var(--alert-info-border-color);
+}
+
+.alert-info .alert-link {
+  color: var(--alert-info-link-color);
+}
+
+.alert-light {
+  color: var(--alert-light-color);
+  background-color: var(--alert-light-bg);
+  border-color: var(--alert-light-border-color);
+}
+
+.alert-light .alert-link {
+  color: var(--alert-light-link-color);
+}
+
+.alert-dark {
+  color: var(--alert-dark-color);
+  background-color: var(--alert-dark-bg);
+  border-color: var(--alert-dark-border-color);
+}
+
+.alert-dark .alert-link {
+  color: var(--alert-dark-link-color);
+}
+
+/* Модальні вікна */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-modal);
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+}
+
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: var(--modal-margin);
+  pointer-events: none;
+}
+
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background-color: var(--modal-content-bg);
+  background-clip: padding-box;
+  border: var(--modal-content-border-width) solid var(--modal-content-border-color);
+  border-radius: var(--modal-content-border-radius);
+  outline: 0;
+}
+
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--modal-header-padding);
+  border-bottom: var(--modal-header-border-width) solid var(--modal-header-border-color);
+  border-top-left-radius: var(--modal-content-border-radius);
+  border-top-right-radius: var(--modal-content-border-radius);
+}
+
+.modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: var(--modal-body-padding);
+}
+
+.modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--modal-footer-padding);
+  border-top: var(--modal-footer-border-width) solid var(--modal-footer-border-color);
+  border-bottom-right-radius: var(--modal-content-border-radius);
+  border-bottom-left-radius: var(--modal-content-border-radius);
+}
+
+/* Таблиці */
+.table {
+  width: 100%;
+  margin-bottom: var(--table-margin-bottom);
+  color: var(--table-color);
+  vertical-align: top;
+  border-color: var(--table-border-color);
+}
+
+.table > thead {
+  vertical-align: bottom;
+  background-color: var(--table-head-bg);
+}
+
+.table > tbody {
+  vertical-align: inherit;
+}
+
+.table > :not(caption) > * > * {
+  padding: var(--table-cell-padding);
+  background-color: var(--table-bg);
+  border-bottom-width: var(--table-border-width);
+  box-shadow: inset 0 0 0 9999px var(--table-accent-bg);
+}
+
+.table > tbody {
+  border-top: calc(var(--table-border-width) * 2) solid var(--table-border-color);
+}
+
+.table-sm > :not(caption) > * > * {
+  padding: var(--table-cell-padding-sm);
+}
+
+.table-bordered > :not(caption) > * {
+  border-width: var(--table-border-width) 0;
+}
+
+.table-bordered > :not(caption) > * > * {
+  border-width: 0 var(--table-border-width);
+}
+
+.table-borderless > :not(caption) > * > * {
+  border-bottom-width: 0;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: var(--table-striped-bg);
+}
+
+.table-hover > tbody > tr:hover > * {
+  background-color: var(--table-hover-bg);
+}
+
+/* Пагінація */
+.pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  margin: var(--pagination-margin) 0;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: var(--pagination-padding-y) var(--pagination-padding-x);
+  color: var(--pagination-color);
+  text-decoration: none;
+  background-color: var(--pagination-bg);
+  border: var(--pagination-border-width) solid var(--pagination-border-color);
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.page-link:hover {
+  z-index: 2;
+  color: var(--pagination-hover-color);
+  background-color: var(--pagination-hover-bg);
+  border-color: var(--pagination-hover-border-color);
+}
+
+.page-link:focus {
+  z-index: 3;
+  color: var(--pagination-focus-color);
+  background-color: var(--pagination-focus-bg);
+  outline: 0;
+  box-shadow: var(--pagination-focus-box-shadow);
+}
+
+.page-item:first-child .page-link {
+  border-top-left-radius: var(--pagination-border-radius);
+  border-bottom-left-radius: var(--pagination-border-radius);
+}
+
+.page-item:last-child .page-link {
+  border-top-right-radius: var(--pagination-border-radius);
+  border-bottom-right-radius: var(--pagination-border-radius);
+}
+
+.page-item.active .page-link {
+  z-index: 3;
+  color: var(--pagination-active-color);
+  background-color: var(--pagination-active-bg);
+  border-color: var(--pagination-active-border-color);
+}
+
+.page-item.disabled .page-link {
+  color: var(--pagination-disabled-color);
+  pointer-events: none;
+  background-color: var(--pagination-disabled-bg);
+  border-color: var(--pagination-disabled-border-color);
+}
+
+/* Прогрес-бар */
+.progress {
+  display: flex;
+  height: var(--progress-height);
+  overflow: hidden;
+  font-size: var(--progress-font-size);
+  background-color: var(--progress-bg);
+  border-radius: var(--progress-border-radius);
+}
+
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--progress-bar-color);
+  text-align: center;
+  white-space: nowrap;
+  background-color: var(--progress-bar-bg);
+  transition: width var(--transition-base);
+}
+
+/* Спінер */
+.spinner-border {
+  display: inline-block;
+  width: var(--spinner-width);
+  height: var(--spinner-height);
+  vertical-align: text-bottom;
+  border: var(--spinner-border-width) solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border .75s linear infinite;
+}
+
+.spinner-grow {
+  display: inline-block;
+  width: var(--spinner-width);
+  height: var(--spinner-height);
+  vertical-align: text-bottom;
+  background-color: currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  animation: spinner-grow .75s linear infinite;
+}
+
+/* Тултіпи */
+.tooltip {
+  position: absolute;
+  z-index: var(--z-tooltip);
+  display: block;
+  margin: var(--tooltip-margin);
+  font-family: var(--tooltip-font-family);
+  font-style: normal;
+  font-weight: var(--tooltip-font-weight);
+  line-height: var(--tooltip-line-height);
+  text-align: left;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-break: normal;
+  word-spacing: normal;
+  white-space: normal;
+  line-break: auto;
+  font-size: var(--tooltip-font-size);
+  word-wrap: break-word;
+  opacity: 0;
+}
+
+.tooltip.show {
+  opacity: var(--tooltip-opacity);
+}
+
+.tooltip .tooltip-arrow {
+  position: absolute;
+  display: block;
+  width: var(--tooltip-arrow-width);
+  height: var(--tooltip-arrow-height);
+}
+
+.tooltip .tooltip-arrow::before {
+  position: absolute;
+  content: "";
+  border-color: transparent;
+  border-style: solid;
+}
+
+/* Поповери */
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--z-popover);
+  display: block;
+  max-width: var(--popover-max-width);
+  font-family: var(--popover-font-family);
+  font-style: normal;
+  font-weight: var(--popover-font-weight);
+  line-height: var(--popover-line-height);
+  text-align: left;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-break: normal;
+  word-spacing: normal;
+  white-space: normal;
+  line-break: auto;
+  font-size: var(--popover-font-size);
+  word-wrap: break-word;
+  background-color: var(--popover-bg);
+  background-clip: padding-box;
+  border: var(--popover-border-width) solid var(--popover-border-color);
+  border-radius: var(--popover-border-radius);
+  box-shadow: var(--popover-box-shadow);
+}
+
+.popover .popover-arrow {
+  position: absolute;
+  display: block;
+  width: var(--popover-arrow-width);
+  height: var(--popover-arrow-height);
+}
+
+.popover .popover-arrow::before,
+.popover .popover-arrow::after {
+  position: absolute;
+  display: block;
+  content: "";
+  border-color: transparent;
+  border-style: solid;
+}
+
+/* Аватари */
+.avatar {
+  position: relative;
+  display: inline-block;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: var(--avatar-border-radius);
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-sm {
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
+}
+
+.avatar-lg {
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
+}
+
+/* Дропдауни */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  white-space: nowrap;
+}
+
+.dropdown-toggle::after {
+  display: inline-block;
+  margin-left: var(--dropdown-toggle-padding-x);
+  vertical-align: var(--dropdown-toggle-padding-y);
+  content: "";
+  border-top: var(--dropdown-toggle-border-width) solid;
+  border-right: var(--dropdown-toggle-border-width) solid transparent;
+  border-bottom: 0;
+  border-left: var(--dropdown-toggle-border-width) solid transparent;
+}
+
+.dropdown-toggle:empty::after {
+  margin-left: 0;
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: var(--z-dropdown);
+  display: none;
+  min-width: var(--dropdown-min-width);
+  padding: var(--dropdown-padding-y) 0;
+  margin: 0;
+  font-size: var(--dropdown-font-size);
+  color: var(--dropdown-color);
+  text-align: left;
+  list-style: none;
+  background-color: var(--dropdown-bg);
+  background-clip: padding-box;
+  border: var(--dropdown-border-width) solid var(--dropdown-border-color);
+  border-radius: var(--dropdown-border-radius);
+  box-shadow: var(--dropdown-box-shadow);
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: var(--dropdown-item-padding-y) var(--dropdown-item-padding-x);
+  clear: both;
+  font-weight: var(--font-weight-normal);
+  color: var(--dropdown-link-color);
+  text-align: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  color: var(--dropdown-link-hover-color);
+  text-decoration: none;
+  background-color: var(--dropdown-link-hover-bg);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+  color: var(--dropdown-link-active-color);
+  text-decoration: none;
+  background-color: var(--dropdown-link-active-bg);
+}
+
+.dropdown-item.disabled,
+.dropdown-item:disabled {
+  color: var(--dropdown-link-disabled-color);
+  pointer-events: none;
+  background-color: transparent;
+}
+
+/* Бейджі */
+.badge {
+  display: inline-block;
+  padding: var(--badge-padding-y) var(--badge-padding-x);
+  font-size: var(--badge-font-size);
+  font-weight: var(--badge-font-weight);
+  line-height: 1;
+  color: var(--badge-color);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: var(--badge-border-radius);
+}
+
+.badge:empty {
+  display: none;
+}
+
+/* Варіанти бейджів */
+.badge-primary {
+  color: var(--badge-primary-color);
+  background-color: var(--badge-primary-bg);
+}
+
+.badge-secondary {
+  color: var(--badge-secondary-color);
+  background-color: var(--badge-secondary-bg);
+}
+
+.badge-success {
+  color: var(--badge-success-color);
+  background-color: var(--badge-success-bg);
+}
+
+.badge-danger {
+  color: var(--badge-danger-color);
+  background-color: var(--badge-danger-bg);
+}
+
+.badge-warning {
+  color: var(--badge-warning-color);
+  background-color: var(--badge-warning-bg);
+}
+
+.badge-info {
+  color: var(--badge-info-color);
+  background-color: var(--badge-info-bg);
+}
+
+.badge-light {
+  color: var(--badge-light-color);
+  background-color: var(--badge-light-bg);
+}
+
+.badge-dark {
+  color: var(--badge-dark-color);
+  background-color: var(--badge-dark-bg);
+}
+
+/* Футер */
+.footer {
+  padding: var(--footer-padding-y) var(--footer-padding-x);
+  background-color: var(--footer-bg);
+  border-top: var(--footer-border-width) solid var(--footer-border-color);
+}
+
+/* Хедер */
+.header {
+  padding: var(--header-padding-y) var(--header-padding-x);
+  background-color: var(--header-bg);
+  border-bottom: var(--header-border-width) solid var(--header-border-color);
+}
+
+/* Сайдбар */
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-sidebar);
+  padding: var(--sidebar-padding-y) var(--sidebar-padding-x);
+  background-color: var(--sidebar-bg);
+  border-right: var(--sidebar-border-width) solid var(--sidebar-border-color);
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - var(--sidebar-padding-y) * 2);
+  padding-top: var(--sidebar-padding-y);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Медіа-запити */
+@media (max-width: 576px) {
+  .container {
+    max-width: 100%;
+    padding-right: var(--spacing-3);
+    padding-left: var(--spacing-3);
+  }
+  
+  .btn {
+    padding: var(--button-padding-y-sm) var(--button-padding-x-sm);
+    font-size: var(--button-font-size-sm);
+  }
+  
+  .form-control {
+    font-size: var(--form-control-font-size-sm);
+  }
+  
+  .card {
+    border-radius: var(--card-border-radius-sm);
+  }
+  
+  .modal-dialog {
+    margin: var(--spacing-2);
+  }
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+  .container {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+} 

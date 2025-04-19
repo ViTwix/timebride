@@ -1,0 +1,22 @@
+{{define "footer"}}
+<footer class="footer footer-transparent">
+    <div class="container-fluid">
+        <div class="row text-center align-items-center flex-row-reverse">
+            <div class="col-lg-auto ms-lg-auto">
+                <ul class="list-inline list-inline-dots mb-0">
+                    <li class="list-inline-item"><a href="/help" class="link-secondary">Допомога</a></li>
+                    <li class="list-inline-item"><a href="/privacy" class="link-secondary">Політика конфіденційності</a></li>
+                    <li class="list-inline-item"><a href="/terms" class="link-secondary">Умови використання</a></li>
+                </ul>
+            </div>
+            <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                <ul class="list-inline list-inline-dots mb-0">
+                    <li class="list-inline-item">
+                        &copy; {{ "now" | date "2006" }} <a href="/" class="link-secondary">TimeBride</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+{{end}} 

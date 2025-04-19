@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>Бронювання - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                Бронювання
+                            </h2>
+                            <div class="text-muted mt-1">
+                                Всього <span class="text-primary">{{.Pagination.TotalCount}}</span> бронювань
+                            </div>
+                        </div>
+                        <div class="col-auto ms-auto d-print-none">
+                            <div class="d-flex">
+                                <a href="/calendar" class="btn btn-outline-primary me-2 d-none d-md-inline-flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                                        <path d="M16 3l0 4"></path>
+                                        <path d="M8 3l0 4"></path>
+                                        <path d="M4 11l16 0"></path>
+                                        <path d="M11 15l1 0"></path>
+                                        <path d="M12 15l0 3"></path>
+                                    </svg>
+                                    Календар
+                                </a>
+                                <a href="/bookings/new" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12 5l0 14"></path>
+                                        <path d="M5 12l14 0"></path>
+                                    </svg>
+                                    Нове бронювання
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center">
+                                <div class="me-auto">
+                                    <div class="input-icon">
+                                        <form id="search-form" method="get" action="/bookings">
+                                            <input type="text" class="form-control" name="q" placeholder="Пошук бронювань..." value="{{.Query}}">
+                                            <span class="input-icon-addon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                                                    <path d="M21 21l-6 -6"></path>
+                                                </svg>
+                                            </span>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="dropdown">
+                                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            Фільтри
+                                            {{if or .EventType .Status .DateRange}}
+                                            <span class="badge bg-azure ms-2">{{if .EventType}}1{{else}}0{{end}}{{if .Status}}1{{else}}0{{end}}{{if .DateRange}}1{{else}}0{{end}}</span>
+                                            {{end}}
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <form method="get" action="/bookings">
+                                                <input type="hidden" name="q" value="{{.Query}}">
+                                                
+                                                <div class="dropdown-item">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Тип події</label>
+                                                        <select class="form-select" name="event_type">
+                                                            <option value="">Всі типи</option>
+                                                            {{range .EventTypes}}
+                                                            <option value="{{.}}" {{if eq $.EventType .}}selected{{end}}>{{.}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="dropdown-item">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Статус</label>
+                                                        <select class="form-select" name="status">
+                                                            <option value="">Всі статуси</option>
+                                                            {{range .Statuses}}
+                                                            <option value="{{.}}" {{if eq $.Status .}}selected{{end}}>{{.}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="dropdown-item">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Період</label>
+                                                        <div class="row g-2">
+                                                            <div class="col">
+                                                                <input type="date" class="form-control" name="start_date" placeholder="Від" value="{{.StartDate}}">
+                                                            </div>
+                                                            <div class="col">
+                                                                <input type="date" class="form-control" name="end_date" placeholder="До" value="{{.EndDate}}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="dropdown-divider"></div>
+                                                <div class="dropdown-item">
+                                                    <div class="btn-list justify-content-end">
+                                                        <a href="/bookings" class="btn btn-link btn-sm">Скинути</a>
+                                                        <button type="submit" class="btn btn-primary btn-sm">Застосувати</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-vcenter card-table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Подія</th>
+                                        <th>Клієнт</th>
+                                        <th>Дата і час</th>
+                                        <th>Тип</th>
+                                        <th>Статус</th>
+                                        <th class="w-1"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{if eq (len .Bookings) 0}}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <div class="empty">
+                                                <div class="empty-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                                                        <path d="M16 3l0 4"></path>
+                                                        <path d="M8 3l0 4"></path>
+                                                        <path d="M4 11l16 0"></path>
+                                                        <path d="M11 15l1 0"></path>
+                                                        <path d="M12 15l0 3"></path>
+                                                    </svg>
+                                                </div>
+                                                <p class="empty-title">Бронювань не знайдено</p>
+                                                <p class="empty-subtitle text-muted">
+                                                    {{if or .Query .EventType .Status .DateRange}}
+                                                    Спробуйте змінити параметри пошуку або фільтри
+                                                    {{else}}
+                                                    Почніть додавати бронювання, щоб вони з'явилися у списку
+                                                    {{end}}
+                                                </p>
+                                                <div class="empty-action">
+                                                    {{if or .Query .EventType .Status .DateRange}}
+                                                    <a href="/bookings" class="btn btn-primary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747"></path>
+                                                            <path d="M20 4v5h-5"></path>
+                                                        </svg>
+                                                        Скинути фільтри
+                                                    </a>
+                                                    {{else}}
+                                                    <a href="/bookings/new" class="btn btn-primary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M12 5l0 14"></path>
+                                                            <path d="M5 12l14 0"></path>
+                                                        </svg>
+                                                        Додати бронювання
+                                                    </a>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{else}}
+                                    {{range .Bookings}}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <a href="/bookings/{{.ID}}" class="text-reset d-block">{{.Title}}</a>
+                                                {{if .Description}}
+                                                <div class="text-muted text-truncate" style="max-width: 200px;">{{.Description}}</div>
+                                                {{end}}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="avatar me-2 {{if not .Client.IsActive}}avatar-gray{{end}}" style="background-image: url(/static/img/clients/{{.Client.ID}}.jpg)">
+                                                    {{if not .Client.AvatarExists}}
+                                                    {{slice .Client.FullName 0 1}}
+                                                    {{end}}
+                                                </span>
+                                                <div>
+                                                    <a href="/clients/{{.Client.ID}}" class="text-reset d-block">{{.Client.FullName}}</a>
+                                                    {{if .Client.Company}}
+                                                    <div class="text-muted">{{.Client.Company}}</div>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                                                        <path d="M16 3l0 4"></path>
+                                                        <path d="M8 3l0 4"></path>
+                                                        <path d="M4 11l16 0"></path>
+                                                        <path d="M8 15h2v2h-2z"></path>
+                                                    </svg>
+                                                    {{.StartDate}}
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                                                        <path d="M12 7v5l3 3"></path>
+                                                    </svg>
+                                                    {{.StartTime}} - {{.EndTime}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-blue-lt">{{.EventType}}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge {{if eq .Status "Підтверджено"}}bg-green-lt{{else if eq .Status "Заплановано"}}bg-azure-lt{{else if eq .Status "Скасовано"}}bg-red-lt{{else}}bg-yellow-lt{{end}}">{{.Status}}</span>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                        <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                        <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                    </svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a href="/bookings/{{.ID}}" class="dropdown-item">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                            <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
+                                                        </svg>
+                                                        Переглянути
+                                                    </a>
+                                                    <a href="/bookings/{{.ID}}/edit" class="dropdown-item">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                                            <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                                            <path d="M16 5l3 3"></path>
+                                                        </svg>
+                                                        Редагувати
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{end}}
+                                    {{end}}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        {{if gt .Pagination.TotalPages 1}}
+                        <div class="card-footer d-flex align-items-center">
+                            <p class="m-0 text-muted">
+                                Показано <span>{{.Pagination.From}}</span> - <span>{{.Pagination.To}}</span> з <span>{{.Pagination.TotalCount}}</span> бронювань
+                            </p>
+                            <ul class="pagination m-0 ms-auto">
+                                <li class="page-item {{if eq .Pagination.CurrentPage 1}}disabled{{end}}">
+                                    <a class="page-link" href="{{.Pagination.PrevPageURL}}" tabindex="-1" aria-disabled="{{if eq .Pagination.CurrentPage 1}}true{{else}}false{{end}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M15 6l-6 6l6 6" />
+                                        </svg>
+                                        Назад
+                                    </a>
+                                </li>
+                                
+                                {{range .Pagination.Pages}}
+                                {{if eq . 0}}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+                                </li>
+                                {{else}}
+                                <li class="page-item {{if eq . $.Pagination.CurrentPage}}active{{end}}">
+                                    <a class="page-link" href="{{$.Pagination.PageURL .}}">{{.}}</a>
+                                </li>
+                                {{end}}
+                                {{end}}
+                                
+                                <li class="page-item {{if eq .Pagination.CurrentPage .Pagination.TotalPages}}disabled{{end}}">
+                                    <a class="page-link" href="{{.Pagination.NextPageURL}}">
+                                        Далі
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M9 6l6 6l-6 6" />
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{template "footer" .}}
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Автоматичне відправлення форми пошуку при введенні тексту
+            const searchInput = document.querySelector('input[name="q"]');
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    document.getElementById('search-form').submit();
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html> 

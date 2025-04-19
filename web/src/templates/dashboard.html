@@ -1,0 +1,61 @@
+{{ define "content" }}
+<!-- Debug information (will be removed in production) -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h3 class="card-title">Debug Information</h3>
+    </div>
+    <div class="card-body">
+        <p><strong>User:</strong> {{ if .User }}{{ .User.FullName }} ({{ .User.Email }}){{ else }}Not set{{ end }}</p>
+        <p><strong>Stats:</strong> {{ if .Stats }}Stats available{{ else }}Not set{{ end }}</p>
+    </div>
+</div>
+
+<!-- Page header -->
+<div class="page-header d-print-none">
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Загальна інформація</div>
+                <h2 class="page-title">Панель керування</h2>
+            </div>
+            <!-- Page actions -->
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <span class="d-none d-sm-inline">
+                        <a href="/calendar" class="btn">
+                            <i class="ti ti-calendar"></i>
+                            Календар
+                        </a>
+                    </span>
+                    <a href="/bookings/create" class="btn btn-primary d-none d-sm-inline-block">
+                        <i class="ti ti-plus"></i>
+                        Нове бронювання
+                    </a>
+                    <a href="/bookings/create" class="btn btn-primary d-sm-none btn-icon">
+                        <i class="ti ti-plus"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page body -->
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row row-deck row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Панель керування</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Ласкаво просимо до TimeBride!</p>
+                        <p>Система управління фотосесіями та бронюваннями</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }} 

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>Редагування клієнта - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <div class="page-pretitle">
+                                <a href="/clients">Клієнти</a> / <a href="/clients/{{.Client.ID}}">{{.Client.FullName}}</a>
+                            </div>
+                            <h2 class="page-title">
+                                Редагування клієнта
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    {{if .Error}}
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        {{.Error}}
+                        <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                    </div>
+                    {{end}}
+                    
+                    <form method="post" action="/clients/{{.Client.ID}}">
+                        <input type="hidden" name="_method" value="PUT">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Основна інформація</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Повне ім'я</label>
+                                                <input type="text" class="form-control" name="full_name" placeholder="Введіть повне ім'я" value="{{.Client.FullName}}" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Компанія</label>
+                                                <input type="text" class="form-control" name="company" placeholder="Назва компанії" value="{{.Client.Company}}">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Email</label>
+                                                <input type="email" class="form-control" name="email" placeholder="email@приклад.com" value="{{.Client.Email}}">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Телефон</label>
+                                                <input type="tel" class="form-control" name="phone" placeholder="+380661234567" value="{{.Client.Phone}}">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Категорія</label>
+                                                <select class="form-select" name="category">
+                                                    <option value="" {{if eq .Client.Category ""}}selected{{end}}>Оберіть категорію</option>
+                                                    {{range .Categories}}
+                                                    <option value="{{.}}" {{if eq $.Client.Category .}}selected{{end}}>{{.}}</option>
+                                                    {{end}}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Джерело</label>
+                                                <select class="form-select" name="source">
+                                                    <option value="" {{if eq .Client.Source ""}}selected{{end}}>Оберіть джерело</option>
+                                                    {{range .Sources}}
+                                                    <option value="{{.}}" {{if eq $.Client.Source .}}selected{{end}}>{{.}}</option>
+                                                    {{end}}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Адреса</label>
+                                            <textarea class="form-control" name="address" rows="2" placeholder="Введіть адресу">{{.Client.Address}}</textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Нотатки</label>
+                                            <textarea class="form-control" name="notes" rows="4" placeholder="Додаткова інформація про клієнта">{{.Client.Notes}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Налаштування</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="is_active" {{if .Client.IsActive}}checked{{end}}>
+                                                <span class="form-check-label">Активний клієнт</span>
+                                            </label>
+                                            <div class="text-muted small mt-1">
+                                                Неактивні клієнти не будуть відображатися в загальному списку за замовчуванням
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer d-flex">
+                                        <a href="/clients/{{.Client.ID}}" class="btn btn-link">Скасувати</a>
+                                        <button type="submit" class="btn btn-primary ms-auto">Зберегти зміни</button>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#modal-delete-client">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M4 7l16 0"></path>
+                                            <path d="M10 11l0 6"></path>
+                                            <path d="M14 11l0 6"></path>
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                        </svg>
+                                        Видалити клієнта
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {{template "footer" .}}
+        </div>
+    </div>
+    
+    <!-- Модальне вікно для підтвердження видалення -->
+    <div class="modal modal-blur fade" id="modal-delete-client" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-status bg-danger"></div>
+                <div class="modal-body text-center py-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 9v2m0 4v.01"></path>
+                        <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>
+                    </svg>
+                    <h3>Ви впевнені?</h3>
+                    <div class="text-muted">Ви збираєтеся видалити клієнта "{{.Client.FullName}}". Ця дія незворотна і призведе до видалення всіх пов'язаних даних.</div>
+                </div>
+                <div class="modal-footer">
+                    <div class="w-100">
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" class="btn w-100" data-bs-dismiss="modal">
+                                    Скасувати
+                                </button>
+                            </div>
+                            <div class="col">
+                                <form method="post" action="/clients/{{.Client.ID}}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Видалити
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

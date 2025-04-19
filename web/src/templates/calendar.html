@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar - TimeBride</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/utilities.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/calendar.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <nav class="nav">
+                <a href="/" class="nav-logo">TimeBride</a>
+                <div class="nav-links">
+                    <a href="/calendar" class="nav-link active">Calendar</a>
+                    <a href="/gallery" class="nav-link">Gallery</a>
+                    <a href="/bookings" class="nav-link">Bookings</a>
+                    <a href="/templates" class="nav-link">Templates</a>
+                </div>
+                <div class="nav-user">
+                    <a href="/profile" class="nav-link">Profile</a>
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="main">
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <h1>Calendar</h1>
+                    <div class="calendar-actions">
+                        <button class="btn btn-primary" onclick="createBooking()">New Booking</button>
+                        <button class="btn btn-outline" onclick="syncCalendar()">Sync Calendar</button>
+                    </div>
+                </div>
+
+                <div class="calendar-filters">
+                    <div class="filter-group">
+                        <label for="eventType">Event Type</label>
+                        <select id="eventType" onchange="filterEvents()">
+                            <option value="">All Events</option>
+                            <option value="wedding">Wedding</option>
+                            <option value="portrait">Portrait</option>
+                            <option value="family">Family</option>
+                            <option value="commercial">Commercial</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="status">Status</label>
+                        <select id="status" onchange="filterEvents()">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="calendar"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for creating/editing bookings -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Booking Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventType">Event Type</label>
+                        <select id="eventType" name="eventType" required>
+                            <option value="wedding">Wedding</option>
+                            <option value="portrait">Portrait</option>
+                            <option value="family">Family</option>
+                            <option value="commercial">Commercial</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startTime">Start Time</label>
+                            <input type="datetime-local" id="startTime" name="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime">End Time</label>
+                            <input type="datetime-local" id="endTime" name="endTime" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientName">Client Name</label>
+                        <input type="text" id="clientName" name="clientName" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientPhone">Client Phone</label>
+                            <input type="tel" id="clientPhone" name="clientPhone">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientEmail">Client Email</label>
+                            <input type="email" id="clientEmail" name="clientEmail">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveBooking()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/calendar.js"></script>
+    <script>
+        // Initialize calendar
+        const calendar = new Calendar(document.getElementById('calendar'), {
+            view: 'month',
+            onEventClick: (event) => {
+                openBookingModal(event);
+            },
+            onDateClick: (date) => {
+                openBookingModal(null, date);
+            }
+        });
+
+        // Load events
+        async function loadEvents() {
+            try {
+                const response = await fetch('/api/v1/bookings');
+                const events = await response.json();
+                calendar.updateEvents(events);
+            } catch (error) {
+                console.error('Failed to load events:', error);
+            }
+        }
+
+        // Filter events
+        function filterEvents() {
+            const eventType = document.getElementById('eventType').value;
+            const status = document.getElementById('status').value;
+            
+            // Implement filtering logic
+        }
+
+        // Create new booking
+        function createBooking() {
+            openBookingModal();
+        }
+
+        // Open booking modal
+        function openBookingModal(event = null, date = null) {
+            const modal = document.getElementById('bookingModal');
+            const form = document.getElementById('bookingForm');
+            
+            if (event) {
+                // Edit existing booking
+                form.title.value = event.title;
+                form.eventType.value = event.event_type;
+                form.startTime.value = event.start_time;
+                form.endTime.value = event.end_time;
+                form.clientName.value = event.client_name;
+                form.clientPhone.value = event.client_phone;
+                form.clientEmail.value = event.client_email;
+                form.location.value = event.location;
+                form.description.value = event.description;
+            } else if (date) {
+                // New booking with pre-selected date
+                form.startTime.value = date.toISOString().slice(0, 16);
+                form.endTime.value = new Date(date.getTime() + 2 * 60 * 60 * 1000).toISOString().slice(0, 16);
+            } else {
+                // New booking
+                form.reset();
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('bookingModal');
+            modal.style.display = 'none';
+        }
+
+        // Save booking
+        async function saveBooking() {
+            const form = document.getElementById('bookingForm');
+            const formData = new FormData(form);
+            const booking = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/v1/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(booking)
+                });
+                
+                if (response.ok) {
+                    closeModal();
+                    loadEvents();
+                } else {
+                    throw new Error('Failed to save booking');
+                }
+            } catch (error) {
+                console.error('Error saving booking:', error);
+            }
+        }
+
+        // Sync with external calendar
+        async function syncCalendar() {
+            try {
+                const response = await fetch('/api/v1/bookings/sync', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    loadEvents();
+                } else {
+                    throw new Error('Failed to sync calendar');
+                }
+            } catch (error) {
+                console.error('Error syncing calendar:', error);
+            }
+        }
+
+        // Logout
+        function logout() {
+            // Implement logout logic
+        }
+
+        // Load events on page load
+        document.addEventListener('DOMContentLoaded', loadEvents);
+    </script>
+</body>
+</html> 

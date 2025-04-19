@@ -1,0 +1,794 @@
+/* 
+ * TimeBride - Анімації
+ * 
+ * Цей файл містить анімації для інтерфейсу.
+ */
+
+/* Базові анімації */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translate3d(-100%, 0, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translate3d(0, -100%, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translate3d(0, 100%, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Класи анімацій */
+.animate {
+  animation-duration: var(--transition-normal);
+  animation-fill-mode: both;
+}
+
+.animate-fast {
+  animation-duration: var(--transition-fast);
+  animation-fill-mode: both;
+}
+
+.animate-slow {
+  animation-duration: var(--transition-slow);
+  animation-fill-mode: both;
+}
+
+/* Fade анімації */
+.fade-enter { opacity: 0; }
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+.fade-exit { opacity: 1; }
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
+
+/* Slide анімації */
+.slide-enter { transform: translateX(-100%); }
+.slide-enter-active {
+  transform: translateX(0);
+  transition: transform 200ms ease-in;
+}
+.slide-exit { transform: translateX(0); }
+.slide-exit-active {
+  transform: translateX(100%);
+  transition: transform 200ms ease-in;
+}
+
+/* Scale анімації */
+.scale-enter { transform: scale(0); }
+.scale-enter-active {
+  transform: scale(1);
+  transition: transform 200ms ease-in;
+}
+.scale-exit { transform: scale(1); }
+.scale-exit-active {
+  transform: scale(0);
+  transition: transform 200ms ease-in;
+}
+
+/* Rotate анімації */
+.rotate-enter { transform: rotate(-180deg); }
+.rotate-enter-active {
+  transform: rotate(0);
+  transition: transform 200ms ease-in;
+}
+.rotate-exit { transform: rotate(0); }
+.rotate-exit-active {
+  transform: rotate(180deg);
+  transition: transform 200ms ease-in;
+}
+
+/* Готові анімаційні класи */
+.bounce { animation: bounce 1s infinite; }
+.pulse { animation: pulse 2s infinite; }
+.spin { animation: rotate 1s linear infinite; }
+.shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+.progress-animate { animation: progress 2s ease-in-out infinite; }
+.loading {
+  background: linear-gradient(90deg, 
+    var(--color-section-bg) 25%, 
+    var(--color-neutral-accent) 50%, 
+    var(--color-section-bg) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Hover ефекти */
+.hover-scale {
+  transition: transform 0.2s ease-in-out;
+}
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-rotate {
+  transition: transform 0.2s ease-in-out;
+}
+.hover-rotate:hover {
+  transform: rotate(5deg);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Тривалість переходів */
+.transition-fast { transition-duration: 150ms; }
+.transition-normal { transition-duration: 300ms; }
+.transition-slow { transition-duration: 500ms; }
+
+/* Функції переходів */
+.ease-linear { transition-timing-function: linear; }
+.ease-in { transition-timing-function: cubic-bezier(0.4, 0, 1, 1); }
+.ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+.ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Затримки переходів */
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Класи для анімацій */
+.animate {
+  animation-duration: var(--transition-normal);
+  animation-fill-mode: both;
+}
+
+.animate-fast {
+  animation-duration: var(--transition-fast);
+  animation-fill-mode: both;
+}
+
+.animate-slow {
+  animation-duration: var(--transition-slow);
+  animation-fill-mode: both;
+}
+
+/* Fade */
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.fade-out {
+  animation-name: fadeOut;
+}
+
+/* Slide */
+.slide-in-right {
+  animation-name: slideInRight;
+}
+
+.slide-in-left {
+  animation-name: slideInLeft;
+}
+
+.slide-in-down {
+  animation-name: slideInDown;
+}
+
+.slide-in-up {
+  animation-name: slideInUp;
+}
+
+/* Zoom */
+.zoom-in {
+  animation-name: zoomIn;
+}
+
+.zoom-out {
+  animation-name: zoomOut;
+}
+
+/* Затримки */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Повторення */
+.repeat-1 {
+  animation-iteration-count: 1;
+}
+
+.repeat-2 {
+  animation-iteration-count: 2;
+}
+
+.repeat-3 {
+  animation-iteration-count: 3;
+}
+
+.repeat-infinite {
+  animation-iteration-count: infinite;
+}
+
+/* Напрямок */
+.reverse {
+  animation-direction: reverse;
+}
+
+.alternate {
+  animation-direction: alternate;
+}
+
+.alternate-reverse {
+  animation-direction: alternate-reverse;
+}
+
+/* Таймінг */
+.ease {
+  animation-timing-function: ease;
+}
+
+.ease-in {
+  animation-timing-function: ease-in;
+}
+
+.ease-out {
+  animation-timing-function: ease-out;
+}
+
+.ease-in-out {
+  animation-timing-function: ease-in-out;
+}
+
+.linear {
+  animation-timing-function: linear;
+}
+
+/* Анімації для елементів інтерфейсу */
+/* Кнопки */
+.btn {
+  transition: all var(--transition-normal);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Картки */
+.card {
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Форми */
+.form-control {
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus {
+  transform: translateY(-1px);
+}
+
+/* Дропдауни */
+.dropdown-menu {
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+  transform-origin: top;
+}
+
+.dropdown-menu.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.dropdown-menu.hide {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+/* Модальні вікна */
+.modal {
+  transition: opacity var(--transition-normal);
+}
+
+.modal-dialog {
+  transition: transform var(--transition-normal);
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+}
+
+.modal.hide .modal-dialog {
+  transform: scale(0.95);
+}
+
+/* Сповіщення */
+.alert {
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.alert.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.alert.hide {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+/* Пагінація */
+.page-link {
+  transition: all var(--transition-fast);
+}
+
+.page-link:hover {
+  transform: translateY(-1px);
+}
+
+/* Прогрес-бар */
+.progress-bar {
+  transition: width var(--transition-normal);
+}
+
+/* Спінер */
+.spinner {
+  animation: spinner-border 0.75s linear infinite;
+}
+
+/* Підказки */
+.tooltip {
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.tooltip.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.tooltip.hide {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+/* Поповери */
+.popover {
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.popover.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.popover.hide {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+/* Аватари */
+.avatar {
+  transition: transform var(--transition-normal);
+}
+
+.avatar:hover {
+  transform: scale(1.1);
+}
+
+/* Анімації для переходів між сторінками */
+.page-enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+/* Анімації для списків */
+.list-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.list-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.list-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.list-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+/* Анімації для форм */
+.form-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.form-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.form-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.form-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+/* Анімації для модальних вікон */
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-enter-active {
+  opacity: 1;
+  transition: opacity var(--transition-normal);
+}
+
+.modal-exit {
+  opacity: 1;
+}
+
+.modal-exit-active {
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+/* Анімації для сповіщень */
+.notification-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.notification-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.notification-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notification-exit-active {
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+/* Fade animations */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
+
+/* Slide animations */
+.slide-enter {
+  transform: translateX(-100%);
+}
+
+.slide-enter-active {
+  transform: translateX(0);
+  transition: transform 200ms ease-in;
+}
+
+.slide-exit {
+  transform: translateX(0);
+}
+
+.slide-exit-active {
+  transform: translateX(100%);
+  transition: transform 200ms ease-in;
+}
+
+/* Scale animations */
+.scale-enter {
+  transform: scale(0);
+}
+
+.scale-enter-active {
+  transform: scale(1);
+  transition: transform 200ms ease-in;
+}
+
+.scale-exit {
+  transform: scale(1);
+}
+
+.scale-exit-active {
+  transform: scale(0);
+  transition: transform 200ms ease-in;
+}
+
+/* Rotate animations */
+.rotate-enter {
+  transform: rotate(-180deg);
+}
+
+.rotate-enter-active {
+  transform: rotate(0);
+  transition: transform 200ms ease-in;
+}
+
+.rotate-exit {
+  transform: rotate(0);
+}
+
+.rotate-exit-active {
+  transform: rotate(180deg);
+  transition: transform 200ms ease-in;
+}
+
+/* Bounce animations */
+.bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Pulse animations */
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Spin animations */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Shake animations */
+.shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Progress bar animations */
+.progress-animate {
+  animation: progress 2s ease-in-out infinite;
+}
+
+/* Loading spinner animations */
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spinner 1s linear infinite;
+}
+
+/* Hover animations */
+.hover-scale {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-rotate {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-rotate:hover {
+  transform: rotate(5deg);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Transition durations */
+.transition-fast {
+  transition-duration: 150ms;
+}
+
+.transition-normal {
+  transition-duration: 300ms;
+}
+
+.transition-slow {
+  transition-duration: 500ms;
+}
+
+/* Transition timing functions */
+.ease-linear {
+  transition-timing-function: linear;
+}
+
+.ease-in {
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+.ease-in-out {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Transition delays */
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+.delay-400 {
+  transition-delay: 400ms;
+}
+
+.delay-500 {
+  transition-delay: 500ms;
+} 

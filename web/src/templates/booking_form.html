@@ -1,0 +1,589 @@
+{{ define "content" }}
+<!-- Page header -->
+<div class="page-header d-print-none">
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Управління розкладом</div>
+                <h2 class="page-title">
+                    {{ if .Booking.ID }}Редагування бронювання{{ else }}Нове бронювання{{ end }}
+                </h2>
+            </div>
+            <!-- Page title actions -->
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <a href="/bookings" class="btn btn-outline-secondary">
+                        <i class="ti ti-arrow-left"></i>
+                        Повернутися до списку
+                    </a>
+                    {{ if .Booking.ID }}
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="ti ti-dots-vertical"></i>
+                            Дії
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="/bookings/{{ .Booking.ID }}/export">
+                                <i class="ti ti-file-export me-2"></i>
+                                Експорт
+                            </a>
+                            <a class="dropdown-item" href="/bookings/{{ .Booking.ID }}/invoice">
+                                <i class="ti ti-receipt me-2"></i>
+                                Рахунок
+                            </a>
+                            <a class="dropdown-item" href="/bookings/{{ .Booking.ID }}/duplicate">
+                                <i class="ti ti-copy me-2"></i>
+                                Дублювати
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#modal-danger">
+                                <i class="ti ti-trash me-2"></i>
+                                Видалити
+                            </a>
+                        </div>
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page body -->
+<div class="page-body">
+    <div class="container-fluid">
+        <form id="booking-form" method="post" action="{{ if .Booking.ID }}/bookings/{{ .Booking.ID }}/edit{{ else }}/bookings/create{{ end }}">
+            {{ if .Error }}
+            <div class="alert alert-danger mb-4" role="alert">
+                <h4 class="alert-title">Помилка</h4>
+                <div class="text-muted">{{ .Error }}</div>
+            </div>
+            {{ end }}
+
+            <div class="row">
+                <!-- Основна інформація -->
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Основна інформація</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required">Назва події</label>
+                                    <input type="text" class="form-control" name="title" value="{{ .Booking.Title }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Тип події</label>
+                                    <select class="form-select" name="event_type" required>
+                                        <option value="">Оберіть тип події</option>
+                                        <option value="wedding" {{ if eq .Booking.EventType "wedding" }}selected{{ end }}>Весілля</option>
+                                        <option value="portrait" {{ if eq .Booking.EventType "portrait" }}selected{{ end }}>Портрет</option>
+                                        <option value="family" {{ if eq .Booking.EventType "family" }}selected{{ end }}>Сімейна</option>
+                                        <option value="event" {{ if eq .Booking.EventType "event" }}selected{{ end }}>Захід</option>
+                                        <option value="commercial" {{ if eq .Booking.EventType "commercial" }}selected{{ end }}>Комерційна</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Дати і час -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required">Дата початку</label>
+                                    <input type="date" class="form-control" name="start_date" value="{{ .Booking.StartDateISO }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Дата завершення</label>
+                                    <input type="date" class="form-control" name="end_date" value="{{ .Booking.EndDateISO }}" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required">Час початку</label>
+                                    <input type="time" class="form-control" name="start_time" value="{{ .Booking.StartTime }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Час завершення</label>
+                                    <input type="time" class="form-control" name="end_time" value="{{ .Booking.EndTime }}" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Весь день</label>
+                                    <label class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="all_day" value="1" {{ if .Booking.AllDay }}checked{{ end }}>
+                                        <span class="form-check-label">Подія триває весь день</span>
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Повторення</label>
+                                    <select class="form-select" name="recurrence">
+                                        <option value="" {{ if eq .Booking.Recurrence "" }}selected{{ end }}>Без повторення</option>
+                                        <option value="daily" {{ if eq .Booking.Recurrence "daily" }}selected{{ end }}>Щодня</option>
+                                        <option value="weekly" {{ if eq .Booking.Recurrence "weekly" }}selected{{ end }}>Щотижня</option>
+                                        <option value="monthly" {{ if eq .Booking.Recurrence "monthly" }}selected{{ end }}>Щомісяця</option>
+                                        <option value="yearly" {{ if eq .Booking.Recurrence "yearly" }}selected{{ end }}>Щороку</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Місце проведення -->
+                            <div class="mb-3">
+                                <label class="form-label">Місце проведення</label>
+                                <input type="text" class="form-control" name="location" value="{{ .Booking.Location }}" placeholder="Адреса або назва місця">
+                            </div>
+
+                            <!-- Опис -->
+                            <div class="mb-3">
+                                <label class="form-label">Опис</label>
+                                <textarea class="form-control" name="description" rows="5" placeholder="Деталі про подію...">{{ .Booking.Description }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Замітки та файли -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Замітки та файли</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Внутрішні замітки</label>
+                                <textarea class="form-control" name="notes" rows="3" placeholder="Замітки, видимі тільки вам...">{{ .Booking.Notes }}</textarea>
+                                <small class="form-hint">Ці замітки не будуть видимі клієнту</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Прикріплені файли</label>
+                                <div class="dropzone border rounded p-3" id="file-dropzone">
+                                    <div class="dz-message">
+                                        <h3 class="text-muted">Перетягніть файли сюди</h3>
+                                        <p>або натисніть для вибору файлів</p>
+                                    </div>
+                                </div>
+                                
+                                {{ if .Booking.Files }}
+                                <div class="mt-3">
+                                    <h4 class="h5">Прикріплені файли</h4>
+                                    <div class="row g-2">
+                                        {{ range .Booking.Files }}
+                                        <div class="col-md-4 col-sm-6" id="file-{{ .ID }}">
+                                            <div class="card card-sm">
+                                                <div class="card-body d-flex align-items-center">
+                                                    <span class="bg-{{ .IconColor }} text-white avatar me-3">
+                                                        <i class="ti ti-{{ .Icon }}"></i>
+                                                    </span>
+                                                    <div class="truncate-text">
+                                                        <div>{{ .Name }}</div>
+                                                        <div class="text-muted small">{{ .SizeFormatted }}</div>
+                                                    </div>
+                                                    <div class="ms-auto">
+                                                        <a href="{{ .URL }}" class="btn btn-sm btn-icon" title="Завантажити" download>
+                                                            <i class="ti ti-download"></i>
+                                                        </a>
+                                                        <a href="#" class="btn btn-sm btn-icon text-danger" title="Видалити" 
+                                                        data-file-id="{{ .ID }}" onclick="deleteFile({{ .ID }})">
+                                                            <i class="ti ti-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{ end }}
+                                    </div>
+                                </div>
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Інформація про клієнта та бічні налаштування -->
+                <div class="col-md-4">
+                    <!-- Статус бронювання -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Статус</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="form-selectgroup-boxes row mb-3">
+                                    <div class="col-lg-6">
+                                        <label class="form-selectgroup-item">
+                                            <input type="radio" name="status" value="pending" class="form-selectgroup-input" {{ if or (eq .Booking.Status "pending") (not .Booking.ID) }}checked{{ end }}>
+                                            <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                                <span class="me-3">
+                                                    <span class="form-selectgroup-check"></span>
+                                                </span>
+                                                <span class="form-selectgroup-label-content">
+                                                    <span class="form-selectgroup-title strong mb-1">Очікує</span>
+                                                    <span class="d-block text-muted">Ще не підтверджено</span>
+                                                </span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label class="form-selectgroup-item">
+                                            <input type="radio" name="status" value="active" class="form-selectgroup-input" {{ if eq .Booking.Status "active" }}checked{{ end }}>
+                                            <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                                <span class="me-3">
+                                                    <span class="form-selectgroup-check"></span>
+                                                </span>
+                                                <span class="form-selectgroup-label-content">
+                                                    <span class="form-selectgroup-title strong mb-1">Активне</span>
+                                                    <span class="d-block text-muted">Підтверджено</span>
+                                                </span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label class="form-selectgroup-item">
+                                            <input type="radio" name="status" value="completed" class="form-selectgroup-input" {{ if eq .Booking.Status "completed" }}checked{{ end }}>
+                                            <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                                <span class="me-3">
+                                                    <span class="form-selectgroup-check"></span>
+                                                </span>
+                                                <span class="form-selectgroup-label-content">
+                                                    <span class="form-selectgroup-title strong mb-1">Завершено</span>
+                                                    <span class="d-block text-muted">Подія відбулась</span>
+                                                </span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label class="form-selectgroup-item">
+                                            <input type="radio" name="status" value="cancelled" class="form-selectgroup-input" {{ if eq .Booking.Status "cancelled" }}checked{{ end }}>
+                                            <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                                <span class="me-3">
+                                                    <span class="form-selectgroup-check"></span>
+                                                </span>
+                                                <span class="form-selectgroup-label-content">
+                                                    <span class="form-selectgroup-title strong mb-1">Скасовано</span>
+                                                    <span class="d-block text-muted">Не відбудеться</span>
+                                                </span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Інформація про клієнта -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Клієнт</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label required">Ім'я клієнта</label>
+                                <input type="text" class="form-control" name="client_name" value="{{ .Booking.ClientName }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label required">Email</label>
+                                <input type="email" class="form-control" name="client_email" value="{{ .Booking.ClientEmail }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Телефон</label>
+                                <input type="tel" class="form-control" name="client_phone" value="{{ .Booking.ClientPhone }}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Адреса</label>
+                                <textarea class="form-control" name="client_address" rows="2">{{ .Booking.ClientAddress }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ціни та оплата -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Ціни та оплата</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Ціна (грн)</label>
+                                <input type="number" class="form-control" name="price" value="{{ .Booking.Price }}" min="0" step="0.01">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Передоплата (грн)</label>
+                                <input type="number" class="form-control" name="deposit" value="{{ .Booking.Deposit }}" min="0" step="0.01">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Статус оплати</label>
+                                <select class="form-select" name="payment_status">
+                                    <option value="not_paid" {{ if eq .Booking.PaymentStatus "not_paid" }}selected{{ end }}>Не оплачено</option>
+                                    <option value="deposit_paid" {{ if eq .Booking.PaymentStatus "deposit_paid" }}selected{{ end }}>Передоплату внесено</option>
+                                    <option value="partially_paid" {{ if eq .Booking.PaymentStatus "partially_paid" }}selected{{ end }}>Частково оплачено</option>
+                                    <option value="fully_paid" {{ if eq .Booking.PaymentStatus "fully_paid" }}selected{{ end }}>Повністю оплачено</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Сума оплачено (грн)</label>
+                                <input type="number" class="form-control" name="amount_paid" value="{{ .Booking.AmountPaid }}" min="0" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="ti ti-device-floppy me-2"></i>
+                    Зберегти бронювання
+                </button>
+                <a href="/bookings" class="btn btn-outline-secondary">Скасувати</a>
+                
+                {{ if and .Booking.ID (eq .Booking.Status "pending") }}
+                <button type="button" class="btn btn-success ms-auto" id="btn-send-confirmation">
+                    <i class="ti ti-mail me-2"></i>
+                    Надіслати підтвердження
+                </button>
+                {{ end }}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Модальне вікно видалення -->
+{{ if .Booking.ID }}
+<div class="modal modal-blur fade" id="modal-danger" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-body text-center py-4">
+                <i class="ti ti-alert-triangle icon mb-2 text-danger icon-lg"></i>
+                <h3>Видалення бронювання</h3>
+                <div class="text-muted">
+                    Ви впевнені, що хочете видалити це бронювання? Цю дію неможливо скасувати.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn w-100" data-bs-dismiss="modal">
+                                Скасувати
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="/bookings/{{ .Booking.ID }}/delete" class="btn btn-danger w-100">
+                                Так, видалити
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}
+
+<!-- Модальне вікно підтвердження -->
+{{ if and .Booking.ID (eq .Booking.Status "pending") }}
+<div class="modal modal-blur fade" id="modal-send-confirmation" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Надіслати підтвердження бронювання</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Одержувач</label>
+                    <input type="text" class="form-control" value="{{ .Booking.ClientName }} <{{ .Booking.ClientEmail }}>" readonly>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Тема</label>
+                    <input type="text" class="form-control" id="email-subject" value="Підтвердження бронювання: {{ .Booking.Title }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Повідомлення</label>
+                    <textarea class="form-control" id="email-message" rows="8">Шановний(а) {{ .Booking.ClientName }},
+
+Раді підтвердити ваше бронювання "{{ .Booking.Title }}" на {{ .Booking.StartDateFormatted }} з {{ .Booking.StartTimeFormatted }} до {{ .Booking.EndTimeFormatted }}.
+
+Деталі бронювання:
+- Тип події: {{ .Booking.EventTypeLabel }}
+- Місце: {{ .Booking.Location }}
+{{ if gt .Booking.Price 0 }}
+- Вартість: {{ .Booking.PriceFormatted }} грн
+{{ if gt .Booking.Deposit 0 }}
+- Передоплата: {{ .Booking.DepositFormatted }} грн
+{{ end }}
+{{ end }}
+
+Будь ласка, повідомте нас, якщо у вас є які-небудь питання.
+
+З повагою,
+{{ .User.FullName }}
+{{ .User.Email }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="attach-calendar" checked>
+                        <label class="form-check-label" for="attach-calendar">
+                            Прикріпити календарний файл (.ics)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="mark-as-active" checked>
+                        <label class="form-check-label" for="mark-as-active">
+                            Позначити бронювання як активне після надсилання
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-success" id="send-confirmation-btn">
+                    <i class="ti ti-send me-2"></i>
+                    Надіслати
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ініціалізація Dropzone для файлів
+        if (typeof Dropzone !== 'undefined') {
+            Dropzone.autoDiscover = false;
+            
+            const myDropzone = new Dropzone("#file-dropzone", {
+                url: "/api/files/upload",
+                paramName: "file",
+                maxFilesize: 10, // МБ
+                addRemoveLinks: true,
+                dictRemoveFile: "Видалити",
+                dictCancelUpload: "Скасувати",
+                dictDefaultMessage: "Перетягніть файли сюди або натисніть для вибору",
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                init: function() {
+                    this.on("success", function(file, response) {
+                        // Додаємо ID файлу до прихованого поля
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'file_ids[]';
+                        input.value = response.file_id;
+                        document.getElementById('booking-form').appendChild(input);
+                        
+                        file.serverId = response.file_id;
+                    });
+                    
+                    this.on("removedfile", function(file) {
+                        if (file.serverId) {
+                            // Видаляємо файл з сервера при видаленні з форми
+                            TimeBride.api.delete(`/api/files/${file.serverId}`)
+                                .catch(error => {
+                                    console.error('Помилка видалення файлу:', error);
+                                });
+                                
+                            // Видаляємо приховане поле
+                            const input = document.querySelector(`input[name="file_ids[]"][value="${file.serverId}"]`);
+                            if (input) input.remove();
+                        }
+                    });
+                }
+            });
+        }
+        
+        // Позначення "весь день"
+        const allDayCheckbox = document.querySelector('input[name="all_day"]');
+        if (allDayCheckbox) {
+            allDayCheckbox.addEventListener('change', function() {
+                const startTime = document.querySelector('input[name="start_time"]');
+                const endTime = document.querySelector('input[name="end_time"]');
+                
+                if (this.checked) {
+                    startTime.value = "00:00";
+                    endTime.value = "23:59";
+                    startTime.setAttribute('disabled', 'disabled');
+                    endTime.setAttribute('disabled', 'disabled');
+                } else {
+                    startTime.removeAttribute('disabled');
+                    endTime.removeAttribute('disabled');
+                }
+            });
+            
+            // Ініціалізація стану при завантаженні
+            if (allDayCheckbox.checked) {
+                const startTime = document.querySelector('input[name="start_time"]');
+                const endTime = document.querySelector('input[name="end_time"]');
+                startTime.setAttribute('disabled', 'disabled');
+                endTime.setAttribute('disabled', 'disabled');
+            }
+        }
+        
+        // Функція видалення файлу
+        window.deleteFile = function(fileId) {
+            if (confirm('Ви впевнені, що хочете видалити цей файл?')) {
+                TimeBride.api.delete(`/api/files/${fileId}`)
+                    .then(() => {
+                        const fileElement = document.getElementById(`file-${fileId}`);
+                        if (fileElement) {
+                            fileElement.remove();
+                        }
+                        TimeBride.dom.showToast('Файл успішно видалено', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Помилка видалення файлу:', error);
+                        TimeBride.dom.showToast('Помилка видалення файлу', 'danger');
+                    });
+            }
+        };
+        
+        // Надсилання підтвердження
+        const confirmationBtn = document.getElementById('btn-send-confirmation');
+        if (confirmationBtn) {
+            confirmationBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const modal = new bootstrap.Modal(document.getElementById('modal-send-confirmation'));
+                modal.show();
+            });
+            
+            document.getElementById('send-confirmation-btn').addEventListener('click', function() {
+                const data = {
+                    booking_id: {{ .Booking.ID }},
+                    subject: document.getElementById('email-subject').value,
+                    message: document.getElementById('email-message').value,
+                    attach_calendar: document.getElementById('attach-calendar').checked,
+                    mark_as_active: document.getElementById('mark-as-active').checked
+                };
+                
+                TimeBride.api.post('/api/bookings/send-confirmation', data)
+                    .then(response => {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modal-send-confirmation'));
+                        modal.hide();
+                        
+                        TimeBride.dom.showToast('Підтвердження успішно надіслано', 'success');
+                        
+                        if (data.mark_as_active) {
+                            setTimeout(() => window.location.reload(), 1500);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Помилка надсилання підтвердження:', error);
+                        TimeBride.dom.showToast(error.message || 'Помилка надсилання підтвердження', 'danger');
+                    });
+            });
+        }
+    });
+</script>
+{{ end }} 

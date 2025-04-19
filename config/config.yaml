@@ -1,0 +1,58 @@
+server:
+  port: 3000
+  host: 0.0.0.0
+  environment: development
+  allow_origins: "*"
+  read_timeout: 10s
+  write_timeout: 10s
+  shutdown_timeout: 5s
+
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: secret
+  dbname: timebride
+  sslmode: disable
+  max_open_conns: 25
+  max_idle_conns: 25
+  conn_max_lifetime: 5m
+
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+  pool_size: 10
+
+jwt:
+  secret_key: "TimeBride-JWT-Secret-2024-Secure-Key"
+  token_duration: "24h"
+
+cors:
+  allowed_origins:
+    - http://localhost:3000
+  allowed_methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  allowed_headers:
+    - Origin
+    - Content-Type
+    - Accept
+    - Authorization
+
+storage:
+  provider: "backblaze"
+  backblaze:
+    account_id: ""
+    application_key: ""
+    bucket: ""
+    bucket_id: ""
+    endpoint: "https://s3.eu-central-003.backblazeb2.com"
+    region: "eu-central-003"
+  cdn:
+    enabled: true
+    domain: "cdn.timebride.com"
+    protocol: "https" 

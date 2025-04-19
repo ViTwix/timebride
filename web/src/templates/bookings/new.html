@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>Нове бронювання - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                Нове бронювання
+                            </h2>
+                            <div class="text-muted mt-1">
+                                Створення нового бронювання в календарі
+                            </div>
+                        </div>
+                        <div class="col-auto ms-auto d-print-none">
+                            <div class="btn-list">
+                                <a href="/bookings" class="btn">
+                                    Скасувати
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <form method="post" action="/bookings" id="booking-form">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Деталі бронювання</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label required">Назва</label>
+                                            <input type="text" class="form-control {{if .Errors.Title}}is-invalid{{end}}" name="title" placeholder="Весілля Ірини та Олега" value="{{.Booking.Title}}" required>
+                                            {{if .Errors.Title}}
+                                            <div class="invalid-feedback">{{.Errors.Title}}</div>
+                                            {{end}}
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Тип події</label>
+                                                <select class="form-select {{if .Errors.EventType}}is-invalid{{end}}" name="event_type" required>
+                                                    <option value="">Оберіть тип події</option>
+                                                    {{range .EventTypes}}
+                                                    <option value="{{.}}" {{if eq $.Booking.EventType .}}selected{{end}}>{{.}}</option>
+                                                    {{end}}
+                                                </select>
+                                                {{if .Errors.EventType}}
+                                                <div class="invalid-feedback">{{.Errors.EventType}}</div>
+                                                {{end}}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Статус</label>
+                                                <select class="form-select {{if .Errors.Status}}is-invalid{{end}}" name="status" required>
+                                                    <option value="">Оберіть статус</option>
+                                                    {{range .Statuses}}
+                                                    <option value="{{.}}" {{if eq $.Booking.Status .}}selected{{end}}>{{.}}</option>
+                                                    {{end}}
+                                                </select>
+                                                {{if .Errors.Status}}
+                                                <div class="invalid-feedback">{{.Errors.Status}}</div>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Дата початку</label>
+                                                <input type="date" class="form-control {{if .Errors.StartDate}}is-invalid{{end}}" name="start_date" value="{{.Booking.StartDate}}" required>
+                                                {{if .Errors.StartDate}}
+                                                <div class="invalid-feedback">{{.Errors.StartDate}}</div>
+                                                {{end}}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Час початку</label>
+                                                <input type="time" class="form-control {{if .Errors.StartTime}}is-invalid{{end}}" name="start_time" value="{{.Booking.StartTime}}" required>
+                                                {{if .Errors.StartTime}}
+                                                <div class="invalid-feedback">{{.Errors.StartTime}}</div>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Дата завершення</label>
+                                                <input type="date" class="form-control {{if .Errors.EndDate}}is-invalid{{end}}" name="end_date" value="{{.Booking.EndDate}}" required>
+                                                {{if .Errors.EndDate}}
+                                                <div class="invalid-feedback">{{.Errors.EndDate}}</div>
+                                                {{end}}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label required">Час завершення</label>
+                                                <input type="time" class="form-control {{if .Errors.EndTime}}is-invalid{{end}}" name="end_time" value="{{.Booking.EndTime}}" required>
+                                                {{if .Errors.EndTime}}
+                                                <div class="invalid-feedback">{{.Errors.EndTime}}</div>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Опис</label>
+                                            <textarea class="form-control" name="description" rows="3" placeholder="Деталі події, побажання, примітки">{{.Booking.Description}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Локація та деталі</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Локація</label>
+                                            <input type="text" class="form-control" name="location" placeholder="Адреса або назва локації" value="{{.Booking.Location}}">
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Вартість</label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control {{if .Errors.Price}}is-invalid{{end}}" name="price" placeholder="0.00" step="0.01" min="0" value="{{.Booking.Price}}">
+                                                    <span class="input-group-text">грн</span>
+                                                </div>
+                                                {{if .Errors.Price}}
+                                                <div class="invalid-feedback">{{.Errors.Price}}</div>
+                                                {{end}}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Внесена передоплата</label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control {{if .Errors.Deposit}}is-invalid{{end}}" name="deposit" placeholder="0.00" step="0.01" min="0" value="{{.Booking.Deposit}}">
+                                                    <span class="input-group-text">грн</span>
+                                                </div>
+                                                {{if .Errors.Deposit}}
+                                                <div class="invalid-feedback">{{.Errors.Deposit}}</div>
+                                                {{end}}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="is_all_day" value="true" {{if .Booking.IsAllDay}}checked{{end}}>
+                                                <span class="form-check-label">Подія на весь день</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Клієнт</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="form-label required">Клієнт</div>
+                                            <select class="form-select {{if .Errors.ClientID}}is-invalid{{end}}" name="client_id" id="client-select" required>
+                                                <option value="">Оберіть клієнта</option>
+                                                {{range .Clients}}
+                                                <option value="{{.ID}}" {{if eq $.Booking.ClientID .ID}}selected{{end}}>
+                                                    {{.FullName}}{{if .Company}} ({{.Company}}){{end}}
+                                                </option>
+                                                {{end}}
+                                            </select>
+                                            {{if .Errors.ClientID}}
+                                            <div class="invalid-feedback">{{.Errors.ClientID}}</div>
+                                            {{end}}
+                                            <div class="mt-2">
+                                                <a href="/clients/new" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M12 5l0 14"></path>
+                                                        <path d="M5 12l14 0"></path>
+                                                    </svg>
+                                                    Додати нового клієнта
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <div id="client-details" class="mt-3" style="display: {{if .Booking.ClientID}}block{{else}}none{{end}};">
+                                            <div class="datagrid">
+                                                <div class="datagrid-item">
+                                                    <div class="datagrid-title">Email</div>
+                                                    <div class="datagrid-content" id="client-email">{{.SelectedClient.Email}}</div>
+                                                </div>
+                                                <div class="datagrid-item">
+                                                    <div class="datagrid-title">Телефон</div>
+                                                    <div class="datagrid-content" id="client-phone">{{.SelectedClient.Phone}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Нагадування</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="reminders" value="email" {{if .Booking.EmailReminder}}checked{{end}}>
+                                                <span class="form-check-label">Надіслати email-нагадування</span>
+                                            </label>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="reminders" value="sms" {{if .Booking.SMSReminder}}checked{{end}}>
+                                                <span class="form-check-label">Надіслати SMS-нагадування</span>
+                                            </label>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">За скільки часу до події</label>
+                                            <select class="form-select" name="reminder_time">
+                                                <option value="30" {{if eq .Booking.ReminderTime 30}}selected{{end}}>30 хвилин</option>
+                                                <option value="60" {{if eq .Booking.ReminderTime 60}}selected{{end}}>1 година</option>
+                                                <option value="120" {{if eq .Booking.ReminderTime 120}}selected{{end}}>2 години</option>
+                                                <option value="360" {{if eq .Booking.ReminderTime 360}}selected{{end}}>6 годин</option>
+                                                <option value="720" {{if eq .Booking.ReminderTime 720}}selected{{end}}>12 годин</option>
+                                                <option value="1440" {{if eq .Booking.ReminderTime 1440}}selected{{end}}>1 день</option>
+                                                <option value="2880" {{if eq .Booking.ReminderTime 2880}}selected{{end}}>2 дні</option>
+                                                <option value="10080" {{if eq .Booking.ReminderTime 10080}}selected{{end}}>1 тиждень</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-body">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            Створити бронювання
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            {{template "footer" .}}
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обробник вибору клієнта
+            const clientSelect = document.getElementById('client-select');
+            const clientDetails = document.getElementById('client-details');
+            const clientEmail = document.getElementById('client-email');
+            const clientPhone = document.getElementById('client-phone');
+            
+            clientSelect.addEventListener('change', function() {
+                if (this.value) {
+                    // Показуємо деталі клієнта
+                    clientDetails.style.display = 'block';
+                    
+                    // Робимо AJAX-запит для отримання даних клієнта
+                    fetch(`/api/clients/${this.value}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            clientEmail.textContent = data.email || '—';
+                            clientPhone.textContent = data.phone || '—';
+                        })
+                        .catch(error => {
+                            console.error('Помилка завантаження даних клієнта:', error);
+                        });
+                } else {
+                    // Ховаємо деталі клієнта
+                    clientDetails.style.display = 'none';
+                    clientEmail.textContent = '';
+                    clientPhone.textContent = '';
+                }
+            });
+            
+            // Валідація форми перед відправкою
+            const bookingForm = document.getElementById('booking-form');
+            bookingForm.addEventListener('submit', function(event) {
+                const startDate = new Date(
+                    document.querySelector('input[name="start_date"]').value + 'T' + 
+                    document.querySelector('input[name="start_time"]').value
+                );
+                
+                const endDate = new Date(
+                    document.querySelector('input[name="end_date"]').value + 'T' + 
+                    document.querySelector('input[name="end_time"]').value
+                );
+                
+                if (endDate <= startDate) {
+                    event.preventDefault();
+                    alert('Дата і час завершення повинні бути пізніше дати і часу початку.');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

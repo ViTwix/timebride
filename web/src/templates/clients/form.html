@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {{template "head" .}}
+    <title>{{.Title}} - TimeBride</title>
+</head>
+<body>
+    <div class="page">
+        {{template "sidebar" .}}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                {{.Title}}
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row row-cards">
+                        <div class="col-12">
+                            <form class="card" method="post" enctype="multipart/form-data" 
+                                {{if eq .Action "create"}}
+                                    action="/clients"
+                                {{else}}
+                                    action="/clients/{{.Client.ID}}"
+                                    onsubmit="convertToPut(this);"
+                                {{end}}>
+                                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                                
+                                <div class="card-header">
+                                    <h3 class="card-title">Інформація про клієнта</h3>
+                                </div>
+                                <div class="card-body">
+                                    {{if .Error}}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{.Error}}
+                                    </div>
+                                    {{end}}
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-3 text-center">
+                                            <div class="mb-3">
+                                                <div class="avatar avatar-xl mb-3 avatar-rounded position-relative avatar-upload">
+                                                    <img id="avatar-preview" src="{{if .Client.Avatar}}{{.Client.Avatar}}{{else}}/static/img/default-avatar.png{{end}}" alt="Аватар">
+                                                    <label for="avatar" class="avatar-upload-icon position-absolute">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-camera-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M12 20h-7a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v3.5"></path>
+                                                            <path d="M16 19h6"></path>
+                                                            <path d="M19 16v6"></path>
+                                                            <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
+                                                        </svg>
+                                                    </label>
+                                                </div>
+                                                <input type="file" id="avatar" name="avatar" class="d-none" accept="image/*">
+                                                <small class="text-muted d-block">Натисніть на зображення, щоб змінити фото</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label required">ПІБ клієнта</label>
+                                                    <input type="text" class="form-control" name="full_name" value="{{if .Client}}{{.Client.FullName}}{{end}}" required>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Email</label>
+                                                    <input type="email" class="form-control" name="email" value="{{if .Client}}{{.Client.Email}}{{end}}">
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Телефон</label>
+                                                    <input type="tel" class="form-control" name="phone" value="{{if .Client}}{{.Client.Phone}}{{end}}">
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Компанія</label>
+                                                    <input type="text" class="form-control" name="company" value="{{if .Client}}{{.Client.Company}}{{end}}">
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Категорія</label>
+                                                    <select class="form-select" name="category">
+                                                        <option value="" {{if not .Client.Category}}selected{{end}}>Оберіть категорію</option>
+                                                        <option value="basic" {{if eq .Client.Category "basic"}}selected{{end}}>Звичайний клієнт</option>
+                                                        <option value="premium" {{if eq .Client.Category "premium"}}selected{{end}}>Преміум клієнт</option>
+                                                        <option value="vip" {{if eq .Client.Category "vip"}}selected{{end}}>VIP клієнт</option>
+                                                        <option value="partner" {{if eq .Client.Category "partner"}}selected{{end}}>Партнер</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="hr-text">Додаткова інформація</div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Джерело</label>
+                                            <select class="form-select" name="source">
+                                                <option value="" {{if not .Client.Source}}selected{{end}}>Оберіть джерело</option>
+                                                <option value="website" {{if eq .Client.Source "website"}}selected{{end}}>Веб-сайт</option>
+                                                <option value="referral" {{if eq .Client.Source "referral"}}selected{{end}}>Рекомендація</option>
+                                                <option value="social" {{if eq .Client.Source "social"}}selected{{end}}>Соціальні мережі</option>
+                                                <option value="ad" {{if eq .Client.Source "ad"}}selected{{end}}>Реклама</option>
+                                                <option value="other" {{if eq .Client.Source "other"}}selected{{end}}>Інше</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Адреса</label>
+                                            <input type="text" class="form-control" name="address" value="{{if .Client}}{{.Client.Address}}{{end}}">
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label">Примітки</label>
+                                            <textarea class="form-control" name="notes" rows="3">{{if .Client}}{{.Client.Notes}}{{end}}</textarea>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="is_active" {{if not .Client.ID}}checked{{else if .Client.IsActive}}checked{{end}}>
+                                                <span class="form-check-label">Активний клієнт</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a href="{{if eq .Action "edit"}}/clients/{{.Client.ID}}{{else}}/clients{{end}}" class="btn btn-link">Скасувати</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        {{if eq .Action "create"}}Створити клієнта{{else}}Зберегти зміни{{end}}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{template "footer" .}}
+        </div>
+    </div>
+
+    <!-- JavaScript для попереднього перегляду та обробки форми -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обробка попереднього перегляду аватара
+            const avatarInput = document.getElementById('avatar');
+            const avatarPreview = document.getElementById('avatar-preview');
+            const avatarUpload = document.querySelector('.avatar-upload');
+
+            avatarUpload.addEventListener('click', function() {
+                avatarInput.click();
+            });
+
+            avatarInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.setAttribute('src', e.target.result);
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+
+        // Функція для конвертації методу форми в PUT при редагуванні
+        function convertToPut(form) {
+            const methodInput = document.createElement('input');
+            methodInput.setAttribute('type', 'hidden');
+            methodInput.setAttribute('name', '_method');
+            methodInput.setAttribute('value', 'PUT');
+            form.appendChild(methodInput);
+        }
+    </script>
+</body>
+</html> 

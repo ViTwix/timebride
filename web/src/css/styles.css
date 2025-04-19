@@ -1,0 +1,320 @@
+/* 
+ * TimeBride - Стилі для інтеграції з Tabler
+ * 
+ * Цей файл містить стилі, які перевизначають стандартні стилі Tabler
+ * для використання нашої кольорової гами та шрифтів.
+ */
+
+/* Перевизначення кольорів Tabler */
+:root {
+  /* Основні кольори */
+  --tblr-primary: var(--color-contrast-accent);
+  --tblr-primary-rgb: 213, 189, 175;
+  --tblr-primary-hover: var(--color-neutral-accent);
+  --tblr-primary-hover-rgb: 214, 204, 194;
+  --tblr-primary-active: var(--color-light-accent);
+  --tblr-primary-active-rgb: 227, 213, 202;
+  
+  /* Фонові кольори */
+  --tblr-bg-surface: var(--color-background);
+  --tblr-bg-surface-secondary: var(--color-section-bg);
+  --tblr-bg-surface-tertiary: var(--color-light-accent);
+  
+  /* Текстові кольори */
+  --tblr-body-color: var(--color-text-primary);
+  --tblr-body-color-rgb: 0, 0, 0;
+  --tblr-secondary-color: var(--color-text-secondary);
+  --tblr-secondary-color-rgb: 74, 71, 68;
+  
+  /* Кольори рамок */
+  --tblr-border-color: var(--color-neutral-accent);
+  --tblr-border-color-translucent: rgba(214, 204, 194, 0.5);
+  
+  /* Кольори тіней */
+  --tblr-box-shadow: var(--shadow-md);
+  --tblr-box-shadow-sm: var(--shadow-sm);
+  --tblr-box-shadow-lg: var(--shadow-lg);
+  
+  /* Радіуси */
+  --tblr-border-radius: var(--radius-md);
+  --tblr-border-radius-sm: var(--radius-sm);
+  --tblr-border-radius-lg: var(--radius-lg);
+  
+  /* Шрифти */
+  --tblr-font-sans-serif: var(--font-family);
+}
+
+/* Перевизначення стилів навігації */
+.navbar {
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-neutral-accent);
+}
+
+.navbar-dark {
+  background-color: var(--color-section-bg);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.nav-link {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: var(--color-contrast-accent);
+}
+
+.nav-link.active {
+  color: var(--color-contrast-accent);
+  font-weight: 700;
+}
+
+/* Перевизначення стилів кнопок */
+.btn-primary {
+  background-color: var(--color-contrast-accent);
+  border-color: var(--color-contrast-accent);
+  color: var(--color-text-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-neutral-accent);
+  border-color: var(--color-neutral-accent);
+}
+
+.btn-secondary {
+  background-color: var(--color-neutral-accent);
+  border-color: var(--color-neutral-accent);
+  color: var(--color-text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-light-accent);
+  border-color: var(--color-light-accent);
+}
+
+/* Перевизначення стилів карток */
+.card {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-neutral-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  background-color: var(--color-section-bg);
+  border-bottom: 1px solid var(--color-neutral-accent);
+}
+
+/* Перевизначення стилів форм */
+.form-control {
+  border-color: var(--color-neutral-accent);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.form-control:focus {
+  border-color: var(--color-contrast-accent);
+  box-shadow: 0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
+}
+
+.form-label {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* Перевизначення стилів таблиць */
+.table {
+  color: var(--color-text-primary);
+}
+
+.table thead th {
+  background-color: var(--color-section-bg);
+  border-bottom-color: var(--color-neutral-accent);
+  color: var(--color-text-secondary);
+  font-weight: 700;
+}
+
+.table td {
+  border-top-color: var(--color-neutral-accent);
+}
+
+/* Перевизначення стилів бейджів */
+.badge {
+  font-weight: 500;
+}
+
+.badge.bg-primary {
+  background-color: var(--color-contrast-accent) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--color-neutral-accent) !important;
+}
+
+/* Перевизначення стилів футера */
+.footer {
+  background-color: var(--color-background);
+  border-top: 1px solid var(--color-neutral-accent);
+}
+
+/* Перевизначення стилів дропдаунів */
+.dropdown-menu {
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.dropdown-item {
+  color: var(--color-text-primary);
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-section-bg);
+  color: var(--color-text-primary);
+}
+
+.dropdown-divider {
+  border-top-color: var(--color-neutral-accent);
+}
+
+/* Перевизначення стилів модальних вікон */
+.modal-content {
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+}
+
+.modal-header {
+  border-bottom-color: var(--color-neutral-accent);
+}
+
+.modal-footer {
+  border-top-color: var(--color-neutral-accent);
+}
+
+/* Перевизначення стилів алертів */
+.alert {
+  border-color: var(--color-neutral-accent);
+}
+
+.alert-primary {
+  background-color: rgba(var(--tblr-primary-rgb), 0.1);
+  border-color: var(--color-contrast-accent);
+  color: var(--color-text-primary);
+}
+
+.alert-secondary {
+  background-color: rgba(var(--tblr-secondary-color-rgb), 0.1);
+  border-color: var(--color-neutral-accent);
+  color: var(--color-text-secondary);
+}
+
+/* Перевизначення стилів пагінації */
+.pagination .page-link {
+  color: var(--color-contrast-accent);
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--color-contrast-accent);
+  border-color: var(--color-contrast-accent);
+  color: var(--color-text-primary);
+}
+
+.pagination .page-item.disabled .page-link {
+  color: var(--color-text-secondary);
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+}
+
+/* Перевизначення стилів прогресс-барів */
+.progress {
+  background-color: var(--color-section-bg);
+}
+
+.progress-bar {
+  background-color: var(--color-contrast-accent);
+}
+
+/* Перевизначення стилів спінерів */
+.spinner-border {
+  color: var(--color-contrast-accent);
+}
+
+/* Перевизначення стилів тултіпів */
+.tooltip .tooltip-inner {
+  background-color: var(--color-text-primary);
+  color: var(--color-background);
+}
+
+/* Перевизначення стилів поповерів */
+.popover {
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.popover-header {
+  background-color: var(--color-section-bg);
+  border-bottom-color: var(--color-neutral-accent);
+}
+
+/* Перевизначення стилів аватарок */
+.avatar {
+  background-color: var(--color-section-bg);
+  color: var(--color-text-primary);
+}
+
+/* Перевизначення стилів бейджів статусу */
+.badge.bg-success {
+  background-color: #d1e7dd !important;
+  color: #0f5132 !important;
+}
+
+.badge.bg-warning {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+}
+
+.badge.bg-danger {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.badge.bg-info {
+  background-color: #cff4fc !important;
+  color: #055160 !important;
+}
+
+.badge.bg-gray {
+  background-color: #e9ecef !important;
+  color: #495057 !important;
+}
+
+.badge.bg-yellow {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+}
+
+.badge.bg-green {
+  background-color: #d1e7dd !important;
+  color: #0f5132 !important;
+}
+
+.badge.bg-red {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.badge.bg-blue {
+  background-color: #cff4fc !important;
+  color: #055160 !important;
+}
+
+/* Перевизначення стилів для темної теми (для майбутнього використання) */
+@media (prefers-color-scheme: dark) {
+  /* Тут будуть стилі для темної теми */
+} 
