@@ -1,21 +1,21 @@
 .PHONY: help
 help:
-@echo "Usage: make [target]"
-@echo ""
-@echo "Targets:"
-@echo "  run              Run the application"
-@echo "  docker-up        Start Docker containers"
-@echo "  docker-down      Stop Docker containers"
-@echo "  test            Run tests"
-@echo "  deps            Download dependencies"
-@echo "  clean           Clean build artifacts"
-@echo "  migrate-up       Run migrations up"
-@echo "  migrate-down     Run migrations down"
-@echo "  frontend-install Install frontend dependencies"
-@echo "  frontend-start   Start frontend development server"
-@echo "  frontend-build   Build frontend assets"
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  run              Run the application"
+	@echo "  docker-up        Start Docker containers"
+	@echo "  docker-down      Stop Docker containers"
+	@echo "  test            Run tests"
+	@echo "  deps            Download dependencies"
+	@echo "  clean           Clean build artifacts"
+	@echo "  migrate-up       Run migrations up"
+	@echo "  migrate-down     Run migrations down"
+	@echo "  frontend-install Install frontend dependencies"
+	@echo "  frontend-start   Start frontend development server"
+	@echo "  frontend-build   Build frontend assets"
 
-.PHONY: run build test clean docker-up docker-down migrate-up migrate-down frontend-install frontend-start frontend-build
+.PHONY: run build test clean docker-up docker-down migrate-up migrate-down frontend-install frontend-start frontend-build deps
 
 # Go commands
 run:
@@ -54,6 +54,6 @@ frontend-start:
 frontend-build:
 	cd web && npm run build
 
-.PHONY: deps
+# Dependencies
 deps:
-go mod download
+	go mod download 

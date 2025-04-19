@@ -108,6 +108,15 @@ func Load() (*Config, error) {
 	viper.SetDefault("storage.backblaze.region", "eu-central-003")
 
 	// Зв'язуємо змінні середовища з конфігурацією
+	viper.BindEnv("database.host", "DB_HOST")
+	viper.BindEnv("database.port", "DB_PORT")
+	viper.BindEnv("database.user", "DB_USER")
+	viper.BindEnv("database.password", "DB_PASSWORD")
+	viper.BindEnv("database.dbname", "DB_NAME")
+
+	viper.BindEnv("server.port", "SERVER_PORT")
+	viper.BindEnv("server.host", "SERVER_HOST")
+
 	viper.BindEnv("storage.backblaze.account_id", "B2_ACCOUNT_ID")
 	viper.BindEnv("storage.backblaze.application_key", "B2_APPLICATION_KEY")
 	viper.BindEnv("storage.backblaze.bucket", "B2_BUCKET")

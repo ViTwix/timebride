@@ -9,10 +9,12 @@ import (
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"golang.org/x/crypto/bcrypt"
 
 	"timebride/internal/config"
 	"timebride/internal/handlers"
 	"timebride/internal/middleware"
+	"timebride/internal/models"
 	"timebride/internal/repositories"
 	"timebride/internal/router"
 	"timebride/internal/services/auth"
@@ -36,6 +38,51 @@ func main() {
 	db, err := database.Connect(cfg.Database)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	// Автоматична міграція моделей в базу даних
+	log.Println("Running database migrations...")
+	if err := db.AutoMigrate(
+		&models.User{},
+		&models.Booking{},
+		&models.Template{},
+		&models.File{},
+	); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
+	log.Println("Migrations completed successfully")
+
+	// Створення адміністратора, якщо він не існує
+	log.Println("Checking for admin user...")
+	var adminCount int64
+	if err := db.Model(&models.User{}).Where("role = ?", models.RoleAdmin).Count(&adminCount).Error; err != nil {
+		log.Printf("Error checking for admin user: %v", err)
+	} else if adminCount == 0 {
+		log.Println("Admin user not found, creating default admin...")
+		// Створення хешу паролю
+		passwordHash, err := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		if err != nil {
+			log.Printf("Error hashing password: %v", err)
+		} else {
+			// Створення адміністратора
+			adminUser := models.User{
+				Email:            "admin@timebride.com",
+				PasswordHash:     string(passwordHash),
+				FullName:         "Адміністратор системи",
+				Role:             models.RoleAdmin,
+				Language:         "uk",
+				Timezone:         "Europe/Kiev",
+				Theme:            "dark",
+				SubscriptionPlan: "premium",
+			}
+			if err := db.Create(&adminUser).Error; err != nil {
+				log.Printf("Error creating admin user: %v", err)
+			} else {
+				log.Println("Default admin user created successfully")
+			}
+		}
+	} else {
+		log.Println("Admin user already exists")
 	}
 
 	// Створюємо S3 клієнт

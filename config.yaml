@@ -1,6 +1,6 @@
 server:
-  port: 8080
-  host: localhost
+  port: 3000
+  host: 0.0.0.0
   environment: development
   allow_origins: "*"
   read_timeout: 10s
@@ -25,7 +25,7 @@ redis:
   pool_size: 10
 
 jwt:
-  secret_key: "your-secret-key-here"
+  secret_key: "TimeBride-JWT-Secret-2024-Secure-Key"
   token_duration: "24h"
 
 cors:
