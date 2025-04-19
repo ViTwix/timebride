@@ -9,28 +9,51 @@ help:
 @echo "  test            Run tests"
 @echo "  deps            Download dependencies"
 @echo "  clean           Clean build artifacts"
+@echo "  migrate-up       Run migrations up"
+@echo "  migrate-down     Run migrations down"
+@echo "  frontend-install Install frontend dependencies"
+@echo "  frontend-start   Start frontend development server"
+@echo "  frontend-build   Build frontend assets"
 
-.PHONY: run
+.PHONY: run build test clean docker-up docker-down migrate-up migrate-down frontend-install frontend-start frontend-build
+
+# Go commands
 run:
-go run cmd/app/main.go
+	go run cmd/app/main.go
 
-.PHONY: docker-up
-docker-up:
-docker-compose up -d
+build:
+	go build -o bin/app cmd/app/main.go
 
-.PHONY: docker-down
-docker-down:
-docker-compose down
-
-.PHONY: test
 test:
-go test -v ./...
+	go test -v ./...
+
+clean:
+	rm -rf bin/
+
+# Docker commands
+docker-up:
+	docker-compose up -d
+
+docker-down:
+	docker-compose down
+
+# Database commands
+migrate-up:
+	migrate -path migrations -database "postgres://postgres:postgres@localhost:5432/timebride?sslmode=disable" up
+
+migrate-down:
+	migrate -path migrations -database "postgres://postgres:postgres@localhost:5432/timebride?sslmode=disable" down
+
+# Frontend commands
+frontend-install:
+	cd web && ./install.sh
+
+frontend-start:
+	cd web && npm start
+
+frontend-build:
+	cd web && npm run build
 
 .PHONY: deps
 deps:
 go mod download
-
-.PHONY: clean
-clean:
-rm -rf bin/
-go clean -cache
