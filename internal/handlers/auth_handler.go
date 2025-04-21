@@ -204,7 +204,7 @@ func (h *AuthHandler) HandleLogin(c *fiber.Ctx) error {
 	log.Printf("Redirecting to dashboard...")
 
 	// Redirect to dashboard
-	return c.Redirect("/")
+	return c.Redirect("/app")
 }
 
 // ShowRegisterPage відображає сторінку реєстрації
@@ -258,13 +258,13 @@ func (h *AuthHandler) HandleRegister(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	return c.Redirect("/dashboard")
+	return c.Redirect("/app")
 }
 
 // HandleLogout обробляє запит на вихід
 func (h *AuthHandler) HandleLogout(c *fiber.Ctx) error {
 	c.ClearCookie("session")
-	return c.Redirect("/login")
+	return c.Redirect("/")
 }
 
 // GetJWTSecret повертає секретний ключ для JWT

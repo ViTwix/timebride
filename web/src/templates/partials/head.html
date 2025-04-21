@@ -1,7 +1,7 @@
 {{define "head"}}
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="format-detection" content="telephone=no">
     
     <!-- Підтримка кирилиці -->
@@ -13,29 +13,30 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
+    <!-- Preload Font Files -->
+    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/tabler-icons.woff2" as="font" type="font/woff2" crossorigin>
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap&subset=cyrillic,cyrillic-ext" rel="stylesheet">
     
-    <!-- Variables & Font CSS -->
-    <link href="/css/variables.css" rel="stylesheet">
-    <link href="/css/fonts.css" rel="stylesheet">
-    
-    <!-- CSS Tabler -->
+    <!-- Основні CSS файли -->
     <link href="/css/tabler.min.css" rel="stylesheet"/>
     <link href="/css/tabler-icons.min.css" rel="stylesheet"/>
-    
-    <!-- Custom CSS -->
-    <link href="/css/styles.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
     
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
     <link rel="manifest" href="/img/site.webmanifest">
     <link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="/img/favicon.ico">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-config" content="/img/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
@@ -46,89 +47,40 @@
     <!-- Additional Header Content -->
     {{ if .ExtraStyles }}{{ .ExtraStyles }}{{ end }}
     
-    <!-- Примусове застосування шрифту Inter -->
-    <style>
-        /* Безпосередньо імпортуємо Google Fonts для миттєвого застосування */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap&subset=cyrillic,cyrillic-ext');
-        
-        /* Глобальні правила з високою специфічністю */
-        html, body, div, span, applet, object, iframe,
-        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-        a, abbr, acronym, address, big, cite, code,
-        del, dfn, em, img, ins, kbd, q, s, samp,
-        small, strike, strong, sub, sup, tt, var,
-        b, u, i, center,
-        dl, dt, dd, ol, ul, li,
-        fieldset, form, label, legend,
-        table, caption, tbody, tfoot, thead, tr, th, td,
-        article, aside, canvas, details, embed, 
-        figure, figcaption, footer, header, hgroup, 
-        menu, nav, output, ruby, section, summary,
-        time, mark, audio, video {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-        }
-        
-        /* Для всіх елементів у документі */
-        * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        /* Клас для примусового застосування шрифту */
-        .font-inter, .font-inter * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-        }
-        
-        /* Специфічні елементи сторінки дашборду */
-        .page-header, .page-header *,
-        .page-title, .page-pretitle,
-        .navbar, .navbar *,
-        .nav, .nav *,
-        .card, .card *,
-        .card-title, .card-header, .card-body,
-        .dropdown-menu, .dropdown-item,
-        .table, .table *, 
-        .btn, .btn *, 
-        .form-control {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-        }
-        
-        /* Специфічні налаштування для заголовків */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-            font-weight: 700;
-        }
-        
-        /* Для покращення відображення кирилиці */
-        body {
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-        }
-    </style>
+    <!-- Title -->
+    <title>{% block title %}{% endblock %} - TimeBride</title>
+
+    <!-- SEO and Open Graph meta tags -->
+    <meta name="description" content="{% block meta_description %}TimeBride - CRM система для фотографів та відеографів{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{% endblock %} - TimeBride">
+    <meta property="og:description" content="{% block og_description %}TimeBride - CRM система для фотографів та відеографів{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}/img/og-image.jpg{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}https://timebride.io{% endblock %}">
+    <meta property="og:type" content="website">
+
+    <!-- Default theme settings -->
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1d21" media="(prefers-color-scheme: dark)">
+
+    <!-- Page specific CSS -->
+    {% block styles %}{% endblock %}
     
     <!-- Додатковий JavaScript для гарантованого застосування шрифтів -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Додати шрифт Google безпосередньо до документа
-        const linkElement = document.createElement('link');
-        linkElement.rel = 'stylesheet';
-        linkElement.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap&subset=cyrillic,cyrillic-ext';
-        document.head.appendChild(linkElement);
-        
         // Додати клас font-inter до html і body
         document.documentElement.classList.add('font-inter');
         document.body.classList.add('font-inter');
         
-        // Застосувати шрифт до всіх елементів
-        const allElements = document.querySelectorAll('*');
-        for (let i = 0; i < allElements.length; i++) {
-            const el = allElements[i];
-            el.style.fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-        }
+        // Додаткова перевірка завантаження шрифту
+        document.fonts.ready.then(function() {
+            // Додаємо клас, коли шрифти завантажені
+            document.documentElement.classList.add('fonts-loaded');
+        });
     });
     </script>
+    
+    <!-- Script для примусового застосування стилів -->
+    <script src="/js/force-styles.js"></script>
 {{end}} 

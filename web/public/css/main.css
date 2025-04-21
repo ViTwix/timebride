@@ -1,0 +1,825 @@
+/*
+ * TimeBride - Єдиний CSS файл
+ * Цей файл містить усі стилі проекту, об'єднані в одному місці
+ */
+
+/* Google Fonts - Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap&subset=cyrillic,cyrillic-ext');
+
+/*--------------------------------------------------------------
+# 1. Змінні
+--------------------------------------------------------------*/
+:root {
+  /* Основна палітра кольорів */
+  --color-background: #FFFFFF;
+  --color-section-bg: #F8F5F2;
+  --color-light-accent: #E3D5CA;
+  --color-neutral-accent: #D6CCC2;
+  --color-contrast-accent: #D5BDAF;
+  --color-accent-dark: #B69B8D;
+  
+  /* Текстові кольори */
+  --color-text-primary: #2a2a2a;
+  --color-text-secondary: #4A4744;
+  --color-text-muted: #6C757D;
+  --color-text-light: #FFFFFF;
+  
+  /* Кольори кнопок */
+  --color-button-primary: #D5BDAF;
+  --color-button-primary-hover: #C9AE9D;
+  --color-button-primary-active: #C1A595;
+  --color-button-text: #FFFFFF;
+  --color-button-outline-hover: #D5BDAF;
+  --color-button-outline-active: #C9AE9D;
+  
+  /* Кольори для статусів */
+  --color-success: #8de3bb;
+  --color-success-hover: #6ecaae;
+  --color-success-active: #7ecca8;
+  
+  --color-danger: #dc3545;
+  --color-danger-hover: #e35d6a;
+  --color-danger-active: #bb2d3b;
+  
+  --color-warning: #ffc107;
+  --color-warning-hover: #ffca2c;
+  --color-warning-active: #d39e00;
+  
+  --color-info: #0dcaf0;
+  --color-info-hover: #31d2f2;
+  --color-info-active: #0aa1c0;
+  
+  /* Фоновий колір хедера і футера */
+  --color-header-bg: #D5BDAF;
+  --color-footer-bg: #D5BDAF;
+  
+  /* Колір іконок */
+  --color-icon-primary: #2A2A2A;
+  --color-icon-secondary: #6C757D;
+  
+  /* Шрифти */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  
+  /* Тіні */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.03);
+  --shadow-card-hover: 0 6px 12px rgba(0, 0, 0, 0.06);
+  --shadow-navbar: 0 2px 4px rgba(0, 0, 0, 0.03);
+  
+  /* Радіуси */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-rounded: 50%;
+  --radius-full: 9999px;
+  
+  /* Анімація */
+  --transition-speed: 0.2s;
+  --transition-timing: ease-in-out;
+  
+  /* Відступи */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
+  
+  /* Розміри */
+  --navbar-height: 70px;
+  --navbar-padding: 1rem;
+  --section-padding: 3rem;
+  
+  /* Z-індекси */
+  --z-index-navbar: 1030;
+  --z-index-dropdown: 1000;
+  --z-index-modal: 1050;
+  --z-index-tooltip: 1070;
+  
+  /* Placeholders */
+  --color-placeholder: #EFE8E2;
+  
+  /* Tabler змінні для інтеграції */
+  --tblr-primary: var(--color-contrast-accent);
+  --tblr-primary-rgb: 213, 189, 175;
+  --tblr-primary-hover: var(--color-neutral-accent);
+  --tblr-primary-hover-rgb: 214, 204, 194;
+  --tblr-primary-active: var(--color-light-accent);
+  --tblr-primary-active-rgb: 227, 213, 202;
+  --tblr-bg-surface: var(--color-background);
+  --tblr-bg-surface-secondary: var(--color-section-bg);
+  --tblr-bg-surface-tertiary: var(--color-light-accent);
+  --tblr-body-color: var(--color-text-primary);
+  --tblr-body-color-rgb: 42, 42, 42;
+  --tblr-secondary-color: var(--color-text-secondary);
+  --tblr-secondary-color-rgb: 74, 71, 68;
+  --tblr-border-color: var(--color-neutral-accent);
+  --tblr-border-color-translucent: rgba(214, 204, 194, 0.5);
+  --tblr-box-shadow: var(--shadow-md);
+  --tblr-box-shadow-sm: var(--shadow-sm);
+  --tblr-box-shadow-lg: var(--shadow-lg);
+  --tblr-border-radius: var(--radius-md);
+  --tblr-border-radius-sm: var(--radius-sm);
+  --tblr-border-radius-lg: var(--radius-lg);
+  --tblr-font-sans-serif: var(--font-family);
+}
+
+/*--------------------------------------------------------------
+# 2. Шрифти
+--------------------------------------------------------------*/
+/* Локальні шрифти (для кращої продуктивності та офлайн-підтримки) */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Inter-Regular.woff2') format('woff2'),
+       url('../fonts/Inter-Regular.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/Inter-Medium.woff2') format('woff2'),
+       url('../fonts/Inter-Medium.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Inter-Bold.woff2') format('woff2'),
+       url('../fonts/Inter-Bold.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Inter-Italic.woff2') format('woff2'),
+       url('../fonts/Inter-Italic.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* Налаштування рендерингу шрифтів для кращої якості */
+html, body {
+  font-family: var(--font-family) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Основні елементи з примусовим використанням Inter */
+body, h1, h2, h3, h4, h5, h6, p, span, a, div, input, button, select, textarea, table {
+  font-family: var(--font-family) !important;
+}
+
+/* Ваги шрифтів */
+.font-weight-bold, .fw-bold, strong, b {
+  font-weight: 700 !important;
+}
+
+.font-weight-medium, .fw-medium {
+  font-weight: 500 !important;
+}
+
+.font-weight-normal, .fw-normal {
+  font-weight: 400 !important;
+}
+
+/* Утилітарний клас */
+.font-inter {
+  font-family: var(--font-family) !important;
+}
+
+/* Перевизначення класів Tabler для відповідності нашій палітрі */
+.text-secondary {
+  color: var(--color-text-secondary) !important;
+}
+
+.text-accent {
+  color: var(--color-contrast-accent) !important;
+}
+
+/* Перевизначення класів для заголовків */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+}
+
+h1.display-3, h2.display-5 {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Основні кольори тексту */
+.text-primary {
+  color: var(--color-text-primary) !important;
+}
+
+.text-muted {
+  color: var(--color-text-muted) !important;
+}
+
+/*--------------------------------------------------------------
+# 3. Кнопки
+--------------------------------------------------------------*/
+/* Основні кнопки */
+.btn {
+  border-radius: 4px;
+  padding: 0.5rem 1.5rem;
+  font-weight: var(--font-weight-medium);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-family: var(--font-family);
+  position: relative;
+  overflow: hidden;
+  transition: background-color var(--transition-speed) var(--transition-timing), 
+              border-color var(--transition-speed) var(--transition-timing), 
+              color var(--transition-speed) var(--transition-timing),
+              transform var(--transition-speed) var(--transition-timing),
+              box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+/* Primary Button */
+.btn-primary {
+  background-color: var(--color-button-primary);
+  border-color: var(--color-button-primary);
+  color: var(--color-button-text);
+}
+
+.btn-primary:hover, 
+.btn-primary:focus {
+  background-color: var(--color-button-primary-hover);
+  border-color: var(--color-button-primary-hover);
+  color: var(--color-button-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:active,
+.btn-primary.active {
+  background-color: var(--color-button-primary-active);
+  border-color: var(--color-button-primary-active);
+  color: var(--color-button-text);
+  box-shadow: 0 0 0 0.2rem rgba(213, 189, 175, 0.5);
+}
+
+/* Outline Primary Button */
+.btn-outline-primary {
+  color: var(--color-button-primary);
+  border-color: var(--color-button-primary);
+  background-color: transparent;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background-color: var(--color-button-outline-hover);
+  color: var(--color-button-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-primary:active,
+.btn-outline-primary.active {
+  background-color: var(--color-button-outline-active);
+  border-color: var(--color-button-outline-active);
+  color: var(--color-button-text);
+  box-shadow: 0 0 0 0.2rem rgba(213, 189, 175, 0.5);
+}
+
+/* Outline Dark Button */
+.btn-outline-dark {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+  background-color: transparent;
+}
+
+.btn-outline-dark:hover,
+.btn-outline-dark:focus {
+  background-color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+  color: var(--color-background);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-dark:active,
+.btn-outline-dark.active {
+  background-color: var(--color-text-secondary);
+  border-color: var(--color-text-secondary);
+  color: var(--color-background);
+  box-shadow: 0 0 0 0.2rem rgba(42, 42, 42, 0.3);
+}
+
+/* Success Button */
+.btn-success {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: var(--color-success-hover);
+  border-color: var(--color-success-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-success:active,
+.btn-success.active {
+  background-color: var(--color-success-active);
+  border-color: var(--color-success-active);
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.3);
+}
+
+/* Danger Button */
+.btn-danger {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  background-color: var(--color-danger-hover);
+  border-color: var(--color-danger-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-danger:active,
+.btn-danger.active {
+  background-color: var(--color-danger-active);
+  border-color: var(--color-danger-active);
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.3);
+}
+
+/* Button Sizes */
+.btn-lg {
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+}
+
+.btn-sm {
+  padding: 0.25rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* Navbar Buttons */
+.navbar .btn {
+  padding: 0.375rem 1rem;
+}
+
+/* Form Buttons */
+.form-login .btn, 
+.form-register .btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Button Animation */
+.btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: width 0.5s, height 0.5s, opacity 0.5s;
+}
+
+.btn:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 1;
+  transition: 0s;
+}
+
+/*--------------------------------------------------------------
+# 4. Основні стилі
+--------------------------------------------------------------*/
+/* Базові стилі */
+body {
+  min-height: 100vh;
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+}
+
+/* Кастомні класи для сторінок */
+.page-body {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Перевизначення стилів навігації */
+.navbar {
+  background-color: var(--color-header-bg);
+  border-bottom: 1px solid var(--color-neutral-accent);
+}
+
+.navbar-dark {
+  background-color: var(--color-section-bg);
+}
+
+.navbar-brand {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.nav-link {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.nav-link:hover {
+  color: var(--color-text-primary);
+  opacity: 0.85;
+}
+
+.nav-link.active {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+body.login-page {
+  background-color: var(--color-section-bg);
+}
+
+/* Fixed Header */
+.navbar-fixed-top {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: var(--z-index-navbar);
+  width: 100%;
+  box-shadow: var(--shadow-navbar);
+  background-color: var(--color-header-bg);
+}
+
+/* Compensate for fixed header */
+.navbar-fixed-top ~ section:first-of-type,
+.hero-has-navbar {
+  padding-top: calc(var(--navbar-height) + var(--navbar-padding));
+}
+
+/* Стилі карток */
+.card {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-neutral-accent);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card-header {
+  background-color: var(--color-section-bg);
+  border-bottom: 1px solid var(--color-neutral-accent);
+}
+
+.card-sm {
+  border-radius: var(--radius-sm);
+}
+
+/* Стилі форм */
+.form-control {
+  border-color: var(--color-neutral-accent);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.form-control:focus {
+  border-color: var(--color-contrast-accent);
+  box-shadow: 0 0 0 0.25rem rgba(213, 189, 175, 0.25);
+}
+
+.form-label {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.form-hint {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Стилі таблиць */
+.table {
+  color: var(--color-text-primary);
+}
+
+.table thead th {
+  background-color: var(--color-section-bg);
+  border-bottom-color: var(--color-neutral-accent);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-bold);
+}
+
+.table td {
+  border-top-color: var(--color-neutral-accent);
+}
+
+/* Стилі бейджів */
+.badge {
+  font-weight: var(--font-weight-medium);
+}
+
+.badge.bg-primary {
+  background-color: var(--color-contrast-accent) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--color-neutral-accent) !important;
+}
+
+.badge.bg-success {
+  background-color: var(--color-success) !important;
+}
+
+.badge.bg-warning {
+  background-color: var(--color-warning) !important;
+}
+
+.badge.bg-danger {
+  background-color: var(--color-danger) !important;
+}
+
+.badge.bg-info {
+  background-color: var(--color-info) !important;
+}
+
+/* Стилі футера */
+.footer {
+  background-color: var(--color-footer-bg);
+  border-top: 1px solid var(--color-neutral-accent);
+}
+
+/* Стилі дропдаунів */
+.dropdown-menu {
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.dropdown-item {
+  color: var(--color-text-primary);
+}
+
+.dropdown-divider {
+  border-top-color: var(--color-neutral-accent);
+}
+
+/* Стилі модалок */
+.modal-content {
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+}
+
+.modal-header {
+  border-bottom-color: var(--color-neutral-accent);
+}
+
+.modal-footer {
+  border-top-color: var(--color-neutral-accent);
+}
+
+/* Стилі алертів */
+.alert {
+  border-radius: var(--radius-md);
+}
+
+.alert-primary {
+  background-color: rgba(213, 189, 175, 0.2);
+  border-color: var(--color-contrast-accent);
+  color: var(--color-text-primary);
+}
+
+.alert-secondary {
+  background-color: rgba(214, 204, 194, 0.2);
+  border-color: var(--color-neutral-accent);
+  color: var(--color-text-primary);
+}
+
+/* Стилі пагінації */
+.pagination .page-link {
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--color-contrast-accent);
+  border-color: var(--color-contrast-accent);
+  color: var(--color-button-text);
+}
+
+.pagination .page-item.disabled .page-link {
+  color: var(--color-text-muted);
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+}
+
+/* Стилі прогресбарів */
+.progress {
+  background-color: var(--color-section-bg);
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  background-color: var(--color-contrast-accent);
+  border-radius: var(--radius-full);
+}
+
+/* Спінери */
+.spinner-border {
+  color: var(--color-contrast-accent);
+}
+
+/* Тултіпи та поповери */
+.tooltip .tooltip-inner {
+  background-color: var(--color-text-primary);
+  color: var(--color-background);
+  border-radius: var(--radius-sm);
+}
+
+.popover {
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.popover-header {
+  background-color: var(--color-section-bg);
+  border-bottom-color: var(--color-neutral-accent);
+  color: var(--color-text-primary);
+}
+
+/* Аватари */
+.avatar {
+  background-color: var(--color-section-bg);
+  color: var(--color-text-primary);
+}
+
+/* List Group */
+.list-group-item {
+  background-color: var(--color-background);
+  border-color: var(--color-neutral-accent);
+  color: var(--color-text-primary);
+}
+
+.list-group-item:first-child {
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+}
+
+.list-group-item:last-child {
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+/* Центрування сторінки */
+.page-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--navbar-padding) 0;
+}
+
+/* Картка авторизації */
+.auth-card {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-md);
+}
+
+/* Loader */
+.loader {
+  border: 3px solid var(--color-section-bg);
+  border-top: 3px solid var(--color-contrast-accent);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Адаптивна типографіка */
+.page-title, h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.page-pretitle {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Додаткові відступи */
+.py-6 {
+  padding-top: 4rem !important;
+  padding-bottom: 4rem !important;
+}
+
+.py-7 {
+  padding-top: 5rem !important;
+  padding-bottom: 5rem !important;
+}
+
+.mt-7 {
+  margin-top: 5rem !important;
+}
+
+/*--------------------------------------------------------------
+# 5. Responsive
+--------------------------------------------------------------*/
+/* Мобільні стилі */
+@media (max-width: 768px) {
+  .py-6 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+  
+  .py-7 {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+  
+  .mt-7 {
+    margin-top: 3.5rem !important;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+  }
+  
+  .auth-card {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+}
+
+/*--------------------------------------------------------------
+# 6. Utility Classes
+--------------------------------------------------------------*/
+/* Перевизначення стандартних стилів для хорошого результату без шрифтів */
+.fonts-loading {
+  opacity: 0.95;
+}
+
+.fonts-loaded {
+  opacity: 1;
+  transition: opacity 0.1s ease-in;
+}
+
+/* Додаткові налаштування для кращої читабельності */
+* {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Color utility classes */
+.bg-primary-light {
+  background-color: var(--color-light-accent) !important;
+}
+
+.color-footer-bg {
+  background-color: var(--color-footer-bg) !important;
+}
+
+.text-accent {
+  color: var(--color-contrast-accent) !important;
+} 

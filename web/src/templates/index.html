@@ -1,61 +1,694 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="uk" class="font-inter">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TimeBride - Система управління фотозйомками</title>
+    <title>TimeBride - Інтелектуальна CRM для фотографів та відеографів</title>
+    <link rel="stylesheet" href="/css/tabler.min.css">
+    <link rel="stylesheet" href="/css/tabler-icons.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+    <link rel="manifest" href="/img/site.webmanifest">
+    <link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#6D4C41">
+    <meta name="msapplication-config" content="/img/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    
     <style>
+        /* CSS Variables */
+        :root {
+            --white: #FFFFFF;
+            --background: #FFFFFF;
+            --section-bg: #F8F5F2;
+            --light-accent: #E3D5CA;
+            --neutral-accent: #9d8d78;
+            --contrast-accent: #D5BDAF;
+            --text-color: #2A2A2A;
+            --secondary-text: #4A4744;
+            --primary-color: #6D4C41;
+            --secondary-color: #D5BDAF;
+        }
+
+        /* Base typography */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
             line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            color: #333;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        
+        .bg-primary-light {
+            background-color: var(--neutral-accent);
         }
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
+        
+        .bg-secondary-light {
+            background-color: var(--secondary-color);
         }
-        .card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+        
+        .text-accent {
+            color: var(--accent-color);
         }
-        .btn {
-            display: inline-block;
-            background: #3498db;
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 4px;
-            text-decoration: none;
-            margin-right: 10px;
+        
+        .hero-section {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/img/photography-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 0;
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            color: var(--contrast-accent);
+        }
+        
+        .testimonial-card {
+            border-left: 4px solid var(--contrast-accent);
+        }
+        
+        .pricing-card.popular {
+            border: 2px solid var(--contrast-accent);
+            transform: scale(1.05);
+        }
+        
+        .footer-dark {
+            background-color: var(--text-color);
+            color: white;
+        }
+        
+        .color-footer-bg {
+            background-color: var(--primary-color);
+        }
+
+        /* Додаткові стилі для кнопок */
+        .btn-primary {
+            background-color: #6D4C41 !important;
+            border-color: #6D4C41 !important;
+            color: #FFFFFF !important;
+        }
+
+        .btn-primary:hover, 
+        .btn-primary:focus {
+            background-color: #AC9588 !important;
+            border-color: #AC9588 !important;
+            color: #FFFFFF !important;
+        }
+
+        .btn-outline-primary {
+            color: #6D4C41 !important;
+            border-color: #6D4C41 !important;
+            background-color: transparent !important;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus {
+            background-color: #6D4C41 !important;
+            color: #FFFFFF !important;
+        }
+
+        .btn-outline-dark:hover,
+        .btn-outline-dark:focus {
+            background-color: #6D4C41 !important;
+            border-color: #6D4C41 !important;
+            color: #FFFFFF !important;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Вітаємо в TimeBride</h1>
-        
-        <div class="card">
-            <h2>Система управління фотозйомками та бронюваннями</h2>
-            <p>TimeBride допомагає фотографам та відеографам організовувати своє робоче життя:</p>
-            <ul>
-                <li>Керування календарем бронювань</li>
-                <li>Робота з галереями зображень</li>
-                <li>Управління клієнтами та контактами</li>
-                <li>Створення шаблонів для різних типів подій</li>
-            </ul>
-            
-            <a href="/login" class="btn">Увійти</a>
-            <a href="/register" class="btn">Зареєструватися</a>
+<body class="font-inter">
+    <!-- Навігаційний бар -->
+    <header class="navbar navbar-expand-md navbar-light bg-primary-light navbar-fixed-top">
+        <div class="container-xl">
+            <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+                <a href=".">
+                    <img src="/img/logo.svg" width="110" height="32" alt="TimeBride" class="navbar-brand-image">
+                </a>
+            </h1>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar-menu">
+                <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#features">
+                                <span class="nav-link-title">Можливості</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pricing">
+                                <span class="nav-link-title">Ціни</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#testimonials">
+                                <span class="nav-link-title">Відгуки</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#faq">
+                                <span class="nav-link-title">Питання</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-nav flex-row order-md-last">
+                    <div class="nav-item d-none d-md-flex me-3">
+                        <a href="/login" class="btn btn-outline-primary">Увійти</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/register" class="btn btn-primary">Реєстрація</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Головний банер -->
+    <section class="hero-section hero-has-navbar py-5 py-lg-6">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-3 text-secondary fw-bold mb-4 mt-7">Просто<br>Швидко<br>Без зайвого</h1>
+                    <p class="fs-1 mb-5">TimeBride — інтелектуальна CRM система для фотографів та відеографів, що об'єднує всі аспекти вашого бізнесу в одному місці.</p>
+                    <div class="d-flex gap-3 mb-5">
+                        <a href="/register" class="btn btn-lg btn-primary">Почати безкоштовно</a>
+                        <a href="#features" class="btn btn-lg btn-outline-dark">Дізнатися більше</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <img src="/img/dashboard-preview.png" alt="TimeBride Dashboard" class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Розділ переваг -->
+    <section class="py-6 py-lg-7 bg-primary-light" id="benefits">
+        <div class="container-xl">
+            <div class="text-center mb-5 mt-4">
+                <h2 class="display-5 text-secondary fw-bold mb-4">Чому TimeBride?</h2>
+                <p class="fs-4 mb-5">Система розроблена спеціально для фотографів та відеографів</p>
+            </div>
+            <div class="row g-4 g-lg-5">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4 p-lg-5">
+                            <div class="display-4 feature-icon mb-4">
+                                <i class="ti ti-calendar-time"></i>
+                            </div>
+                            <h3 class="card-title mb-3">Ефективне планування</h3>
+                            <p class="card-text">Зручний календар для бронювань і зустрічей з можливістю синхронізації з Google Calendar</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4 p-lg-5">
+                            <div class="display-4 feature-icon mb-4">
+                                <i class="ti ti-users"></i>
+                            </div>
+                            <h3 class="card-title mb-3">Управління клієнтами</h3>
+                            <p class="card-text">Повна база клієнтів з історією замовлень, контактами та персональними примітками</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4 p-lg-5">
+                            <div class="display-4 feature-icon mb-4">
+                                <i class="ti ti-file-dollar"></i>
+                            </div>
+                            <h3 class="card-title mb-3">Фінансовий облік</h3>
+                            <p class="card-text">Автоматичне відстеження платежів, формування рахунків та фінансова звітність</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Розділ функцій -->
+    <section class="py-6 py-lg-7 bg-white" id="features">
+        <div class="container-xl">
+            <div class="text-center mb-5 mt-4">
+                <h2 class="display-5 text-secondary fw-bold mb-4">Основні можливості</h2>
+                <p class="fs-4 mb-5">Всі інструменти для успішного ведення фотобізнесу</p>
+            </div>
+            <div class="row g-4 align-items-center mb-5">
+                <div class="col-md-6">
+                    <img src="/img/calendar-feature.png" alt="Календар бронювань" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-md-6">
+                    <h3 class="fs-1 fw-bold mb-3">Розумний календар бронювань</h3>
+                    <p class="fs-5 mb-4">Візуальний календар допомагає уникнути накладок і ефективно планувати свій час. Автоматичні нагадування клієнтам зменшують кількість пропущених зустрічей.</p>
+                    <ul class="list-unstyled">
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Зручний перегляд дня, тижня і місяця
+                        </li>
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Повторювані події та шаблони розкладу
+                        </li>
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Інтеграція з Google Calendar і Apple Calendar
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row g-4 align-items-center mb-5 flex-md-row-reverse">
+                <div class="col-md-6">
+                    <img src="/img/client-feature.png" alt="Управління клієнтами" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-md-6">
+                    <h3 class="fs-1 fw-bold mb-3">Повне управління клієнтами</h3>
+                    <p class="fs-5 mb-4">Зберігайте всю важливу інформацію про клієнтів в одному місці. Доступ до історії комунікацій, замовлень та побажань для персоналізованого підходу.</p>
+                    <ul class="list-unstyled">
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Детальні профілі клієнтів
+                        </li>
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Автоматичне сегментування та теги
+                        </li>
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Зручний пошук та фільтрація
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row g-4 align-items-center">
+                <div class="col-md-6">
+                    <img src="/img/contract-feature.png" alt="Шаблони документів" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-md-6">
+                    <h3 class="fs-1 fw-bold mb-3">Шаблони документів та договорів</h3>
+                    <p class="fs-5 mb-4">Створюйте професійні договори за допомогою готових шаблонів. Електронні підписи та автоматичне заповнення даних клієнтів економлять ваш час.</p>
+                    <ul class="list-unstyled">
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Бібліотека готових шаблонів
+                        </li>
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Електронні підписи та відправка
+                        </li>
+                        <li class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                            Повна історія версій та змін
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Розділ відгуків -->
+    <section class="py-6 py-lg-7 bg-primary-light" id="testimonials">
+        <div class="container-xl">
+            <div class="text-center mb-5 mt-4">
+                <h2 class="display-5 text-secondary fw-bold mb-4">Що кажуть наші клієнти</h2>
+                <p class="fs-4 mb-5">Відгуки професійних фотографів та відеографів, які використовують TimeBride</p>
+            </div>
+            <div class="row g-4 g-lg-5">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm testimonial-card">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <img src="/img/avatars/avatar-1.jpg" class="avatar me-3" alt="Аватар">
+                                <div>
+                                    <h5 class="mb-0">Олександр Петренко</h5>
+                                    <small class="text-muted">Весільний фотограф</small>
+                                </div>
+                            </div>
+                            <p class="card-text mb-0">"TimeBride дозволив мені сфокусуватися на творчості замість адміністративної роботи. Тепер я витрачаю на 70% менше часу на управління замовленнями."</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm testimonial-card">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <img src="/img/avatars/avatar-2.jpg" class="avatar me-3" alt="Аватар">
+                                <div>
+                                    <h5 class="mb-0">Марія Ковальчук</h5>
+                                    <small class="text-muted">Сімейний фотограф</small>
+                                </div>
+                            </div>
+                            <p class="card-text mb-0">"Неймовірно зручно мати календар, клієнтську базу та фінанси в одному місці. Моя улюблена функція - автоматичні нагадування клієнтам."</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm testimonial-card">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <img src="/img/avatars/avatar-3.jpg" class="avatar me-3" alt="Аватар">
+                                <div>
+                                    <h5 class="mb-0">Іван Мельник</h5>
+                                    <small class="text-muted">Відеограф</small>
+                                </div>
+                            </div>
+                            <p class="card-text mb-0">"З TimeBride я забув, що таке пропущені зустрічі та незадоволені клієнти. Система просто рятує мене щодня і допомагає підтримувати професійний імідж."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Розділ тарифів -->
+    <section class="py-6 py-lg-7 bg-white" id="pricing">
+        <div class="container-xl">
+            <div class="text-center mb-5 mt-4">
+                <h2 class="display-5 text-secondary fw-bold mb-4">Простий і прозорий підхід до ціноутворення</h2>
+                <p class="fs-4 mb-5">Виберіть план, який відповідає вашим потребам</p>
+            </div>
+            <div class="row g-4 g-lg-5 mb-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 p-lg-5">
+                            <h3 class="card-title mb-4">Базовий</h3>
+                            <div class="display-5 mb-4">
+                                <span class="fw-bold">₴490</span>
+                                <small class="fs-6 text-muted">/місяць</small>
+                            </div>
+                            <p class="text-muted mb-4">Ідеальний варіант для початківців або фотографів-фрілансерів.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    До 30 бронювань в місяць
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Календар і синхронізація з Google
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Базова клієнтська база
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge text-bg-secondary me-2"><i class="ti ti-x"></i></span>
+                                    <span class="text-muted">Фінансова звітність</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge text-bg-secondary me-2"><i class="ti ti-x"></i></span>
+                                    <span class="text-muted">Брендування галереї</span>
+                                </li>
+                            </ul>
+                            <a href="/register" class="btn btn-outline-primary d-block">Спробувати безкоштовно</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm popular transform-none">
+                        <div class="position-absolute top-0 start-50 translate-middle">
+                            <span class="badge bg-primary px-3 py-2">Найпопулярніший</span>
+                        </div>
+                        <div class="card-body p-4 p-lg-5">
+                            <h3 class="card-title mb-4">Професійний</h3>
+                            <div class="display-5 mb-4">
+                                <span class="fw-bold">₴990</span>
+                                <small class="fs-6 text-muted">/місяць</small>
+                            </div>
+                            <p class="text-muted mb-4">Для активних фотографів з регулярними замовленнями.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Необмежена кількість бронювань
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Розширений календар з нагадуваннями
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Повна CRM-система для клієнтів
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Фінансова звітність і контракти
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge text-bg-secondary me-2"><i class="ti ti-x"></i></span>
+                                    <span class="text-muted">Брендування галереї</span>
+                                </li>
+                            </ul>
+                            <a href="/register" class="btn btn-primary d-block">Спробувати безкоштовно</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 p-lg-5">
+                            <h3 class="card-title mb-4">Бізнес</h3>
+                            <div class="display-5 mb-4">
+                                <span class="fw-bold">₴1490</span>
+                                <small class="fs-6 text-muted">/місяць</small>
+                            </div>
+                            <p class="text-muted mb-4">Для фотостудій та команд з кількома фотографами.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Все з тарифу "Професійний"
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Багатокористувацький доступ
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Розширена аналітика бізнесу
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    API-інтеграції з іншими сервісами
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    Брендовані галереї для кожного клієнта
+                                </li>
+                            </ul>
+                            <a href="/register" class="btn btn-outline-primary d-block">Спробувати безкоштовно</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Розділ питання та відповіді -->
+    <section class="py-6 py-lg-7 bg-primary-light" id="faq">
+        <div class="container-xl">
+            <div class="text-center mb-5 mt-4">
+                <h2 class="display-5 text-secondary fw-bold mb-4">Питання та відповіді</h2>
+                <p class="fs-4 mb-5">Відповіді на найпоширеніші запитання про TimeBride</p>
+            </div>
+            <div class="row g-4 g-lg-5">
+                <div class="col-lg-6">
+                    <div class="accordion" id="accordionFaq1">
+                        <div class="accordion-item border-0 shadow-sm mb-4">
+                            <h2 class="accordion-header" id="heading1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                    Скільки триває пробний період?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#accordionFaq1">
+                                <div class="accordion-body">
+                                    Безкоштовний пробний період триває 14 днів на будь-якому тарифному плані. За цей час ви зможете повністю оцінити всі можливості системи і зрозуміти, наскільки вона підходить для вашого бізнесу.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 shadow-sm mb-4">
+                            <h2 class="accordion-header" id="heading2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                                    Чи можу я змінити тарифний план?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#accordionFaq1">
+                                <div class="accordion-body">
+                                    Так, ви можете змінити тарифний план у будь-який момент. При підвищенні тарифу, різниця буде розрахована пропорційно до залишку днів у поточному розрахунковому періоді. При зниженні тарифу, новий тариф почне діяти з наступного розрахункового періоду.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 shadow-sm">
+                            <h2 class="accordion-header" id="heading3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                                    Чи можна синхронізувати з Google Calendar?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#accordionFaq1">
+                                <div class="accordion-body">
+                                    Так, TimeBride має повну двосторонню синхронізацію з Google Calendar. Це означає, що всі події, створені в TimeBride, будуть автоматично додані до вашого Google Calendar і навпаки.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="accordion" id="accordionFaq2">
+                        <div class="accordion-item border-0 shadow-sm mb-4">
+                            <h2 class="accordion-header" id="heading4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                    Як працює система сповіщень клієнтів?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#accordionFaq2">
+                                <div class="accordion-body">
+                                    TimeBride автоматично надсилає сповіщення вашим клієнтам електронною поштою або SMS (за вашим вибором). Ви можете налаштувати кілька нагадувань перед фотосесією, наприклад, за тиждень, за день і за годину до зйомки.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 shadow-sm mb-4">
+                            <h2 class="accordion-header" id="heading5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+                                    Чи можу я використовувати власний домен для галерей?
+                                </button>
+                            </h2>
+                            <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5" data-bs-parent="#accordionFaq2">
+                                <div class="accordion-body">
+                                    Так, на тарифі "Бізнес" ви можете налаштувати власний домен для клієнтських галерей. Це дозволить вам створити повністю брендований досвід для ваших клієнтів під вашим доменним ім'ям.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 shadow-sm">
+                            <h2 class="accordion-header" id="heading6">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+                                    Чи є обмеження на кількість клієнтів?
+                                </button>
+                            </h2>
+                            <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6" data-bs-parent="#accordionFaq2">
+                                <div class="accordion-body">
+                                    На жодному з тарифів немає обмежень на кількість клієнтів у вашій базі даних. Різниця лише в кількості активних бронювань на місяць на тарифі "Базовий".
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA розділ -->
+    <section class="py-6 py-lg-7 bg-white">
+        <div class="container-xl">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="display-5 text-secondary fw-bold mb-4">Готові спростити управління фотобізнесом?</h2>
+                    <p class="fs-4 mb-4">Почніть безкоштовний 14-денний пробний період вже зараз і відчуйте, як TimeBride змінить ваш робочий процес.</p>
+                    <div class="d-flex gap-3">
+                        <a href="/register" class="btn btn-lg btn-primary">Почати безкоштовно</a>
+                        <a href="#benefits" class="btn btn-lg btn-outline-dark">Дізнатися більше</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <img src="/img/calendar-feature.png" alt="TimeBride Calendar" class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="py-5 bg-secondary-light">
+        <div class="container-xl">
+            <div class="row g-5">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <a href="/" class="d-inline-block mb-4">
+                        <img src="/img/logo-white.svg" alt="TimeBride" height="32" class="mb-3">
+                    </a>
+                    <p class="text-white">TimeBride — інтелектуальна CRM-система, розроблена спеціально для фотографів та відеографів. <br>Ми допомагаємо керувати бронюваннями, клієнтами і бізнесом.</p>
+                    <div class="mt-4">
+                        <a href="#" class="btn btn-icon btn-sm btn-outline-light me-2"><i class="ti ti-brand-facebook"></i></a>
+                        <a href="#" class="btn btn-icon btn-sm btn-outline-light me-2"><i class="ti ti-brand-instagram"></i></a>
+                        <a href="#" class="btn btn-icon btn-sm btn-outline-light"><i class="ti ti-brand-telegram"></i></a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <h5 class="text-white mb-4">Компанія</h5>
+                    <ul class="text-white">
+                        <li class="mb-2"><a href="#" class="text-white">Про нас</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Блог</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Кар'єра</a></li>
+                        <li><a href="#" class="text-white">Контакти</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <h5 class="text-white mb-4">Функції</h5>
+                    <ul class="text-white">
+                        <li class="mb-2"><a href="#" class="text-white">Календар</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">CRM-система</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Фінанси</a></li>
+                        <li><a href="#" class="text-white">Галереї</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <h5 class="text-white mb-4">Підтримка</h5>
+                    <ul class="text-white">
+                        <li class="mb-2"><a href="#" class="text-white">Документація</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">FAQ</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Зв'язатися з нами</a></li>
+                        <li><a href="#" class="text-white">Спільнота</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <h5 class="text-white mb-4">Юридична інформація</h5>
+                    <ul class="text-white">
+                        <li class="mb-2"><a href="#" class="text-white">Умови використання</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Політика конфіденційності</a></li>
+                        <li><a href="#" class="text-white">Правила обробки даних</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-top border-light mt-5 pt-4">
+                <div class="row align-items-center">
+                    <div class="text-white text-center text-md-start">
+                        <p class="mb-md-0 text-white">&copy; 2023 TimeBride. Всі права захищені.</p>
+                    </div>
+                    <div class="text-white text-center text-md-end">
+                        <p class="mb-0 text-white">Зроблено з <i class="ti ti-heart text-white"></i> в Україні</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипти -->
+    <script src="/js/tabler.min.js"></script>
+    <script src="/js/inter-font-loader.js"></script>
+    <script src="/js/image-placeholders.js"></script>
+    <script src="/js/force-styles.js"></script>
+    <script>
+        // Анімація при прокрутці
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                    }
+                });
+            }, { threshold: 0.2 });
+            
+            // Плавна прокрутка до якорів
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        window.scrollTo({
+                            top: target.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html> 

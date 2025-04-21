@@ -123,6 +123,7 @@ func Auth(c *fiber.Ctx) error {
 		"/images",
 		"/css",
 		"/js",
+		"/fonts",
 		"/favicon.ico",
 	}
 

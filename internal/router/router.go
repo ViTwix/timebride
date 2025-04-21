@@ -24,6 +24,7 @@ type Router struct {
 	templateHandler  *handlers.TemplateHandler
 	fileHandler      *handlers.FileHandler
 	userHandler      *handlers.UserHandler
+	landingHandler   *handlers.LandingHandler
 }
 
 func New(
@@ -59,6 +60,10 @@ func New(
 	app.Static("/css", "./web/public/css")
 	app.Static("/js", "./web/public/js")
 	app.Static("/img", "./web/public/img")
+	app.Static("/fonts", "./web/public/fonts")
+
+	// Створюємо обробник лендінгу
+	landingHandler := handlers.NewLandingHandler()
 
 	return &Router{
 		app:              app,
@@ -69,18 +74,20 @@ func New(
 		templateHandler:  templateHandler,
 		fileHandler:      fileHandler,
 		userHandler:      userHandler,
+		landingHandler:   landingHandler,
 	}
 }
 
 func (r *Router) SetupRoutes() {
 	// Публічні маршрути
+	r.app.Get("/", r.landingHandler.HandleLanding) // Лендінг-сторінка для неавторизованих користувачів
 	r.app.Get("/login", r.authHandler.ShowLoginPage)
 	r.app.Post("/login", r.authHandler.HandleLogin)
 	r.app.Get("/register", r.authHandler.ShowRegisterPage)
 	r.app.Post("/register", r.authHandler.HandleRegister)
 
 	// Захищені маршрути
-	app := r.app.Group("/")
+	app := r.app.Group("/app")
 
 	// Передаємо секретний ключ для перевірки JWT токена
 	app.Use(func(c *fiber.Ctx) error {
@@ -96,7 +103,7 @@ func (r *Router) SetupRoutes() {
 
 	app.Use(middleware.Auth)
 
-	// Дашборд
+	// Дашборд (головна сторінка для авторизованих користувачів)
 	app.Get("/", r.dashboardHandler.HandleDashboard)
 	app.Get("/dashboard", r.dashboardHandler.HandleDashboard)
 

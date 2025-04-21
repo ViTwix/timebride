@@ -43,19 +43,292 @@
 <!-- Page body -->
 <div class="page-body">
     <div class="container-xl">
+        <!-- Metrics cards -->
+        <div class="row row-deck row-cards mb-4">
+            <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="subheader">Bookings</div>
+                        </div>
+                        <div class="d-flex align-items-baseline">
+                            <div class="h1 mb-0">12</div>
+                            <div class="ms-2">This Month</div>
+                        </div>
+                        <div class="avatar bg-primary-lt mt-3">
+                            <i class="ti ti-file"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="subheader">Earnings</div>
+                        </div>
+                        <div class="d-flex align-items-baseline">
+                            <div class="h1 mb-0">$7,200</div>
+                            <div class="ms-2">This Month</div>
+                        </div>
+                        <div class="avatar bg-green-lt mt-3">
+                            <i class="ti ti-cash"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="subheader">Clients</div>
+                        </div>
+                        <div class="d-flex align-items-baseline">
+                            <div class="h1 mb-0">105</div>
+                            <div class="ms-2">Active</div>
+                        </div>
+                        <div class="avatar bg-azure-lt mt-3">
+                            <i class="ti ti-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="subheader">Contracts</div>
+                        </div>
+                        <div class="d-flex align-items-baseline">
+                            <div class="h1 mb-0">8</div>
+                            <div class="ms-2">This Month</div>
+                        </div>
+                        <div class="avatar bg-yellow-lt mt-3">
+                            <i class="ti ti-file-invoice"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row row-deck row-cards">
+            <!-- Booking chart -->
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Панель керування</h3>
+                        <h3 class="card-title">Bookings</h3>
+                        <div class="card-actions">
+                            <a href="/bookings" class="btn btn-primary btn-sm">View all</a>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <p>Ласкаво просимо до TimeBride!</p>
-                        <p>Система управління фотосесіями та бронюваннями</p>
+                        <div id="chart-bookings" class="chart-lg"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent bookings and client tables on the bottom row -->
+            <div class="col-md-6 col-lg-7">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Bookings</h3>
+                        <div class="card-actions">
+                            <a href="/bookings" class="btn-link">View all</a>
+                        </div>
+                    </div>
+                    <div class="list-group list-group-flush overflow-auto" style="max-height: 35rem">
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="badge bg-blue"></span>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div><strong>Jane & John Wedding</strong></div>
+                                        <div class="text-muted">April 2, 2024</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="badge bg-green"></span>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div><strong>Emily Photoshoot</strong></div>
+                                        <div class="text-muted">April 2, 2024</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="badge bg-blue"></span>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div><strong>Michael & Sarah Wedding</strong></div>
+                                        <div class="text-muted">April 15, 2024</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="badge bg-yellow"></span>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div><strong>Corporate Event</strong></div>
+                                        <div class="text-muted">April 10, 2024</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clients overview -->
+            <div class="col-md-6 col-lg-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Client Overview</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter card-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Jane Smith</td>
+                                    <td class="text-muted">jane.smith@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td>John Doe</td>
+                                    <td class="text-muted">john.doe@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td>Alice Johnson</td>
+                                    <td class="text-muted">alice.johnson@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td>Michael Brown</td>
+                                    <td class="text-muted">michael.brown@example.com</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Pending contracts -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Pending Contracts</h3>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-body d-block">Jane & John Wedding Contract</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-body d-block">Emily Photoshoot Agreement</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-body d-block">Michael & Sarah Wedding Contract</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Add the chart JS -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Check if ApexCharts is available
+    if (window.ApexCharts) {
+        var options = {
+            chart: {
+                type: 'line',
+                fontFamily: 'Inter, sans-serif',
+                height: 300,
+                toolbar: {
+                    show: false,
+                },
+                zoom: {
+                    enabled: false,
+                }
+            },
+            stroke: {
+                width: 2,
+                curve: 'smooth',
+                colors: ['#3b82f6']
+            },
+            grid: {
+                padding: {
+                    top: -20,
+                    right: 0,
+                    left: -4,
+                    bottom: -4
+                },
+                strokeDashArray: 4,
+            },
+            series: [{
+                name: "Bookings",
+                data: [6, 8, 15, 12, 20, 18]
+            }],
+            xaxis: {
+                categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                tooltip: {
+                    enabled: false
+                },
+                axisBorder: {
+                    show: false,
+                },
+            },
+            markers: {
+                size: 5,
+                colors: '#fff',
+                strokeColors: '#3b82f6',
+                strokeWidth: 2,
+                strokeOpacity: 0.9,
+                strokeDashArray: 0,
+                fillOpacity: 1,
+                shape: "circle",
+                radius: 5,
+                hover: {
+                    size: 7,
+                }
+            },
+            tooltip: {
+                theme: 'dark'
+            },
+        };
+        
+        var chart = new ApexCharts(document.querySelector("#chart-bookings"), options);
+        chart.render();
+    }
+});
+</script>
 {{ end }} 

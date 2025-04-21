@@ -8,14 +8,14 @@
   /* Кольори */
   --color-primary: #0d6efd;
   --color-primary-dark: #0b5ed7;
-  --color-secondary: #6c757d;
-  --color-secondary-dark: #5c636a;
-  --color-success: #198754;
-  --color-success-dark: #157347;
+  --color-secondary: #4A4744;
+  --color-secondary-dark: #4A4744;
+  --color-success: #8fdab7;
+  --color-success-dark: #8bcdae;
   --color-danger: #dc3545;
   --color-danger-dark: #bb2d3b;
   --color-warning: #ffc107;
-  --color-warning-dark: #ffca2c;
+  --color-warning-dark: #7f765b;
   --color-info: #0dcaf0;
   --color-info-dark: #0aa2c0;
   --color-light: #f8f9fa;

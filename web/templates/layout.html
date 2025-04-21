@@ -1,88 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk" class="font-inter">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}} - TimeBride</title>
+    
+    <!-- Основні стилі -->
+    <link rel="stylesheet" href="/css/tabler.min.css">
+    <link rel="stylesheet" href="/css/tabler-icons.min.css">
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/utilities.css">
+    
+    <!-- Фавікон -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/favicon-96x96.png">
+    
+    <!-- Додаткові стилі сторінок -->
     {{block "styles" .}}{{end}}
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen flex">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white shadow-sm hidden md:block">
-            <div class="h-full flex flex-col">
-                <!-- Logo -->
-                <div class="h-16 flex items-center px-6 border-b border-gray-200">
-                    <h1 class="text-xl font-bold text-gray-900">TimeBride</h1>
+<body>
+    <div class="page">
+        <!-- Навбар для мобільних пристроїв -->
+        <header class="navbar navbar-expand-md navbar-fixed-top d-md-none">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <h1 class="navbar-brand navbar-brand-light">
+                    <a href="/dashboard">
+                        <img src="/img/logo.svg" width="110" height="32" alt="TimeBride" class="navbar-brand-image">
+                    </a>
+                </h1>
+            </div>
+        </header>
+        
+        <div class="page-wrapper">
+            <!-- Боковий сайдбар -->
+            <aside class="navbar navbar-vertical navbar-expand-md">
+                <div class="container-fluid">
+                    <h1 class="navbar-brand">
+                        <a href="/dashboard">
+                            <img src="/img/logo.svg" width="110" height="32" alt="TimeBride" class="navbar-brand-image">
+                        </a>
+                    </h1>
+                    
+                    <div class="collapse navbar-collapse" id="navbar-menu">
+                        <ul class="navbar-nav pt-lg-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/dashboard">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
+                                    </span>
+                                    <span class="nav-link-title">Дашборд</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/bookings">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M18 14v4h4" /><path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M15 3v4" /><path d="M7 3v4" /><path d="M3 11h16" /></svg>
+                                    </span>
+                                    <span class="nav-link-title">Бронювання</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/templates">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 17h6" /><path d="M9 13h6" /></svg>
+                                    </span>
+                                    <span class="nav-link-title">Шаблони</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/files">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" /></svg>
+                                    </span>
+                                    <span class="nav-link-title">Файли</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-
-                <!-- Navigation -->
-                <nav class="flex-1 px-4 py-4 space-y-1">
-                    <a href="/dashboard" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                        </svg>
-                        Dashboard
-                    </a>
-                    <a href="/bookings" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        Bookings
-                    </a>
-                    <a href="/templates" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
-                        </svg>
-                        Templates
-                    </a>
-                    <a href="/files" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
-                        </svg>
-                        Files
-                    </a>
-                </nav>
-
-                <!-- User Menu -->
-                <div class="p-4 border-t border-gray-200">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white">
-                            {{.User.Initials}}
+            </aside>
+            
+            <!-- Основний контент -->
+            <div class="page-body">
+                <div class="container-fluid">
+                    <!-- Заголовок сторінки можна додати через блок -->
+                    {{block "page-header" .}}{{end}}
+                    
+                    <!-- Контент сторінки -->
+                    {{block "content" .}}{{end}}
+                </div>
+            </div>
+            
+            <!-- Футер -->
+            <footer class="footer footer-transparent">
+                <div class="container-fluid">
+                    <div class="row text-center align-items-center flex-row-reverse">
+                        <div class="col-lg-auto ms-lg-auto">
+                            <ul class="list-inline list-inline-dots mb-0">
+                                <li class="list-inline-item"><a href="#" class="link-secondary">Допомога</a></li>
+                                <li class="list-inline-item"><a href="#" class="link-secondary">Підтримка</a></li>
+                            </ul>
                         </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-900">{{.User.FullName}}</p>
-                            <p class="text-xs text-gray-500">{{.User.Email}}</p>
+                        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                            <ul class="list-inline list-inline-dots mb-0">
+                                <li class="list-inline-item">
+                                    &copy; 2023 <a href="/" class="link-secondary">TimeBride</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <div class="flex-1">
-            <!-- Mobile Header -->
-            <header class="bg-white shadow-sm md:hidden">
-                <div class="px-4 py-4 flex items-center justify-between">
-                    <h1 class="text-xl font-bold text-gray-900">TimeBride</h1>
-                    <button class="text-gray-500 hover:text-gray-700">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <main class="p-6">
-                {{block "content" .}}{{end}}
-            </main>
+            </footer>
         </div>
     </div>
-
+    
+    <!-- JavaScript файли -->
+    <script src="/js/tabler.min.js"></script>
     <script src="/js/main.js"></script>
+    <script src="/js/force-styles.js"></script>
+    
+    <!-- Додаткові скрипти сторінок -->
     {{block "scripts" .}}{{end}}
 </body>
 </html> 
