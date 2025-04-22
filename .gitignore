@@ -33,3 +33,4 @@ vendor/
 # Database
 *.db
 *.sqlite
+.env
