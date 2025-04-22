@@ -1,62 +1,309 @@
-{{ define "content" }}
-<!-- Debug information (will be removed in production) -->
-<div class="card mb-3">
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ if .Title }}{{ .Title }}{{ else }}Панель керування{{ end }} - TimeBride</title>
+    
+    <!-- CSS Tabler -->
+    <link href="/css/tabler.min.css" rel="stylesheet"/>
+    <link href="/css/tabler-icons.min.css" rel="stylesheet"/>
+    
+    <!-- Custom CSS -->
+    <link href="/css/main.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+    <link rel="manifest" href="/img/site.webmanifest">
+    <link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Inline стилі для темної бічної панелі -->
+    <style>
+        .navbar-dark {
+            background-color: #1e293b;
+        }
+        .navbar-dark .navbar-brand-autodark {
+            color: #fff;
+        }
+        .navbar-dark .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .navbar-dark .nav-link:hover,
+        .navbar-dark .nav-link.active {
+            color: #fff;
+        }
+        .navbar-dark .nav-link-icon {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .navbar-dark .nav-item.active .nav-link-icon,
+        .navbar-dark .nav-link:hover .nav-link-icon {
+            color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body class="layout-fluid">
+    <div class="page">
+        <!-- Sidebar navigation -->
+        <aside class="navbar navbar-vertical navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <h1 class="navbar-brand navbar-brand-autodark">
+                    <a href="/app">
+                        <img src="/img/logo.svg" width="110" height="32" alt="TimeBride" class="navbar-brand-image">
+                    </a>
+                </h1>
+                
+                <div class="collapse navbar-collapse" id="sidebar-menu">
+                    <ul class="navbar-nav pt-lg-3">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/app">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-home"></i>
+                                </span>
+                                <span class="nav-link-title">
+                                    Головна
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/app/calendar">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-calendar"></i>
+                                </span>
+                                <span class="nav-link-title">
+                                    Календар
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/app/bookings">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-book"></i>
+                                </span>
+                                <span class="nav-link-title">
+                                    Бронювання
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/app/gallery">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-photo"></i>
+                                </span>
+                                <span class="nav-link-title">
+                                    Галерея
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/app/clients">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-users"></i>
+                                </span>
+                                <span class="nav-link-title">
+                                    Клієнти
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-file-invoice"></i>
+                                </span>
+                                <span class="nav-link-title">
+                                    Фінанси
+                                </span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/app/invoices">
+                                    Рахунки
+                                </a>
+                                <a class="dropdown-item" href="/app/payments">
+                                    Платежі
+                                </a>
+                                <a class="dropdown-item" href="/app/reports">
+                                    Звіти
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-file-text"></i>
+                                </span>
+                                <span class="nav-link-title">
+                                    Документи
+                                </span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/app/templates">
+                                    Шаблони
+                                </a>
+                                <a class="dropdown-item" href="/app/contracts">
+                                    Договори
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+        
+        <div class="page-wrapper">
+            <!-- Верхній header -->
+            <header class="navbar navbar-expand-md navbar-light d-print-none">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <div class="navbar-nav flex-row order-md-last">
+                        <!-- Пошук -->
+                        <div class="nav-item d-none d-md-flex me-3">
+                            <div class="btn-list">
+                                <form action="/app/search" method="get">
+                                    <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <i class="ti ti-search"></i>
+                                        </span>
+                                        <input type="text" name="q" class="form-control" placeholder="Пошук...">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!-- Сповіщення -->
+                        <div class="nav-item dropdown d-none d-md-flex me-3">
+                            <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Сповіщення">
+                                <i class="ti ti-bell"></i>
+                                {{ if and .NotificationsCount (gt .NotificationsCount 0) }}
+                                <span class="badge bg-red">{{ .NotificationsCount }}</span>
+                                {{ end }}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-card">
+                                <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Debug Information</h3>
+                                        <h3 class="card-title">Сповіщення</h3>
+                                    </div>
+                                    <div class="list-group list-group-flush list-group-hoverable">
+                                        {{ if .Notifications }}
+                                            {{ range .Notifications }}
+                                            <div class="list-group-item">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <span class="status-dot {{ .Status }} d-block"></span>
+                                                    </div>
+                                                    <div class="col text-truncate">
+                                                        <a href="{{ .URL }}" class="text-body d-block">{{ .Title }}</a>
+                                                        <div class="d-block text-muted text-truncate mt-n1">
+                                                            {{ .Message }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{ end }}
+                                        {{ else }}
+                                            <div class="list-group-item">
+                                                <div class="row align-items-center">
+                                                    <div class="col text-center py-3">
+                                                        <div class="text-muted">У вас немає нових сповіщень</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{ end }}
+                                    </div>
     </div>
-    <div class="card-body">
-        <p><strong>User:</strong> {{ if .User }}{{ .User.FullName }} ({{ .User.Email }}){{ else }}Not set{{ end }}</p>
-        <p><strong>Stats:</strong> {{ if .Stats }}Stats available{{ else }}Not set{{ end }}</p>
     </div>
 </div>
 
-<!-- Page header -->
+                        <!-- Профіль користувача -->
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Відкрити меню користувача">
+                                <span class="avatar avatar-sm">{{ if .User.Initials }}{{ .User.Initials }}{{ else }}U{{ end }}</span>
+                                <div class="d-none d-xl-block ps-2">
+                                    <div>{{ if .User.FullName }}{{ .User.FullName }}{{ else }}Користувач{{ end }}</div>
+                                    <div class="mt-1 small text-muted">{{ if .User.Email }}{{ .User.Email }}{{ else }}email@example.com{{ end }}</div>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                <a href="/app/profile" class="dropdown-item">
+                                    <i class="ti ti-user me-2"></i>
+                                    Профіль
+                                </a>
+                                <a href="/app/settings" class="dropdown-item">
+                                    <i class="ti ti-settings me-2"></i>
+                                    Налаштування
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="/help" class="dropdown-item">
+                                    <i class="ti ti-help me-2"></i>
+                                    Допомога
+                                </a>
+                                <a href="/app/logout" class="dropdown-item">
+                                    <i class="ti ti-logout me-2"></i>
+                                    Вийти
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Основний контент сторінки -->
 <div class="page-header d-print-none">
     <div class="container-fluid">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <div class="page-pretitle">Загальна інформація</div>
-                <h2 class="page-title">Панель керування</h2>
+                            <div class="page-pretitle">{{ if .PagePreTitle }}{{ .PagePreTitle }}{{ else }}Загальна інформація{{ end }}</div>
+                            <h2 class="page-title">{{ if .PageTitle }}{{ .PageTitle }}{{ else }}Панель керування{{ end }}</h2>
             </div>
-            <!-- Page actions -->
+                        <!-- Кнопки дій -->
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
+                                {{ if .ActionButtons }}
+                                    {{ .ActionButtons }}
+                                {{ else }}
                     <span class="d-none d-sm-inline">
-                        <a href="/calendar" class="btn">
+                                        <a href="/app/calendar" class="btn">
                             <i class="ti ti-calendar"></i>
                             Календар
                         </a>
                     </span>
-                    <a href="/bookings/create" class="btn btn-primary d-none d-sm-inline-block">
+                                    <a href="/app/bookings/create" class="btn btn-primary d-none d-sm-inline-block">
                         <i class="ti ti-plus"></i>
                         Нове бронювання
                     </a>
-                    <a href="/bookings/create" class="btn btn-primary d-sm-none btn-icon">
+                                    <a href="/app/bookings/create" class="btn btn-primary d-sm-none btn-icon">
                         <i class="ti ti-plus"></i>
                     </a>
+                                {{ end }}
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Page body -->
 <div class="page-body">
-    <div class="container-xl">
-        <!-- Metrics cards -->
+                <div class="container-fluid">
+                    {{ if .Content }}
+                        {{ .Content }}
+                    {{ else }}
+                        <!-- Картки метрик -->
         <div class="row row-deck row-cards mb-4">
             <div class="col-sm-6 col-lg-3">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <div class="subheader">Bookings</div>
+                                            <div class="subheader">Бронювання</div>
                         </div>
                         <div class="d-flex align-items-baseline">
-                            <div class="h1 mb-0">12</div>
-                            <div class="ms-2">This Month</div>
-                        </div>
-                        <div class="avatar bg-primary-lt mt-3">
-                            <i class="ti ti-file"></i>
+                                            <div class="h1 mb-0">{{ if .Stats.TotalBookings }}{{ .Stats.TotalBookings }}{{ else }}0{{ end }}</div>
+                                            <div class="ms-2">Цього місяця</div>
                         </div>
                     </div>
                 </div>
@@ -65,14 +312,11 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <div class="subheader">Earnings</div>
+                                            <div class="subheader">Прибутки</div>
                         </div>
                         <div class="d-flex align-items-baseline">
-                            <div class="h1 mb-0">$7,200</div>
-                            <div class="ms-2">This Month</div>
-                        </div>
-                        <div class="avatar bg-green-lt mt-3">
-                            <i class="ti ti-cash"></i>
+                                            <div class="h1 mb-0">0₴</div>
+                                            <div class="ms-2">Цього місяця</div>
                         </div>
                     </div>
                 </div>
@@ -81,14 +325,11 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <div class="subheader">Clients</div>
+                                            <div class="subheader">Клієнти</div>
                         </div>
                         <div class="d-flex align-items-baseline">
-                            <div class="h1 mb-0">105</div>
-                            <div class="ms-2">Active</div>
-                        </div>
-                        <div class="avatar bg-azure-lt mt-3">
-                            <i class="ti ti-users"></i>
+                                            <div class="h1 mb-0">0</div>
+                                            <div class="ms-2">Активних</div>
                         </div>
                     </div>
                 </div>
@@ -97,238 +338,77 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <div class="subheader">Contracts</div>
+                                            <div class="subheader">Договори</div>
                         </div>
                         <div class="d-flex align-items-baseline">
-                            <div class="h1 mb-0">8</div>
-                            <div class="ms-2">This Month</div>
-                        </div>
-                        <div class="avatar bg-yellow-lt mt-3">
-                            <i class="ti ti-file-invoice"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row row-deck row-cards">
-            <!-- Booking chart -->
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Bookings</h3>
-                        <div class="card-actions">
-                            <a href="/bookings" class="btn btn-primary btn-sm">View all</a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="chart-bookings" class="chart-lg"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent bookings and client tables on the bottom row -->
-            <div class="col-md-6 col-lg-7">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Recent Bookings</h3>
-                        <div class="card-actions">
-                            <a href="/bookings" class="btn-link">View all</a>
-                        </div>
-                    </div>
-                    <div class="list-group list-group-flush overflow-auto" style="max-height: 35rem">
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="badge bg-blue"></span>
+                                            <div class="h1 mb-0">0</div>
+                                            <div class="ms-2">Цього місяця</div>
                                 </div>
-                                <div class="col">
-                                    <div class="d-flex justify-content-between">
-                                        <div><strong>Jane & John Wedding</strong></div>
-                                        <div class="text-muted">April 2, 2024</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="badge bg-green"></span>
+                        
+                        <!-- Пустий стан для порожнього дашборду -->
+                        <div class="text-center py-4">
+                            <div class="empty">
+                                <div class="empty-img">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-photo" width="48" height="48" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M15 8h.01"></path>
+                                        <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"></path>
+                                        <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"></path>
+                                        <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"></path>
+                                    </svg>
                                 </div>
-                                <div class="col">
-                                    <div class="d-flex justify-content-between">
-                                        <div><strong>Emily Photoshoot</strong></div>
-                                        <div class="text-muted">April 2, 2024</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="badge bg-blue"></span>
-                                </div>
-                                <div class="col">
-                                    <div class="d-flex justify-content-between">
-                                        <div><strong>Michael & Sarah Wedding</strong></div>
-                                        <div class="text-muted">April 15, 2024</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="badge bg-yellow"></span>
-                                </div>
-                                <div class="col">
-                                    <div class="d-flex justify-content-between">
-                                        <div><strong>Corporate Event</strong></div>
-                                        <div class="text-muted">April 10, 2024</div>
-                                    </div>
+                                <p class="empty-title">Поки немає даних</p>
+                                <p class="empty-subtitle text-muted">
+                                    Почніть додавати бронювання та клієнтів, щоб заповнити панель керування 
+                                </p>
+                                <div class="empty-action">
+                                    <a href="/app/bookings/create" class="btn btn-primary">
+                                        <i class="ti ti-plus me-2"></i>
+                                        Додати нове бронювання
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    {{ end }}
                 </div>
             </div>
 
-            <!-- Clients overview -->
-            <div class="col-md-6 col-lg-5">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Client Overview</h3>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Jane Smith</td>
-                                    <td class="text-muted">jane.smith@example.com</td>
-                                </tr>
-                                <tr>
-                                    <td>John Doe</td>
-                                    <td class="text-muted">john.doe@example.com</td>
-                                </tr>
-                                <tr>
-                                    <td>Alice Johnson</td>
-                                    <td class="text-muted">alice.johnson@example.com</td>
-                                </tr>
-                                <tr>
-                                    <td>Michael Brown</td>
-                                    <td class="text-muted">michael.brown@example.com</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Pending contracts -->
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h3 class="card-title">Pending Contracts</h3>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <div class="text-body d-block">Jane & John Wedding Contract</div>
-                                </div>
-                            </div>
+            <!-- Футер -->
+            <footer class="footer footer-transparent mt-auto">
+                <div class="container-fluid">
+                    <div class="row text-center align-items-center flex-row-reverse">
+                        <div class="col-lg-auto ms-lg-auto">
+                            <ul class="list-inline list-inline-dots mb-0">
+                                <li class="list-inline-item"><a href="/help" class="link-secondary">Допомога</a></li>
+                                <li class="list-inline-item"><a href="/privacy" class="link-secondary">Політика конфіденційності</a></li>
+                                <li class="list-inline-item"><a href="/terms" class="link-secondary">Умови використання</a></li>
+                            </ul>
                         </div>
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <div class="text-body d-block">Emily Photoshoot Agreement</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <div class="text-body d-block">Michael & Sarah Wedding Contract</div>
-                                </div>
-                            </div>
+                        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                            <ul class="list-inline list-inline-dots mb-0">
+                                <li class="list-inline-item">
+                                    &copy; 2024 <a href="/" class="link-secondary">TimeBride</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </footer>
     </div>
 </div>
 
-<!-- Add the chart JS -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Check if ApexCharts is available
-    if (window.ApexCharts) {
-        var options = {
-            chart: {
-                type: 'line',
-                fontFamily: 'Inter, sans-serif',
-                height: 300,
-                toolbar: {
-                    show: false,
-                },
-                zoom: {
-                    enabled: false,
-                }
-            },
-            stroke: {
-                width: 2,
-                curve: 'smooth',
-                colors: ['#3b82f6']
-            },
-            grid: {
-                padding: {
-                    top: -20,
-                    right: 0,
-                    left: -4,
-                    bottom: -4
-                },
-                strokeDashArray: 4,
-            },
-            series: [{
-                name: "Bookings",
-                data: [6, 8, 15, 12, 20, 18]
-            }],
-            xaxis: {
-                categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                tooltip: {
-                    enabled: false
-                },
-                axisBorder: {
-                    show: false,
-                },
-            },
-            markers: {
-                size: 5,
-                colors: '#fff',
-                strokeColors: '#3b82f6',
-                strokeWidth: 2,
-                strokeOpacity: 0.9,
-                strokeDashArray: 0,
-                fillOpacity: 1,
-                shape: "circle",
-                radius: 5,
-                hover: {
-                    size: 7,
-                }
-            },
-            tooltip: {
-                theme: 'dark'
-            },
-        };
-        
-        var chart = new ApexCharts(document.querySelector("#chart-bookings"), options);
-        chart.render();
-    }
-});
-</script>
+    <!-- JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/tabler.min.js"></script>
+    
+    <!-- Додаткові скрипти -->
+    {{ if .ExtraScripts }}
+        {{ .ExtraScripts }}
 {{ end }} 
+</body>
+</html> 

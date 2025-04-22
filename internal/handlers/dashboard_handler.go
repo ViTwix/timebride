@@ -117,13 +117,14 @@ func (h *DashboardHandler) HandleDashboard(c *fiber.Ctx) error {
 	viewModel := fiber.Map{
 		"Title": "Головна панель",
 		"User": fiber.Map{
-			"FullName": user.FullName,
+			"Name":     user.Name,
 			"Email":    user.Email,
 			"Role":     user.Role,
-			"Initials": getInitials(user.FullName),
+			"Initials": getInitials(user.Name),
 		},
-		"Bookings":       bookings,
-		"RecentBookings": formatBookings(bookings),
+		"Bookings":           bookings,
+		"RecentBookings":     formatBookings(bookings),
+		"NotificationsCount": 0,
 		"Stats": fiber.Map{
 			"TotalBookings":   totalBookings,
 			"ActiveBookings":  activeBookings,
@@ -137,7 +138,7 @@ func (h *DashboardHandler) HandleDashboard(c *fiber.Ctx) error {
 	}
 
 	log.Println("Dashboard handler completed successfully")
-	return c.Render("simple_dashboard", viewModel)
+	return c.Render("dashboard", viewModel)
 }
 
 // getStatusClass returns CSS class for booking status

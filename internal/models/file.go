@@ -10,9 +10,9 @@ import (
 
 // File модель для зберігання інформації про файли
 type File struct {
-	ID          uuid.UUID      `gorm:"type:text;primary_key"`
-	UserID      uuid.UUID      `gorm:"type:text;not null"`
-	BookingID   *uuid.UUID     `gorm:"type:text"`
+	ID          uuid.UUID      `gorm:"type:uuid;primaryKey"`
+	UserID      uuid.UUID      `gorm:"type:uuid;not null"`
+	BookingID   *uuid.UUID     `gorm:"type:uuid"`
 	FileName    string         `gorm:"type:text;not null"`
 	FileType    string         `gorm:"type:text;not null"`
 	FileSize    int64          `gorm:"not null"`

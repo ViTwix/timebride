@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"timebride/internal/models"
 	"timebride/internal/services/user"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"gorm.io/datatypes"
 )
 
 type UserHandler struct {
@@ -40,11 +40,10 @@ func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 // Create створює нового користувача
 func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Email       string `json:"email"`
-		Password    string `json:"password"`
-		FullName    string `json:"full_name"`
-		CompanyName string `json:"company_name"`
-		Role        string `json:"role"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Name     string `json:"name"`
+		Role     string `json:"role"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -52,7 +51,7 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.userService.Register(r.Context(), input.Email, input.Password, input.FullName, input.CompanyName, input.Role)
+	user, err := h.userService.Register(r.Context(), input.Email, input.Password, input.Name, input.Role)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -159,7 +158,7 @@ func (h *UserHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 
 // UpdateSettings оновлює налаштування користувача
 func (h *UserHandler) UpdateSettings(w http.ResponseWriter, r *http.Request) {
-	var settings map[string]interface{}
+	var settings models.Settings
 	if err := json.NewDecoder(r.Body).Decode(&settings); err != nil {
 		http.Error(w, "Невірний формат даних", http.StatusBadRequest)
 		return
@@ -177,11 +176,11 @@ func (h *UserHandler) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	// Конвертуємо налаштування в JSON
 	settingsJSON, err := json.Marshal(settings)
 	if err != nil {
-		http.Error(w, "Помилка конвертації налаштувань", http.StatusInternalServerError)
+		http.Error(w, "Помилка при конвертації налаштувань", http.StatusInternalServerError)
 		return
 	}
 
-	user.Settings = datatypes.JSON(settingsJSON)
+	user.Settings = settingsJSON
 
 	if err := h.userService.Update(r.Context(), user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

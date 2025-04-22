@@ -1,0 +1,6 @@
+/* 
+ * This file exists to prevent 404 errors for legacy references 
+ * All styles should be in main.css which is based on tabler.min.css
+ */
+
+@import url('main.css');

@@ -1,210 +1,328 @@
 package handlers
 
 import (
-	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 
-	"timebride/internal/middleware"
 	"timebride/internal/models"
-	"timebride/internal/services/auth"
-	"timebride/internal/services/user"
-
-	"github.com/google/uuid"
+	"timebride/internal/services"
 )
 
-// AuthHandler обробляє запити аутентифікації
+// AuthHandler містить обробники запитів для автентифікації
 type AuthHandler struct {
-	userService *user.Service
-	authConfig  middleware.AuthConfig
-	authService *auth.Service
+	authService *services.AuthService
 }
 
-// NewAuthHandler створює новий екземпляр AuthHandler
-func NewAuthHandler(userService *user.Service, authConfig middleware.AuthConfig, authService *auth.Service) *AuthHandler {
+// NewAuthHandler створює новий обробник автентифікації
+func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 	return &AuthHandler{
-		userService: userService,
-		authConfig:  authConfig,
 		authService: authService,
 	}
 }
 
-// RegisterRequest містить дані для реєстрації
+// RegisterRequest структура запиту на реєстрацію
 type RegisterRequest struct {
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	FullName    string `json:"full_name"`
-	CompanyName string `json:"company_name"`
-	Role        string `json:"role"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8"`
+	Name     string `json:"name" validate:"required,min=2,max=100"`
 }
 
-// LoginRequest містить дані для входу
+// LoginRequest структура запиту на вхід
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
-// AuthResponse містить дані відповіді аутентифікації
+// RefreshTokenRequest структура запиту на оновлення токену
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+// AuthResponse структура відповіді з токенами
 type AuthResponse struct {
-	Token string      `json:"token"`
-	User  models.User `json:"user"`
+	User         models.PublicUser `json:"user"`
+	AccessToken  string            `json:"access_token"`
+	RefreshToken string            `json:"refresh_token"`
+	ExpiresAt    time.Time         `json:"expires_at"`
 }
 
-// RegisterInput структура для реєстрації
-type RegisterInput struct {
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	FullName    string `json:"full_name"`
-	CompanyName string `json:"company_name"`
-	Phone       string `json:"phone"`
-}
-
-// LoginInput структура для входу
-type LoginInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-// Register обробляє реєстрацію нового користувача
-func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
+// Register обробляє запит на реєстрацію користувача
+func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	var req RegisterRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
 	}
 
-	// Створюємо користувача
-	user, err := h.userService.Register(r.Context(), req.Email, req.Password, req.FullName, req.CompanyName, req.Role)
+	// Валідація даних
+	if req.Email == "" || req.Password == "" || req.Name == "" {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Email, password and name are required",
+		})
+	}
+
+	// Викликаємо сервіс для реєстрації
+	user, err := h.authService.Register(c.Context(), req.Email, req.Password, req.Name)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		if errors.Is(err, services.ErrEmailAlreadyExists) {
+			return c.Status(http.StatusConflict).JSON(fiber.Map{
+				"error": "Email already registered",
+			})
+		}
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to register user",
+		})
 	}
 
-	// Генеруємо JWT токен
-	token, err := middleware.GenerateToken(user.ID, user.Email, user.Role, h.authConfig)
+	// Генеруємо токени для автоматичного входу після реєстрації
+	loginUser, tokens, err := h.authService.Login(c.Context(), req.Email, req.Password)
 	if err != nil {
-		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
-		return
+		// В цьому випадку користувач створений, але не можемо увійти
+		// Повертаємо успіх реєстрації, але без токенів
+		return c.Status(http.StatusCreated).JSON(fiber.Map{
+			"message": "User registered successfully. Please login.",
+			"user":    user.ToPublicUser(),
+		})
 	}
 
-	// Відправляємо відповідь
-	response := AuthResponse{
-		Token: token,
-		User:  *user,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	// Повертаємо токени і дані користувача
+	return c.Status(http.StatusCreated).JSON(AuthResponse{
+		User:         loginUser.ToPublicUser(),
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		ExpiresAt:    tokens.ExpiresAt,
+	})
 }
 
-// Login обробляє вхід користувача
-func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+// Login обробляє запит на вхід користувача
+func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	var req LoginRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
 	}
 
-	// Перевіряємо облікові дані
-	user, err := h.userService.Login(r.Context(), req.Email, req.Password)
+	// Валідація даних
+	if req.Email == "" || req.Password == "" {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Email and password are required",
+		})
+	}
+
+	// Викликаємо сервіс для логіну
+	user, tokens, err := h.authService.Login(c.Context(), req.Email, req.Password)
 	if err != nil {
-		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
-		return
+		if errors.Is(err, services.ErrInvalidCredentials) {
+			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid credentials",
+			})
+		}
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to login",
+		})
 	}
 
-	// Генеруємо JWT токен
-	token, err := middleware.GenerateToken(user.ID, user.Email, user.Role, h.authConfig)
-	if err != nil {
-		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
-		return
-	}
-
-	// Відправляємо відповідь
-	response := AuthResponse{
-		Token: token,
-		User:  *user,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	// Повертаємо токени і дані користувача
+	return c.Status(http.StatusOK).JSON(AuthResponse{
+		User:         user.ToPublicUser(),
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		ExpiresAt:    tokens.ExpiresAt,
+	})
 }
 
-// Me повертає інформацію про поточного користувача
-func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
-	userIDStr := r.Context().Value("user_id").(string)
-
-	userID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
+// RefreshToken обробляє запит на оновлення токену
+func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {
+	var req RefreshTokenRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
 	}
 
-	user, err := h.userService.GetByID(r.Context(), userID)
-	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
+	// Валідація даних
+	if req.RefreshToken == "" {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Refresh token is required",
+		})
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	// Викликаємо сервіс для оновлення токену
+	user, tokens, err := h.authService.RefreshToken(c.Context(), req.RefreshToken)
+	if err != nil {
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid or expired refresh token",
+		})
+	}
+
+	// Повертаємо нові токени і дані користувача
+	return c.Status(http.StatusOK).JSON(AuthResponse{
+		User:         user.ToPublicUser(),
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		ExpiresAt:    tokens.ExpiresAt,
+	})
+}
+
+// OAuthRedirect генерує URL для OAuth автентифікації і перенаправляє користувача
+func (h *AuthHandler) OAuthRedirect(c *fiber.Ctx) error {
+	provider := c.Params("provider")
+
+	// Перевіряємо, чи підтримується провайдер
+	switch provider {
+	case models.AuthProviderGoogle, models.AuthProviderFacebook, models.AuthProviderApple:
+		// Продовжуємо
+	default:
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Unsupported OAuth provider",
+		})
+	}
+
+	// Генеруємо URL для OAuth
+	authURL, state, err := h.authService.GenerateOAuthURL(provider)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to generate OAuth URL",
+		})
+	}
+
+	// Зберігаємо стан в сесії
+	c.Cookie(&fiber.Cookie{
+		Name:     "oauth_state",
+		Value:    state,
+		Expires:  time.Now().Add(time.Minute * 10), // Термін дії 10 хвилин
+		HTTPOnly: true,
+		Secure:   c.Protocol() == "https",
+		SameSite: "lax",
+	})
+
+	// Перенаправляємо користувача на URL автентифікації провайдера
+	return c.Redirect(authURL, http.StatusFound)
+}
+
+// OAuthCallback обробляє відповідь від OAuth провайдера
+func (h *AuthHandler) OAuthCallback(c *fiber.Ctx) error {
+	provider := c.Params("provider")
+
+	// Перевіряємо, чи підтримується провайдер
+	switch provider {
+	case models.AuthProviderGoogle, models.AuthProviderFacebook, models.AuthProviderApple:
+		// Продовжуємо
+	default:
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Unsupported OAuth provider",
+		})
+	}
+
+	// Отримуємо код і стан з запиту
+	code := c.Query("code")
+	state := c.Query("state")
+
+	if code == "" || state == "" {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid OAuth callback parameters",
+		})
+	}
+
+	// Отримуємо збережений стан з cookie
+	savedState := c.Cookies("oauth_state")
+	if savedState == "" {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Missing OAuth state",
+		})
+	}
+
+	// Видаляємо cookie стану
+	c.Cookie(&fiber.Cookie{
+		Name:     "oauth_state",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HTTPOnly: true,
+		Secure:   c.Protocol() == "https",
+		SameSite: "lax",
+	})
+
+	// Перевіряємо стан для безпеки
+	if state != savedState {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid OAuth state",
+		})
+	}
+
+	// Обробляємо відповідь від OAuth провайдера
+	user, tokens, err := h.authService.HandleOAuthCallback(c.Context(), provider, code, state, savedState)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to authenticate with provider: " + err.Error(),
+		})
+	}
+
+	// Повертаємо токени і дані користувача
+	return c.Status(http.StatusOK).JSON(AuthResponse{
+		User:         user.ToPublicUser(),
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		ExpiresAt:    tokens.ExpiresAt,
+	})
 }
 
 // ShowLoginPage відображає сторінку входу
 func (h *AuthHandler) ShowLoginPage(c *fiber.Ctx) error {
 	return c.Render("auth/login", fiber.Map{
-		"Title": "Вхід",
+		"Title": "Вхід в систему",
 	})
 }
 
-// HandleLogin обробляє запит на вхід
+// HandleLogin обробляє вхід користувача
 func (h *AuthHandler) HandleLogin(c *fiber.Ctx) error {
-	var input models.LoginInput
-	if err := c.BodyParser(&input); err != nil {
-		log.Printf("Error parsing login input: %v", err)
-		return c.Render("auth/login", fiber.Map{
-			"Title": "Вхід",
-			"Error": "Неправильний формат даних",
-		})
-	}
+	// Отримуємо дані з форми
+	email := c.FormValue("email")
+	password := c.FormValue("password")
 
-	log.Printf("Login attempt for email: %s", input.Email)
-	user, err := h.userService.Login(c.Context(), input.Email, input.Password)
+	log.Printf("Спроба входу для користувача: %s", email)
+
+	// Автентифікуємо користувача
+	user, tokens, err := h.authService.Login(c.Context(), email, password)
 	if err != nil {
-		log.Printf("Login failed for email %s: %v", input.Email, err)
-		return c.Render("auth/login", fiber.Map{
-			"Title": "Вхід",
+		log.Printf("Помилка входу для %s: %v", email, err)
+		// У випадку помилки повертаємося на сторінку логіну з повідомленням про помилку
+		return c.Status(fiber.StatusUnauthorized).Render("login", fiber.Map{
 			"Error": "Неправильний email або пароль",
+			"Email": email,
 		})
 	}
 
-	log.Printf("User authenticated successfully: %s (%s)", user.Email, user.ID.String())
-	token, err := middleware.GenerateToken(user.ID, user.Email, user.Role, h.authConfig)
-	if err != nil {
-		log.Printf("Error generating token: %v", err)
-		return c.Render("auth/login", fiber.Map{
-			"Title": "Вхід",
-			"Error": "Помилка генерації токена",
-		})
-	}
+	log.Printf("Успішний вхід для користувача: %s (ID: %s, Роль: %s)", email, user.ID.String(), user.Role)
 
-	// Set cookie with longer expiration time
-	c.Cookie(&fiber.Cookie{
+	// Очищуємо старий cookie, якщо він є
+	c.ClearCookie("session")
+
+	// Встановлюємо токен в cookie
+	cookie := fiber.Cookie{
 		Name:     "session",
-		Value:    token,
+		Value:    tokens.AccessToken,
 		Path:     "/",
+		MaxAge:   int(time.Until(tokens.ExpiresAt).Seconds()),
 		HTTPOnly: true,
-		MaxAge:   86400 * 30, // 30 days in seconds
-		Secure:   c.Protocol() == "https",
-	})
+		SameSite: "Lax",
+	}
+	c.Cookie(&cookie)
 
-	// Log successful login
-	log.Printf("Successfully set session cookie for user %s", user.Email)
-	log.Printf("Redirecting to dashboard...")
+	// Безпечно логуємо перші символи токена
+	tokenPreview := tokens.AccessToken
+	if len(tokenPreview) > 20 {
+		tokenPreview = tokenPreview[:20]
+	}
+	log.Printf("Встановлено cookie session з токеном (початок): %s...", tokenPreview)
 
-	// Redirect to dashboard
-	return c.Redirect("/app")
+	// Перенаправляємо на дашборд
+	return c.Redirect("/app/dashboard")
 }
 
 // ShowRegisterPage відображає сторінку реєстрації
@@ -214,60 +332,59 @@ func (h *AuthHandler) ShowRegisterPage(c *fiber.Ctx) error {
 	})
 }
 
-// HandleRegister обробляє запит на реєстрацію
+// HandleRegister обробляє реєстрацію користувача (переадресація на веб-інтерфейс)
 func (h *AuthHandler) HandleRegister(c *fiber.Ctx) error {
-	var input models.RegisterInput
-	if err := c.BodyParser(&input); err != nil {
-		return c.Render("auth/register", fiber.Map{
-			"Title": "Реєстрація",
-			"Error": "Неправильний формат даних",
+	var req RegisterRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
 		})
 	}
 
-	// Перевіряємо, чи вже існує користувач з таким email
-	existingUser, err := h.userService.GetByEmail(c.Context(), input.Email)
-	if err == nil && existingUser != nil {
+	// Валідація даних
+	if req.Email == "" || req.Password == "" || req.Name == "" {
 		return c.Render("auth/register", fiber.Map{
 			"Title": "Реєстрація",
-			"Error": "Користувач з таким email вже існує",
+			"Error": "Всі поля обов'язкові",
+			"Email": req.Email,
+			"Name":  req.Name,
 		})
 	}
 
-	// Створюємо нового користувача
-	user, err := h.userService.Register(c.Context(), input.Email, input.Password, input.FullName, input.CompanyName, "user")
+	// Викликаємо сервіс для реєстрації
+	_, err := h.authService.Register(c.Context(), req.Email, req.Password, req.Name)
 	if err != nil {
+		errorMsg := "Помилка при реєстрації"
+		if errors.Is(err, services.ErrEmailAlreadyExists) {
+			errorMsg = "Користувач з таким email вже існує"
+		}
+
 		return c.Render("auth/register", fiber.Map{
 			"Title": "Реєстрація",
-			"Error": "Помилка при реєстрації: " + err.Error(),
+			"Error": errorMsg,
+			"Email": req.Email,
+			"Name":  req.Name,
 		})
 	}
 
-	// Генеруємо токен
-	token, err := middleware.GenerateToken(user.ID, user.Email, user.Role, h.authConfig)
-	if err != nil {
-		return c.Render("auth/register", fiber.Map{
-			"Title": "Реєстрація",
-			"Error": "Помилка генерації токена",
-		})
-	}
-
-	// Встановлюємо токен в cookie
-	c.Cookie(&fiber.Cookie{
-		Name:     "session",
-		Value:    token,
-		HTTPOnly: true,
+	// Перенаправляємо на сторінку входу з повідомленням про успіх
+	return c.Render("auth/login", fiber.Map{
+		"Title":   "Вхід в систему",
+		"Success": "Реєстрація успішна! Тепер ви можете увійти.",
+		"Email":   req.Email,
 	})
-
-	return c.Redirect("/app")
-}
-
-// HandleLogout обробляє запит на вихід
-func (h *AuthHandler) HandleLogout(c *fiber.Ctx) error {
-	c.ClearCookie("session")
-	return c.Redirect("/")
 }
 
 // GetJWTSecret повертає секретний ключ для JWT
 func (h *AuthHandler) GetJWTSecret() string {
-	return h.authConfig.SecretKey
+	return h.authService.GetJWTSecret()
+}
+
+// HandleLogout обробляє вихід користувача
+func (h *AuthHandler) HandleLogout(c *fiber.Ctx) error {
+	// Видаляємо cookie з токеном
+	c.ClearCookie("session")
+
+	// Перенаправляємо на сторінку входу
+	return c.Redirect("/login")
 }

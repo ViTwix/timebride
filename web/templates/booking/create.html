@@ -1,0 +1,132 @@
+{{define "page-header"}}
+<div class="page-header d-print-none">
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <h2 class="page-title">
+                    Нове бронювання
+                </h2>
+            </div>
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <a href="/bookings" class="btn btn-outline-secondary d-none d-sm-inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 12l14 0"></path>
+                            <path d="M5 12l6 6"></path>
+                            <path d="M5 12l6 -6"></path>
+                        </svg>
+                        Назад
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{define "content"}}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Інформація про бронювання</h3>
+    </div>
+    <div class="card-body">
+        <form action="/bookings" method="post">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Назва</label>
+                        <input type="text" class="form-control" name="title" placeholder="Введіть назву бронювання" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Тип події</label>
+                        <select class="form-select" name="event_type">
+                            <option value="wedding">Весілля</option>
+                            <option value="portrait">Портретна зйомка</option>
+                            <option value="family">Сімейна зйомка</option>
+                            <option value="event">Захід</option>
+                            <option value="other">Інше</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Дата початку</label>
+                        <input type="datetime-local" class="form-control" name="start_time" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Дата завершення</label>
+                        <input type="datetime-local" class="form-control" name="end_time" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Ім'я клієнта</label>
+                        <input type="text" class="form-control" name="client_name" placeholder="Введіть ім'я клієнта" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Email клієнта</label>
+                        <input type="email" class="form-control" name="client_email" placeholder="email@example.com">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Опис</label>
+                <textarea class="form-control" name="description" rows="4" placeholder="Детальний опис бронювання"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Статус</label>
+                <select class="form-select" name="status">
+                    <option value="pending">В очікуванні</option>
+                    <option value="confirmed">Підтверджено</option>
+                    <option value="cancelled">Скасовано</option>
+                </select>
+            </div>
+
+            <div class="form-footer">
+                <a href="/bookings" class="btn btn-outline-secondary">Скасувати</a>
+                <button type="submit" class="btn btn-primary ms-auto">Створити бронювання</button>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}
+
+{{define "styles"}}
+<!-- Додаткові стилі тут -->
+{{end}}
+
+{{define "scripts"}}
+<script>
+    // Встановлюємо початкові дати
+    document.addEventListener('DOMContentLoaded', function() {
+        // Встановлюємо поточну дату і час
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        // Форматуємо для input datetime-local
+        const formatDatetime = (date) => {
+            return date.toISOString().slice(0, 16);
+        };
+        
+        // Встановлюємо початкові значення
+        document.querySelector('input[name="start_time"]').value = formatDatetime(now);
+        document.querySelector('input[name="end_time"]').value = formatDatetime(tomorrow);
+    });
+</script>
+{{end}} 

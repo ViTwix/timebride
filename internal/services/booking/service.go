@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"timebride/internal/models"
@@ -137,7 +138,7 @@ func (s *Service) AddTeamMember(ctx context.Context, bookingID uuid.UUID, member
 
 	// Конвертуємо поточні дані команди
 	var teamMembers []map[string]interface{}
-	if booking.TeamMembers != nil {
+	if len(booking.TeamMembers) > 0 {
 		if err := json.Unmarshal(booking.TeamMembers, &teamMembers); err != nil {
 			return err
 		}
@@ -152,7 +153,7 @@ func (s *Service) AddTeamMember(ctx context.Context, bookingID uuid.UUID, member
 		return err
 	}
 
-	booking.TeamMembers = teamMembersJSON
+	booking.TeamMembers = datatypes.JSON(teamMembersJSON)
 	return s.repo.Update(ctx, booking)
 }
 
@@ -183,6 +184,6 @@ func (s *Service) RemoveTeamMember(ctx context.Context, bookingID uuid.UUID, mem
 		return err
 	}
 
-	booking.TeamMembers = teamMembersJSON
+	booking.TeamMembers = datatypes.JSON(teamMembersJSON)
 	return s.repo.Update(ctx, booking)
 }

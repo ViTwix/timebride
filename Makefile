@@ -15,11 +15,14 @@ help:
 	@echo "  frontend-start   Start frontend development server"
 	@echo "  frontend-build   Build frontend assets"
 
-.PHONY: run build test clean docker-up docker-down migrate-up migrate-down frontend-install frontend-start frontend-build deps
+.PHONY: run build test clean docker-up docker-down migrate-up migrate-down frontend-install frontend-start frontend-build deps run-legacy
 
 # Go commands
 run:
 	go run cmd/app/main.go
+
+run-legacy:
+	go run cmd/api/main.go
 
 build:
 	go build -o bin/app cmd/app/main.go

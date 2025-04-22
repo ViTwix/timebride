@@ -22,17 +22,6 @@ func NewFileHandler(fileService *file.Service) *FileHandler {
 	}
 }
 
-// RegisterRoutes registers all file-related routes
-func (h *FileHandler) RegisterRoutes(app *fiber.App) {
-	files := app.Group("/files")
-
-	files.Get("/", h.HandleFileList)
-	files.Post("/upload", h.HandleFileUpload)
-	files.Get("/:id", h.HandleFileGet)
-	files.Get("/:id/download", h.HandleFileDownload)
-	files.Delete("/:id", h.HandleFileDelete)
-}
-
 // HandleFileList displays the list of files
 func (h *FileHandler) HandleFileList(c *fiber.Ctx) error {
 	// Get user ID from context

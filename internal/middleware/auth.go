@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"timebride/internal/config"
 	"timebride/internal/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -168,10 +169,10 @@ func Auth(c *fiber.Ctx) error {
 		return c.Redirect("/login")
 	}
 
-	// Отримуємо ID користувача з токена
-	userIDStr, ok := claims["user_id"].(string)
+	// Отримуємо ID користувача з токена (використовуємо поле "sub", яке містить ID)
+	userIDStr, ok := claims["sub"].(string)
 	if !ok {
-		log.Printf("Failed to get user_id from claims, got type: %T, value: %v", claims["user_id"], claims["user_id"])
+		log.Printf("Failed to get user ID from claims (sub), got type: %T, value: %v", claims["sub"], claims["sub"])
 		c.ClearCookie("session")
 		return c.Redirect("/login")
 	}
@@ -219,4 +220,125 @@ func ParseJWT(tokenString string, secretKey string) (map[string]interface{}, err
 	}
 
 	return nil, fmt.Errorf("invalid token")
+}
+
+// JWTMiddleware створює middleware для перевірки JWT токенів
+func JWTMiddleware(cfg *config.Config) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		// Отримуємо токен з заголовка Authorization
+		authHeader := c.Get("Authorization")
+		if authHeader == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Authorization header is required",
+			})
+		}
+
+		// Перевіряємо формат Bearer Token
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid authorization format, must be 'Bearer {token}'",
+			})
+		}
+
+		tokenString := parts[1]
+
+		// Парсимо та перевіряємо токен
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			// Перевіряємо метод підпису
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+
+			return []byte(cfg.Auth.JWTSecret), nil
+		})
+
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": fmt.Sprintf("Invalid or expired token: %v", err),
+			})
+		}
+
+		// Перевіряємо валідність токена
+		if !token.Valid {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid token",
+			})
+		}
+
+		// Отримуємо claims з токена
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid token claims",
+			})
+		}
+
+		// Витягуємо дані користувача з claims
+		userID, ok := claims["sub"].(string)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid user ID in token",
+			})
+		}
+
+		// Парсимо UUID
+		uid, err := uuid.Parse(userID)
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid user ID format",
+			})
+		}
+
+		email, ok := claims["email"].(string)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid email in token",
+			})
+		}
+
+		role, ok := claims["role"].(string)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid role in token",
+			})
+		}
+
+		// Зберігаємо дані користувача в контексті для використання в обробниках
+		c.Locals("userID", uid)
+		c.Locals("email", email)
+		c.Locals("role", role)
+
+		return c.Next()
+	}
+}
+
+// RoleAuthMiddleware створює middleware для перевірки ролі користувача
+func RoleAuthMiddleware(roles ...string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		// Отримуємо роль користувача з контексту (встановлену JWTMiddleware)
+		userRole, ok := c.Locals("role").(string)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "User role not found in context",
+			})
+		}
+
+		// Перевіряємо, чи має користувач необхідну роль
+		hasRole := false
+		for _, role := range roles {
+			if userRole == role {
+				hasRole = true
+				break
+			}
+		}
+
+		if !hasRole {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"error": "Access denied: insufficient permissions",
+			})
+		}
+
+		return c.Next()
+	}
 }

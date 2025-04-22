@@ -13,6 +13,7 @@ type Config struct {
 	Database DatabaseConfig `mapstructure:"database"`
 	JWT      JWTConfig      `mapstructure:"jwt"`
 	Storage  StorageConfig  `mapstructure:"storage"`
+	Auth     AuthConfig     `mapstructure:"auth"`
 }
 
 // ServerConfig містить налаштування сервера
@@ -63,6 +64,23 @@ type CDNConfig struct {
 	Protocol string `mapstructure:"protocol"`
 }
 
+// AuthConfig містить налаштування автентифікації
+type AuthConfig struct {
+	JWTSecret                string        `mapstructure:"jwt_secret"`
+	AccessTokenExpiryMinutes int           `mapstructure:"access_token_expiry_minutes"`
+	RefreshTokenExpiryDays   int           `mapstructure:"refresh_token_expiry_days"`
+	Google                   OAuthProvider `mapstructure:"google"`
+	Facebook                 OAuthProvider `mapstructure:"facebook"`
+	Apple                    OAuthProvider `mapstructure:"apple"`
+}
+
+// OAuthProvider містить налаштування OAuth провайдера
+type OAuthProvider struct {
+	ClientID     string `mapstructure:"client_id"`
+	ClientSecret string `mapstructure:"client_secret"`
+	RedirectURL  string `mapstructure:"redirect_url"`
+}
+
 // Load завантажує конфігурацію з файлу
 func Load() (*Config, error) {
 	// Спочатку завантажуємо .env файл, перевіряючи різні можливі шляхи
@@ -107,6 +125,10 @@ func Load() (*Config, error) {
 	viper.SetDefault("storage.backblaze.endpoint", "https://s3.eu-central-003.backblazeb2.com")
 	viper.SetDefault("storage.backblaze.region", "eu-central-003")
 
+	// Значення за замовчуванням для автентифікації
+	viper.SetDefault("auth.access_token_expiry_minutes", 15)
+	viper.SetDefault("auth.refresh_token_expiry_days", 7)
+
 	// Зв'язуємо змінні середовища з конфігурацією
 	viper.BindEnv("database.host", "DB_HOST")
 	viper.BindEnv("database.port", "DB_PORT")
@@ -122,6 +144,18 @@ func Load() (*Config, error) {
 	viper.BindEnv("storage.backblaze.bucket", "B2_BUCKET")
 	viper.BindEnv("storage.backblaze.bucket_id", "B2_BUCKET_ID")
 
+	// OAuth провайдери
+	viper.BindEnv("auth.jwt_secret", "JWT_SECRET")
+	viper.BindEnv("auth.google.client_id", "GOOGLE_CLIENT_ID")
+	viper.BindEnv("auth.google.client_secret", "GOOGLE_CLIENT_SECRET")
+	viper.BindEnv("auth.google.redirect_url", "GOOGLE_REDIRECT_URL")
+	viper.BindEnv("auth.facebook.client_id", "FACEBOOK_CLIENT_ID")
+	viper.BindEnv("auth.facebook.client_secret", "FACEBOOK_CLIENT_SECRET")
+	viper.BindEnv("auth.facebook.redirect_url", "FACEBOOK_REDIRECT_URL")
+	viper.BindEnv("auth.apple.client_id", "APPLE_CLIENT_ID")
+	viper.BindEnv("auth.apple.client_secret", "APPLE_CLIENT_SECRET")
+	viper.BindEnv("auth.apple.redirect_url", "APPLE_REDIRECT_URL")
+
 	// Завантажуємо змінні середовища
 	viper.AutomaticEnv()
 
@@ -135,6 +169,11 @@ func Load() (*Config, error) {
 	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
 		return nil, err
+	}
+
+	// Якщо JWT секрет не встановлено, використовуємо значення з JWTConfig
+	if config.Auth.JWTSecret == "" {
+		config.Auth.JWTSecret = config.JWT.SecretKey
 	}
 
 	return &config, nil

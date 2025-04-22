@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -12,17 +13,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"timebride/internal/config"
+	"timebride/internal/database"
 	"timebride/internal/handlers"
-	"timebride/internal/middleware"
 	"timebride/internal/models"
 	"timebride/internal/repositories"
 	"timebride/internal/router"
-	"timebride/internal/services/auth"
+	"timebride/internal/services"
 	"timebride/internal/services/booking"
 	"timebride/internal/services/file"
 	"timebride/internal/services/template"
 	"timebride/internal/services/user"
-	"timebride/pkg/database"
 )
 
 func main() {
@@ -40,14 +40,9 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	// Автоматична міграція моделей в базу даних
+	// Виконуємо міграції бази даних
 	log.Println("Running database migrations...")
-	if err := db.AutoMigrate(
-		&models.User{},
-		&models.Booking{},
-		&models.Template{},
-		&models.File{},
-	); err != nil {
+	if err := database.RunMigrations(db); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	log.Println("Migrations completed successfully")
@@ -64,16 +59,21 @@ func main() {
 		if err != nil {
 			log.Printf("Error hashing password: %v", err)
 		} else {
+			// Конвертуємо дозволи в JSON
+			permissions, err := json.Marshal(models.DefaultPermissions(models.RoleAdmin))
+			if err != nil {
+				log.Printf("Error marshaling permissions: %v", err)
+				return
+			}
+
 			// Створення адміністратора
 			adminUser := models.User{
-				Email:            "admin@timebride.com",
-				PasswordHash:     string(passwordHash),
-				FullName:         "Адміністратор системи",
-				Role:             models.RoleAdmin,
-				Language:         "uk",
-				Timezone:         "Europe/Kiev",
-				Theme:            "dark",
-				SubscriptionPlan: "premium",
+				Email:        "admin@timebride.com",
+				PasswordHash: string(passwordHash),
+				Name:         "Адміністратор системи",
+				Role:         models.RoleAdmin,
+				Language:     "uk",
+				Permissions:  permissions,
 			}
 			if err := db.Create(&adminUser).Error; err != nil {
 				log.Printf("Error creating admin user: %v", err)
@@ -119,16 +119,10 @@ func main() {
 	bookingSvc := booking.New(bookingRepo, userSvc, db)
 	templateSvc := template.NewService(templateRepo)
 	fileSvc := file.NewService(fileRepo, s3Client, cfg.Storage)
-	authSvc := auth.NewService(userRepo, cfg.JWT)
-
-	// Створюємо конфігурацію авторизації
-	authConfig := middleware.AuthConfig{
-		SecretKey:     cfg.JWT.SecretKey,
-		TokenDuration: cfg.JWT.TokenDuration,
-	}
+	authSvc := services.NewAuthService(userRepo, cfg)
 
 	// Створюємо хендлери
-	authHandler := handlers.NewAuthHandler(userSvc, authConfig, authSvc)
+	authHandler := handlers.NewAuthHandler(authSvc)
 	dashboardHandler := handlers.NewDashboardHandler(userSvc, bookingSvc, templateSvc, fileSvc)
 	bookingHandler := handlers.NewBookingHandler(bookingSvc, userSvc)
 	templateHandler := handlers.NewTemplateHandler(templateSvc)

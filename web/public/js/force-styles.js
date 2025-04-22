@@ -1,8 +1,20 @@
 /**
  * Force styles and handle missing resources
  * This script ensures consistent styling even when some resources are missing
+ * Respects tabler.min.css as base styling
  */
 document.addEventListener('DOMContentLoaded', function() {
+    // Забезпечуємо завантаження tabler.min.css першим
+    function ensureTablerFirst() {
+        const links = document.querySelectorAll('link[rel="stylesheet"]');
+        const tablerLink = Array.from(links).find(link => link.href.includes('tabler.min.css'));
+        const head = document.head;
+        
+        if (tablerLink && head.firstChild !== tablerLink) {
+            head.insertBefore(tablerLink, head.firstChild);
+        }
+    }
+    
     // Додаємо параметр версії до CSS файлів для обходу кешу
     function addRandomQueryToCSS() {
         const links = document.querySelectorAll('link[rel="stylesheet"]');
@@ -18,65 +30,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Примусово застосовуємо стилі для кнопок, якщо щось не працює
-    function applyButtonStyles() {
+    // Примусово застосовуємо кастомні стилі для кнопок на основі tabler 
+    function applyCustomButtonStyles() {
         // Primary кнопки
         document.querySelectorAll('.btn-primary').forEach(btn => {
             btn.style.backgroundColor = '#D5BDAF';
             btn.style.borderColor = '#D5BDAF';
-            btn.style.color = '#FFFFFF';
         });
         
         // Outline Primary кнопки
         document.querySelectorAll('.btn-outline-primary').forEach(btn => {
             btn.style.color = '#D5BDAF';
             btn.style.borderColor = '#D5BDAF';
-            btn.style.backgroundColor = 'transparent';
-        });
-        
-        // Outline Dark кнопки при наведенні - додаємо слухачі подій
-        document.querySelectorAll('.btn-outline-dark').forEach(btn => {
-            btn.addEventListener('mouseover', function() {
-                this.style.backgroundColor = '#2A2A2A';
-                this.style.borderColor = '#2A2A2A';
-                this.style.color = '#FFFFFF';
-            });
-            
-            btn.addEventListener('mouseout', function() {
-                this.style.backgroundColor = 'transparent';
-                this.style.borderColor = '#2A2A2A';
-                this.style.color = '#2A2A2A';
-            });
         });
     }
     
     // Переконуємося, що класи шрифтів застосовані
     function ensureFontClasses() {
         document.documentElement.classList.add('font-inter');
-        document.body.classList.add('font-inter');
     }
     
+    // Примусово застосовуємо шрифт Inter через CSS змінні tabler
+    function applyInterFontThroughTablerVars() {
+        document.documentElement.style.setProperty('--tblr-font-sans-serif', 
+            '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif');
+    }
+
     // Викликаємо функції
+    ensureTablerFirst();
     addRandomQueryToCSS();
-    setTimeout(applyButtonStyles, 100); // Невелика затримка для завантаження стилів
+    setTimeout(applyCustomButtonStyles, 100); // Невелика затримка для завантаження стилів
     ensureFontClasses();
-
-    // Apply Inter font to all elements
-    document.querySelectorAll('*').forEach(element => {
-        if (window.getComputedStyle(element).fontFamily !== 'Inter') {
-            element.style.fontFamily = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-        }
-    });
-
-    // Примусово застосовуємо кольори для тексту
-    document.querySelectorAll('.text-secondary').forEach(el => {
-        el.style.color = '#4A4744 !important';
-    });
-    
-    // Примусово застосовуємо кольори для заголовків
-    document.querySelectorAll('h1.display-3, h2.display-5').forEach(el => {
-        el.style.color = '#4A4744';
-    });
+    applyInterFontThroughTablerVars();
 
     // Force the footer background color
     document.querySelectorAll('.color-footer-bg').forEach(element => {

@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/google/uuid"
@@ -21,9 +22,15 @@ func NewService(repo repositories.UserRepository) *Service {
 	}
 }
 
-func (s *Service) Register(ctx context.Context, email, password, fullName, companyName, role string) (*models.User, error) {
+func (s *Service) Register(ctx context.Context, email, password, name, role string) (*models.User, error) {
 	// Хешуємо пароль
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	// Конвертуємо дозволи в JSON
+	permissions, err := json.Marshal(models.DefaultPermissions(role))
 	if err != nil {
 		return nil, err
 	}
@@ -33,9 +40,9 @@ func (s *Service) Register(ctx context.Context, email, password, fullName, compa
 		ID:           uuid.New(),
 		Email:        email,
 		PasswordHash: string(hashedPassword),
-		FullName:     fullName,
-		CompanyName:  companyName,
+		Name:         name,
 		Role:         role,
+		Permissions:  permissions,
 	}
 
 	// Зберігаємо користувача

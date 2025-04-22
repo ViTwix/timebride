@@ -37,7 +37,7 @@ func NewHandler(userService *user.Service) *Handler {
 }
 
 // Register registers a new user
-func (s *Service) Register(ctx context.Context, email, password, fullName, companyName string) (*models.User, error) {
+func (s *Service) Register(ctx context.Context, email, password, name string) (*models.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -47,8 +47,7 @@ func (s *Service) Register(ctx context.Context, email, password, fullName, compa
 		ID:           uuid.New(),
 		Email:        email,
 		PasswordHash: string(hashedPassword),
-		FullName:     fullName,
-		CompanyName:  companyName,
+		Name:         name,
 		Role:         "user",
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),

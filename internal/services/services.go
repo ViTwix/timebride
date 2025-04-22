@@ -13,7 +13,7 @@ import (
 
 // UserService визначає інтерфейс для роботи з користувачами
 type UserService interface {
-	Register(ctx context.Context, email, password, fullName, companyName, role string) (*models.User, error)
+	Register(ctx context.Context, email, password, name, role string) (*models.User, error)
 	Login(ctx context.Context, email, password string) (*models.User, error)
 	GetByID(ctx context.Context, id uuid.UUID) (*models.User, error)
 	GetByEmail(ctx context.Context, email string) (*models.User, error)
@@ -22,11 +22,13 @@ type UserService interface {
 	UpdatePassword(ctx context.Context, user *models.User, currentPassword, newPassword string) error
 }
 
-// AuthService визначає інтерфейс для аутентифікації
-type AuthService interface {
-	ValidateToken(tokenString string) (*models.User, error)
-	Login(ctx context.Context, email, password string) (string, error)
-	Register(ctx context.Context, email, password, fullName, companyName string) (*models.User, error)
+// IAuthService визначає інтерфейс для аутентифікації
+type IAuthService interface {
+	Register(ctx context.Context, email, password, name string) (*models.User, error)
+	Login(ctx context.Context, email, password string) (*models.User, *AuthTokens, error)
+	RefreshToken(ctx context.Context, refreshTokenString string) (*models.User, *AuthTokens, error)
+	GenerateOAuthURL(provider string) (string, string, error)
+	HandleOAuthCallback(ctx context.Context, provider, code, state, savedState string) (*models.User, *AuthTokens, error)
 }
 
 // StorageService визначає інтерфейс для роботи з файлами

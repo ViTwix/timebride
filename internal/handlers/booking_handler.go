@@ -70,15 +70,24 @@ func (h *BookingHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Встановлюємо значення за замовчуванням для EventType, якщо порожнє
+	eventType := input.EventType
+	if eventType == "" {
+		eventType = models.EventTypeEvent // Значення за замовчуванням
+	}
+
+	// Перетворюємо телефон у вказівник
+	clientPhone := input.ClientPhone
+
 	// Створюємо нове бронювання
 	booking := &models.Booking{
 		UserID:        userID,
 		Title:         input.Title,
-		EventType:     input.EventType,
+		EventType:     eventType,
 		StartTime:     input.StartTime,
 		EndTime:       input.EndTime,
 		ClientName:    input.ClientName,
-		ClientPhone:   input.ClientPhone,
+		ClientPhone:   &clientPhone,
 		ClientEmail:   input.ClientEmail,
 		Status:        models.BookingStatusPending,
 		PaymentStatus: models.PaymentStatusPending,
@@ -154,9 +163,17 @@ func (h *BookingHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Зберігаємо поточне значення EventType
+	currentEventType := booking.EventType
+
 	if err := json.NewDecoder(r.Body).Decode(booking); err != nil {
 		http.Error(w, "Невірний формат даних", http.StatusBadRequest)
 		return
+	}
+
+	// Якщо EventType порожній, відновлюємо попереднє значення
+	if booking.EventType == "" {
+		booking.EventType = currentEventType
 	}
 
 	if err := h.bookingService.Update(r.Context(), booking); err != nil {
@@ -333,6 +350,25 @@ func (h *BookingHandler) HandleBookingCreate(c *fiber.Ctx) error {
 	// Встановлюємо ID користувача
 	booking.UserID = userID
 
+	// Перевіряємо, чи встановлено тип події
+	if booking.EventType == "" {
+		// Спробуємо отримати значення безпосередньо з форми
+		eventType := c.FormValue("event_type")
+		if eventType != "" {
+			booking.EventType = eventType
+		} else {
+			booking.EventType = models.EventTypeEvent // Встановлюємо значення за замовчуванням
+		}
+	}
+
+	// Задаємо значення за замовчуванням
+	if booking.Status == "" {
+		booking.Status = models.BookingStatusPending
+	}
+	if booking.PaymentStatus == "" {
+		booking.PaymentStatus = models.PaymentStatusPending
+	}
+
 	// Створюємо бронювання
 	if err := h.bookingService.Create(c.Context(), &booking); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -360,11 +396,25 @@ func (h *BookingHandler) HandleBookingUpdate(c *fiber.Ctx) error {
 		})
 	}
 
+	// Зберігаємо поточне значення EventType
+	currentEventType := booking.EventType
+
 	// Парсимо дані з форми
 	if err := c.BodyParser(booking); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid input",
 		})
+	}
+
+	// Перевіряємо, чи встановлено тип події
+	if booking.EventType == "" {
+		// Спробуємо отримати значення безпосередньо з форми
+		eventType := c.FormValue("event_type")
+		if eventType != "" {
+			booking.EventType = eventType
+		} else {
+			booking.EventType = currentEventType // Відновлюємо попереднє значення
+		}
 	}
 
 	// Оновлюємо бронювання
@@ -394,4 +444,12 @@ func (h *BookingHandler) HandleBookingDelete(c *fiber.Ctx) error {
 	}
 
 	return c.Redirect("/bookings")
+}
+
+// HandleBookingCreateForm відображає форму створення бронювання
+func (h *BookingHandler) HandleBookingCreateForm(c *fiber.Ctx) error {
+	// Рендеримо шаблон
+	return c.Render("booking/create", fiber.Map{
+		"Title": "Створення бронювання",
+	})
 }

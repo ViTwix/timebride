@@ -54,7 +54,14 @@ func New(
 	app.Use(logger.New())
 	app.Use(recover.New())
 	app.Use(compress.New())
-	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "*",
+		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS,PATCH",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-Requested-With",
+		ExposeHeaders:    "Content-Length, Content-Type",
+		AllowCredentials: false,
+		MaxAge:           86400,
+	}))
 
 	// Статичні файли
 	app.Static("/css", "./web/public/css")
@@ -109,6 +116,7 @@ func (r *Router) SetupRoutes() {
 
 	// Бронювання
 	app.Get("/bookings", r.bookingHandler.HandleBookingList)
+	app.Get("/bookings/create", r.bookingHandler.HandleBookingCreateForm)
 	app.Post("/bookings", r.bookingHandler.HandleBookingCreate)
 	app.Put("/bookings/:id", r.bookingHandler.HandleBookingUpdate)
 	app.Delete("/bookings/:id", r.bookingHandler.HandleBookingDelete)
