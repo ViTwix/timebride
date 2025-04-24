@@ -33,15 +33,29 @@ type BookingRepository interface {
 
 	// Count returns the number of bookings matching the filter
 	Count(ctx context.Context, filter map[string]interface{}) (int64, error)
+
+	// CountUpcoming counts upcoming bookings
+	CountUpcoming(ctx context.Context, userID uuid.UUID) (int64, error)
+
+	// CountInDateRange counts bookings in a date range
+	CountInDateRange(ctx context.Context, userID uuid.UUID, start, end time.Time) (int64, error)
+
+	// GetRecent retrieves recent bookings
+	GetRecent(ctx context.Context, userID uuid.UUID, limit int) ([]*models.Booking, error)
+
+	// GetByClientID retrieves bookings by client ID
+	GetByClientID(ctx context.Context, clientID uuid.UUID) ([]*models.Booking, error)
 }
 
 type bookingRepository struct {
-	db *gorm.DB
+	baseRepository[models.Booking]
 }
 
 // NewBookingRepository creates a new instance of BookingRepository
 func NewBookingRepository(db *gorm.DB) BookingRepository {
-	return &bookingRepository{db: db}
+	return &bookingRepository{
+		baseRepository: baseRepository[models.Booking]{db: db},
+	}
 }
 
 func (r *bookingRepository) Create(ctx context.Context, booking *models.Booking) error {
@@ -70,7 +84,7 @@ func (r *bookingRepository) GetByUserID(ctx context.Context, userID uuid.UUID) (
 func (r *bookingRepository) GetByDateRange(ctx context.Context, userID uuid.UUID, start, end time.Time) ([]*models.Booking, error) {
 	var bookings []*models.Booking
 	if err := r.db.WithContext(ctx).
-		Where("user_id = ? AND start_time >= ? AND end_time <= ?", userID, start, end).
+		Where("user_id = ? AND start_time BETWEEN ? AND ?", userID, start, end).
 		Find(&bookings).Error; err != nil {
 		return nil, err
 	}
@@ -133,4 +147,48 @@ func (r *bookingRepository) Count(ctx context.Context, filter map[string]interfa
 		return 0, err
 	}
 	return count, nil
+}
+
+// CountUpcoming counts upcoming bookings
+func (r *bookingRepository) CountUpcoming(ctx context.Context, userID uuid.UUID) (int64, error) {
+	var count int64
+	if err := r.db.WithContext(ctx).Model(&models.Booking{}).
+		Where("user_id = ? AND start_time > ?", userID, time.Now()).
+		Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// CountInDateRange counts bookings in a date range
+func (r *bookingRepository) CountInDateRange(ctx context.Context, userID uuid.UUID, start, end time.Time) (int64, error) {
+	var count int64
+	if err := r.db.WithContext(ctx).Model(&models.Booking{}).
+		Where("user_id = ? AND start_time BETWEEN ? AND ?", userID, start, end).
+		Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// GetRecent retrieves recent bookings
+func (r *bookingRepository) GetRecent(ctx context.Context, userID uuid.UUID, limit int) ([]*models.Booking, error) {
+	var bookings []*models.Booking
+	if err := r.db.WithContext(ctx).
+		Where("user_id = ?", userID).
+		Order("created_at DESC").
+		Limit(limit).
+		Find(&bookings).Error; err != nil {
+		return nil, err
+	}
+	return bookings, nil
+}
+
+// GetByClientID retrieves bookings by client ID
+func (r *bookingRepository) GetByClientID(ctx context.Context, clientID uuid.UUID) ([]*models.Booking, error) {
+	var bookings []*models.Booking
+	if err := r.db.WithContext(ctx).Where("client_id = ?", clientID).Find(&bookings).Error; err != nil {
+		return nil, err
+	}
+	return bookings, nil
 }

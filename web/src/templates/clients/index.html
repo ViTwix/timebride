@@ -114,17 +114,18 @@
                                 <thead>
                                     <tr>
                                         <th>Клієнт</th>
-                                        <th>Категорія</th>
-                                        <th>Контакти</th>
-                                        <th>Джерело</th>
-                                        <th>Бронювання</th>
+                                        <th>Телефон</th>
+                                        <th>Email</th>
+                                        <th>Instagram</th>
+                                        <th>Дата бронювання</th>
+                                        <th>Назва бронювання</th>
                                         <th class="w-1"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {{if eq (len .Clients) 0}}
                                     <tr>
-                                        <td colspan="6" class="text-center py-4">
+                                        <td colspan="7" class="text-center py-4">
                                             <div class="empty">
                                                 <div class="empty-icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -186,52 +187,39 @@
                                             </div>
                                         </td>
                                         <td>
-                                            {{if .Category}}
-                                            <span class="badge bg-blue-lt">{{.Category}}</span>
+                                            {{if .Phone}}
+                                            <a href="tel:{{.Phone}}" class="text-reset">{{.Phone}}</a>
                                             {{else}}
                                             <span class="text-muted">—</span>
                                             {{end}}
                                         </td>
                                         <td>
-                                            <div class="d-flex flex-column gap-1">
-                                                {{if .Email}}
-                                                <a href="mailto:{{.Email}}" class="text-reset d-flex align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                        <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"></path>
-                                                        <path d="M3 7l9 6l9 -6"></path>
-                                                    </svg>
-                                                    <span class="text-truncate" style="max-width: 180px;">{{.Email}}</span>
-                                                </a>
-                                                {{end}}
-                                                {{if .Phone}}
-                                                <a href="tel:{{.Phone}}" class="text-reset d-flex align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-phone text-muted me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                        <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path>
-                                                    </svg>
-                                                    {{.Phone}}
-                                                </a>
-                                                {{end}}
-                                                {{if and (not .Email) (not .Phone)}}
-                                                <span class="text-muted">—</span>
-                                                {{end}}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {{if .Source}}
-                                            <span class="badge bg-azure-lt">{{.Source}}</span>
+                                            {{if .Email}}
+                                            <a href="mailto:{{.Email}}" class="text-reset text-truncate" style="max-width: 180px;">{{.Email}}</a>
                                             {{else}}
                                             <span class="text-muted">—</span>
                                             {{end}}
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="text-reset">{{.BookingsCount}}</span>
-                                                {{if gt .UpcomingBookingsCount 0}}
-                                                <span class="badge bg-green-lt ms-2">{{.UpcomingBookingsCount}} заплановано</span>
-                                                {{end}}
-                                            </div>
+                                            {{if .Instagram}}
+                                            <a href="https://instagram.com/{{.Instagram}}" target="_blank" class="text-reset">@{{.Instagram}}</a>
+                                            {{else}}
+                                            <span class="text-muted">—</span>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            {{if .LastBooking}}
+                                            {{.LastBooking.StartTime.Format "02.01.2006"}}
+                                            {{else}}
+                                            <span class="text-muted">—</span>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            {{if .LastBooking}}
+                                            <a href="/bookings/{{.LastBooking.ID}}" class="text-reset">{{.LastBooking.Title}}</a>
+                                            {{else}}
+                                            <span class="text-muted">—</span>
+                                            {{end}}
                                         </td>
                                         <td>
                                             <div class="dropdown">

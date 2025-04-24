@@ -22,7 +22,7 @@ run:
 	go run cmd/app/main.go
 
 run-legacy:
-	go run cmd/api/main.go
+	go run cmd/app/main.go
 
 build:
 	go build -o bin/app cmd/app/main.go

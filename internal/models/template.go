@@ -4,26 +4,34 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/datatypes"
-	"gorm.io/gorm"
 )
 
+// Template представляє шаблон документа або повідомлення
 type Template struct {
-	ID             uuid.UUID      `json:"id" gorm:"type:uuid;primaryKey"`
-	UserID         uuid.UUID      `json:"user_id" gorm:"type:uuid;not null"`
-	Name           string         `json:"name" gorm:"not null"`
-	Description    string         `json:"description"`
-	EventType      string         `json:"event_type" gorm:"not null"`
-	FieldsTemplate datatypes.JSON `json:"fields_template" gorm:"type:jsonb;default:'{}'"`
-	TeamTemplate   datatypes.JSON `json:"team_template" gorm:"type:jsonb;default:'[]'"`
-	CreatedAt      time.Time      `json:"created_at" gorm:"autoCreateTime"`
-	UpdatedAt      time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
+	ID          uuid.UUID         `json:"id" gorm:"primarykey;type:uuid"`
+	UserID      uuid.UUID         `json:"user_id" gorm:"type:uuid;not null"`
+	Name        string            `json:"name"`
+	Type        string            `json:"type"`
+	Subject     string            `json:"subject"`
+	Content     string            `json:"content"`
+	Variables   map[string]string `json:"variables" gorm:"type:jsonb;serializer:json"`
+	IsDefault   bool              `json:"is_default"`
+	IsActive    bool              `json:"is_active" gorm:"default:true"`
+	Description string            `json:"description"`
+	CreatedAt   time.Time         `json:"created_at"`
+	UpdatedAt   time.Time         `json:"updated_at"`
 }
 
-// BeforeCreate - GORM хук для генерації UUID перед створенням
-func (t *Template) BeforeCreate(tx *gorm.DB) error {
+// BeforeCreate генерує UUID для нового шаблону
+func (t *Template) BeforeCreate() error {
 	if t.ID == uuid.Nil {
 		t.ID = uuid.New()
 	}
+	return nil
+}
+
+// BeforeUpdate оновлює час модифікації перед оновленням
+func (t *Template) BeforeUpdate() error {
+	t.UpdatedAt = time.Now()
 	return nil
 }

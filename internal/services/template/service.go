@@ -9,45 +9,56 @@ import (
 	"timebride/internal/repositories"
 )
 
-type Service struct {
-	repo repositories.TemplateRepository
+type templateService struct {
+	templateRepo repositories.Repository[models.Template]
 }
 
-func NewService(repo repositories.TemplateRepository) *Service {
-	return &Service{
-		repo: repo,
+// NewTemplateService creates a new template service instance
+func NewTemplateService(templateRepo repositories.Repository[models.Template]) ITemplateService {
+	return &templateService{
+		templateRepo: templateRepo,
 	}
 }
 
-func (s *Service) Create(ctx context.Context, template *models.Template) error {
-	template.ID = uuid.New()
-	return s.repo.Create(ctx, template)
+// Create створює новий шаблон
+func (s *templateService) Create(ctx context.Context, template *models.Template) error {
+	return s.templateRepo.Create(ctx, template)
 }
 
-func (s *Service) GetByID(ctx context.Context, id uuid.UUID) (*models.Template, error) {
-	return s.repo.GetByID(ctx, id)
+// GetByID отримує шаблон за ID
+func (s *templateService) GetByID(ctx context.Context, id uuid.UUID) (*models.Template, error) {
+	return s.templateRepo.GetByID(ctx, id)
 }
 
-func (s *Service) GetByUserID(ctx context.Context, userID uuid.UUID) ([]*models.Template, error) {
-	return s.repo.GetByUserID(ctx, userID)
+// GetByUserID отримує всі шаблони користувача
+func (s *templateService) GetByUserID(ctx context.Context, userID uuid.UUID) ([]*models.Template, error) {
+	return s.templateRepo.List(ctx, map[string]interface{}{"user_id": userID})
 }
 
-func (s *Service) Update(ctx context.Context, template *models.Template) error {
-	return s.repo.Update(ctx, template)
+// Update оновлює шаблон
+func (s *templateService) Update(ctx context.Context, template *models.Template) error {
+	return s.templateRepo.Update(ctx, template)
 }
 
-func (s *Service) Delete(ctx context.Context, id uuid.UUID) error {
-	return s.repo.Delete(ctx, id)
+// Delete видаляє шаблон
+func (s *templateService) Delete(ctx context.Context, id uuid.UUID) error {
+	return s.templateRepo.Delete(ctx, id)
 }
 
-// GetTotalTemplates returns the total number of templates
-func (s *Service) GetTotalTemplates(ctx context.Context) (int64, error) {
-	return s.repo.Count(ctx, map[string]interface{}{})
+// GetTotalTemplates повертає загальну кількість шаблонів
+func (s *templateService) GetTotalTemplates(ctx context.Context) (int64, error) {
+	templates, err := s.templateRepo.List(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	return int64(len(templates)), nil
 }
 
-// GetActiveTemplates returns the number of active templates
-func (s *Service) GetActiveTemplates(ctx context.Context) (int64, error) {
-	return s.repo.Count(ctx, map[string]interface{}{
-		"status": "active",
-	})
+// GetActiveTemplates повертає кількість активних шаблонів
+func (s *templateService) GetActiveTemplates(ctx context.Context) (int64, error) {
+	templates, err := s.templateRepo.List(ctx, map[string]interface{}{"is_active": true})
+	if err != nil {
+		return 0, err
+	}
+	return int64(len(templates)), nil
 }

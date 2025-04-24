@@ -1,14 +1,11 @@
 package models
 
 import (
-	"database/sql/driver"
 	"encoding/json"
-	"errors"
 	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
-	"gorm.io/gorm"
 )
 
 // Типи аутентифікації користувачів
@@ -40,160 +37,126 @@ type Permissions struct {
 
 // User представляє користувача системи
 type User struct {
-	ID              uuid.UUID      `json:"id" db:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	Email           string         `json:"email" db:"email" gorm:"uniqueIndex;not null"`
-	PasswordHash    string         `json:"-" db:"password_hash"`
-	AuthProvider    string         `json:"auth_provider" db:"auth_provider" gorm:"default:'local'"`
-	ProviderID      *string        `json:"provider_id,omitempty" db:"provider_id"`
-	Name            string         `json:"name" db:"name" gorm:"not null"`
-	AvatarURL       *string        `json:"avatar_url,omitempty" db:"avatar_url"`
-	IsEmailVerified bool           `json:"is_email_verified" db:"is_email_verified" gorm:"default:false"`
-	Is2FAEnabled    bool           `json:"is_2fa_enabled" db:"is_2fa_enabled" gorm:"default:false"`
-	TwoFASecret     *string        `json:"-" db:"two_fa_secret"`
-	Phone           *string        `json:"phone,omitempty" db:"phone"`
-	Country         *string        `json:"country,omitempty" db:"country"`
-	City            *string        `json:"city,omitempty" db:"city"`
-	Role            string         `json:"role" db:"role" gorm:"default:'user'"`
-	Language        string         `json:"language" db:"language" gorm:"default:'uk'"`
-	Settings        datatypes.JSON `json:"settings,omitempty" gorm:"type:jsonb;default:'{}'"`
-	ParentID        *uuid.UUID     `json:"parent_id,omitempty" db:"parent_id" gorm:"type:uuid"`
-	Permissions     datatypes.JSON `json:"permissions" gorm:"type:jsonb;default:'{}'"`
-	CustomFields    datatypes.JSON `json:"custom_fields,omitempty" gorm:"type:jsonb;default:'{}'"`
-	CreatedAt       time.Time      `json:"created_at" db:"created_at" gorm:"autoCreateTime"`
-	UpdatedAt       time.Time      `json:"updated_at" db:"updated_at" gorm:"autoUpdateTime"`
+	ID           uuid.UUID      `json:"id" gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	Email        string         `json:"email" gorm:"unique;not null"`
+	PasswordHash string         `json:"-" gorm:"not null"`
+	FullName     string         `json:"full_name" gorm:"not null"`
+	CompanyName  string         `json:"company_name"`
+	Phone        string         `json:"phone"`
+	Role         string         `json:"role" gorm:"not null;default:'user'"`
+	Settings     datatypes.JSON `json:"settings" gorm:"type:jsonb"`
+	CreatedAt    time.Time      `json:"created_at" gorm:"not null"`
+	UpdatedAt    time.Time      `json:"updated_at" gorm:"not null"`
+	DeletedAt    *time.Time     `json:"-" gorm:"index"`
 }
 
-// Settings представляє кастомні налаштування користувача
-type Settings struct {
-	Notifications *NotificationSettings `json:"notifications,omitempty"`
-	Preferences   *UserPreferences      `json:"preferences,omitempty"`
-	Theme         *ThemeSettings        `json:"theme,omitempty"`
+// UserSettings представляє налаштування користувача
+type UserSettings struct {
+	Theme            string            `json:"theme"`
+	Language         string            `json:"language"`
+	Notifications    bool              `json:"notifications"`
+	DefaultCurrency  string            `json:"default_currency"`
+	CustomFields     map[string]string `json:"custom_fields"`
+	CalendarSettings CalendarSettings  `json:"calendar_settings"`
 }
 
-// Value - реалізація інтерфейсу Valuer для Settings
-func (s Settings) Value() (driver.Value, error) {
-	return json.Marshal(s)
+// CalendarSettings представляє налаштування календаря
+type CalendarSettings struct {
+	DefaultView string `json:"default_view"`
+	StartOfWeek int    `json:"start_of_week"`
+	WorkingDays []int  `json:"working_days"`
 }
 
-// Scan - реалізація інтерфейсу Scanner для Settings
-func (s *Settings) Scan(value interface{}) error {
-	if value == nil {
-		return nil
-	}
-
-	bytes, ok := value.([]byte)
-	if !ok {
-		return errors.New("type assertion to []byte failed")
-	}
-
-	return json.Unmarshal(bytes, &s)
-}
-
-// NotificationSettings представляє налаштування сповіщень
-type NotificationSettings struct {
-	Email             bool `json:"email"`
-	PushNotifications bool `json:"push_notifications"`
-	SMS               bool `json:"sms"`
-}
-
-// UserPreferences представляє загальні налаштування користувача
-type UserPreferences struct {
-	DefaultView    string `json:"default_view"`
-	FirstDayOfWeek int    `json:"first_day_of_week"`
-}
-
-// ThemeSettings представляє налаштування теми
-type ThemeSettings struct {
-	Mode         string `json:"mode"` // light, dark, system
-	PrimaryColor string `json:"primary_color"`
-	AccentColor  string `json:"accent_color"`
-}
-
-// PublicUser - публічна інформація про користувача (без конфіденційних даних)
+// PublicUser представляє публічну інформацію про користувача
 type PublicUser struct {
-	ID     uuid.UUID `json:"id"`
-	Email  string    `json:"email"`
-	Name   string    `json:"name"`
-	Avatar string    `json:"avatar"`
-	Role   string    `json:"role"`
+	ID          uuid.UUID `json:"id"`
+	Email       string    `json:"email"`
+	FullName    string    `json:"full_name"`
+	CompanyName string    `json:"company_name,omitempty"`
+	Role        string    `json:"role"`
 }
 
-// UserPublic забезпечує сумісність зі старим кодом
-type UserPublic = PublicUser
-
-// ToPublicUser конвертує User в PublicUser
-func (u *User) ToPublicUser() PublicUser {
-	var avatar string
-	if u.AvatarURL != nil {
-		avatar = *u.AvatarURL
-	}
-
-	return PublicUser{
-		ID:     u.ID,
-		Email:  u.Email,
-		Name:   u.Name,
-		Avatar: avatar,
-		Role:   u.Role,
+// ToPublic конвертує User в PublicUser
+func (u *User) ToPublic() *PublicUser {
+	return &PublicUser{
+		ID:          u.ID,
+		Email:       u.Email,
+		FullName:    u.FullName,
+		CompanyName: u.CompanyName,
+		Role:        u.Role,
 	}
 }
 
-// DefaultPermissions повертає стандартні дозволи в залежності від ролі
-func DefaultPermissions(role string) Permissions {
-	switch role {
-	case RoleOwner, RoleAdmin:
-		return Permissions{
-			ViewFinancials: true,
-			EditProjects:   true,
-			ViewProjects:   true,
-			ManageTeam:     true,
-		}
-	case RoleEditor, RoleRetoucher:
-		return Permissions{
-			ViewFinancials: false,
-			EditProjects:   true,
-			ViewProjects:   true,
-			ManageTeam:     false,
-		}
-	case RoleOperator, RoleAssistant:
-		return Permissions{
-			ViewFinancials: false,
-			EditProjects:   false,
-			ViewProjects:   true,
-			ManageTeam:     false,
-		}
-	default:
-		return Permissions{
-			ViewFinancials: false,
-			EditProjects:   false,
-			ViewProjects:   true,
-			ManageTeam:     false,
-		}
+// GetSettings повертає налаштування користувача
+func (u *User) GetSettings() (*UserSettings, error) {
+	if u.Settings == nil {
+		return &UserSettings{
+			Theme:           "light",
+			Language:        "uk",
+			DefaultCurrency: "UAH",
+			CustomFields:    make(map[string]string),
+			CalendarSettings: CalendarSettings{
+				DefaultView: "month",
+				StartOfWeek: 1,
+				WorkingDays: []int{1, 2, 3, 4, 5},
+			},
+		}, nil
 	}
+
+	var settings UserSettings
+	if err := json.Unmarshal(u.Settings, &settings); err != nil {
+		return nil, err
+	}
+	return &settings, nil
 }
 
-// BeforeCreate - GORM хук для генерації UUID перед створенням
-func (u *User) BeforeCreate(tx *gorm.DB) error {
+// SetSettings встановлює налаштування користувача
+func (u *User) SetSettings(settings *UserSettings) error {
+	data, err := json.Marshal(settings)
+	if err != nil {
+		return err
+	}
+	u.Settings = datatypes.JSON(data)
+	return nil
+}
+
+// BeforeCreate встановлює значення за замовчуванням перед створенням
+func (u *User) BeforeCreate() error {
 	if u.ID == uuid.Nil {
 		u.ID = uuid.New()
+	}
+	if u.CreatedAt.IsZero() {
+		u.CreatedAt = time.Now()
+	}
+	if u.UpdatedAt.IsZero() {
+		u.UpdatedAt = time.Now()
+	}
+	if u.Role == "" {
+		u.Role = "user"
+	}
+
+	// Встановлюємо налаштування за замовчуванням
+	if u.Settings == nil {
+		settings := &UserSettings{
+			Theme:           "light",
+			Language:        "uk",
+			DefaultCurrency: "UAH",
+			CustomFields:    make(map[string]string),
+			CalendarSettings: CalendarSettings{
+				DefaultView: "month",
+				StartOfWeek: 1,
+				WorkingDays: []int{1, 2, 3, 4, 5},
+			},
+		}
+		if err := u.SetSettings(settings); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-// Value - реалізація інтерфейсу Valuer для Permissions
-func (p Permissions) Value() (driver.Value, error) {
-	return json.Marshal(p)
-}
-
-// Scan - реалізація інтерфейсу Scanner для Permissions
-func (p *Permissions) Scan(value interface{}) error {
-	if value == nil {
-		return nil
-	}
-
-	bytes, ok := value.([]byte)
-	if !ok {
-		return errors.New("type assertion to []byte failed")
-	}
-
-	return json.Unmarshal(bytes, &p)
+// BeforeUpdate оновлює час модифікації перед оновленням
+func (u *User) BeforeUpdate() error {
+	u.UpdatedAt = time.Now()
+	return nil
 }

@@ -1,7 +1,7 @@
 /* Base styles */
 :root {
-    --primary-color: #4f46e5;
-    --primary-hover: #4338ca;
+    --primary-color: #dbba97;
+    --primary-hover: #dba66e;
     --error-color: #ef4444;
 }
 
@@ -231,6 +231,12 @@ body {
 .input-field.error {
     border-color: var(--error-color);
 }
+
+.navbar-brand {
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #9d8d78;
+  }
 
 /* Responsive */
 @media (min-width: 640px) {

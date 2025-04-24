@@ -29,12 +29,14 @@ type UserRepository interface {
 }
 
 type userRepository struct {
-	db *gorm.DB
+	baseRepository[models.User]
 }
 
 // NewUserRepository creates a new instance of UserRepository
 func NewUserRepository(db *gorm.DB) UserRepository {
-	return &userRepository{db: db}
+	return &userRepository{
+		baseRepository: baseRepository[models.User]{db: db},
+	}
 }
 
 func (r *userRepository) Create(ctx context.Context, user *models.User) error {
@@ -54,7 +56,7 @@ func (r *userRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Use
 
 func (r *userRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	if err := r.db.WithContext(ctx).First(&user, "email = ?", email).Error; err != nil {
+	if err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrUserNotFound
 		}

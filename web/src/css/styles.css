@@ -57,6 +57,7 @@
 .navbar-brand {
   font-weight: 700;
   color: var(--color-text-primary);
+  background-color: #9d8d78;
 }
 
 .nav-link {

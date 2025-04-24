@@ -1,11 +1,6 @@
 package router
 
 import (
-	"log"
-	"timebride/internal/handlers"
-	"timebride/internal/middleware"
-	"timebride/internal/utils"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -13,28 +8,19 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/template/html/v2"
+
+	"timebride/internal/handlers"
+	"timebride/internal/middleware"
+	"timebride/internal/utils"
 )
 
 type Router struct {
-	app              *fiber.App
-	sessionStore     *session.Store
-	authHandler      *handlers.AuthHandler
-	dashboardHandler *handlers.DashboardHandler
-	bookingHandler   *handlers.BookingHandler
-	templateHandler  *handlers.TemplateHandler
-	fileHandler      *handlers.FileHandler
-	userHandler      *handlers.UserHandler
-	landingHandler   *handlers.LandingHandler
+	app          *fiber.App
+	sessionStore *session.Store
+	handlers     *handlers.Handlers
 }
 
-func New(
-	authHandler *handlers.AuthHandler,
-	dashboardHandler *handlers.DashboardHandler,
-	bookingHandler *handlers.BookingHandler,
-	templateHandler *handlers.TemplateHandler,
-	fileHandler *handlers.FileHandler,
-	userHandler *handlers.UserHandler,
-) *Router {
+func New(h *handlers.Handlers) *Router {
 	// Ініціалізуємо HTML шаблонізатор
 	engine := html.New("./web/src/templates", ".html")
 	engine.Reload(true) // Enable reload in development
@@ -69,76 +55,73 @@ func New(
 	app.Static("/img", "./web/public/img")
 	app.Static("/fonts", "./web/public/fonts")
 
-	// Створюємо обробник лендінгу
-	landingHandler := handlers.NewLandingHandler()
-
 	return &Router{
-		app:              app,
-		sessionStore:     store,
-		authHandler:      authHandler,
-		dashboardHandler: dashboardHandler,
-		bookingHandler:   bookingHandler,
-		templateHandler:  templateHandler,
-		fileHandler:      fileHandler,
-		userHandler:      userHandler,
-		landingHandler:   landingHandler,
+		app:          app,
+		sessionStore: store,
+		handlers:     h,
 	}
 }
 
 func (r *Router) SetupRoutes() {
 	// Публічні маршрути
-	r.app.Get("/", r.landingHandler.HandleLanding) // Лендінг-сторінка для неавторизованих користувачів
-	r.app.Get("/login", r.authHandler.ShowLoginPage)
-	r.app.Post("/login", r.authHandler.HandleLogin)
-	r.app.Get("/register", r.authHandler.ShowRegisterPage)
-	r.app.Post("/register", r.authHandler.HandleRegister)
+	r.app.Get("/", r.handlers.Home)
+	r.app.Get("/login", r.handlers.Auth.ShowLoginPage)
+	r.app.Post("/login", r.handlers.Auth.HandleLogin)
+	r.app.Get("/register", r.handlers.Auth.ShowRegisterPage)
+	r.app.Post("/register", r.handlers.Auth.HandleRegister)
+
+	// OAuth маршрути
+	r.app.Get("/oauth/:provider", r.handlers.Auth.OAuthRedirect)
+	r.app.Get("/oauth/:provider/callback", r.handlers.Auth.OAuthCallback)
 
 	// Захищені маршрути
 	app := r.app.Group("/app")
 
 	// Передаємо секретний ключ для перевірки JWT токена
-	app.Use(func(c *fiber.Ctx) error {
-		secretKey := r.authHandler.GetJWTSecret()
-		if secretKey == "" {
-			log.Println("Warning: JWT secret is empty!")
-		} else {
-			log.Println("JWT secret successfully loaded!")
-		}
-		c.Locals("jwt_secret", secretKey)
-		return c.Next()
-	})
-
 	app.Use(middleware.Auth)
 
 	// Дашборд (головна сторінка для авторизованих користувачів)
-	app.Get("/", r.dashboardHandler.HandleDashboard)
-	app.Get("/dashboard", r.dashboardHandler.HandleDashboard)
+	app.Get("/", r.handlers.Dashboard)
+	app.Get("/dashboard", r.handlers.Dashboard)
 
 	// Бронювання
-	app.Get("/bookings", r.bookingHandler.HandleBookingList)
-	app.Get("/bookings/create", r.bookingHandler.HandleBookingCreateForm)
-	app.Post("/bookings", r.bookingHandler.HandleBookingCreate)
-	app.Put("/bookings/:id", r.bookingHandler.HandleBookingUpdate)
-	app.Delete("/bookings/:id", r.bookingHandler.HandleBookingDelete)
+	app.Get("/bookings", r.handlers.Bookings.List)
+	app.Post("/bookings", r.handlers.Bookings.Create)
+	app.Get("/bookings/:id", r.handlers.Bookings.Get)
+	app.Put("/bookings/:id", r.handlers.Bookings.Update)
+	app.Delete("/bookings/:id", r.handlers.Bookings.Delete)
 
-	// Шаблони
-	app.Get("/templates", r.templateHandler.HandleTemplateList)
-	app.Post("/templates", r.templateHandler.HandleTemplateCreate)
-	app.Put("/templates/:id", r.templateHandler.HandleTemplateUpdate)
-	app.Delete("/templates/:id", r.templateHandler.HandleTemplateDelete)
+	// Клієнти
+	app.Get("/clients", r.handlers.Clients.List)
+	app.Post("/clients", r.handlers.Clients.Create)
+	app.Get("/clients/:id", r.handlers.Clients.Get)
+	app.Put("/clients/:id", r.handlers.Clients.Update)
+	app.Delete("/clients/:id", r.handlers.Clients.Delete)
+
+	// Команда
+	app.Get("/team", r.handlers.Team.List)
+	app.Post("/team", r.handlers.Team.Create)
+	app.Get("/team/:id", r.handlers.Team.Get)
+	app.Put("/team/:id", r.handlers.Team.Update)
+	app.Delete("/team/:id", r.handlers.Team.Delete)
+
+	// Ціни
+	app.Get("/prices", r.handlers.Prices.List)
+	app.Post("/prices", r.handlers.Prices.Create)
+	app.Get("/prices/:id", r.handlers.Prices.Get)
+	app.Put("/prices/:id", r.handlers.Prices.Update)
+	app.Delete("/prices/:id", r.handlers.Prices.Delete)
 
 	// Файли
-	app.Get("/files", r.fileHandler.HandleFileList)
-	app.Post("/files", r.fileHandler.HandleFileUpload)
-	app.Get("/files/:id", r.fileHandler.HandleFileDownload)
-	app.Delete("/files/:id", r.fileHandler.HandleFileDelete)
+	app.Get("/storage", r.handlers.Storage.List)
+	app.Post("/storage/upload", r.handlers.Storage.Upload)
+	app.Get("/storage/:id", r.handlers.Storage.Download)
+	app.Delete("/storage/:id", r.handlers.Storage.Delete)
 
 	// Профіль користувача
-	app.Get("/profile", r.userHandler.HandleProfile)
-	app.Get("/settings", r.userHandler.HandleSettings)
-	app.Put("/profile", r.userHandler.HandleUpdateProfile)
-	app.Put("/password", r.userHandler.HandleUpdatePassword)
-	app.Get("/logout", r.authHandler.HandleLogout)
+	app.Get("/profile", r.handlers.Users.Get)
+	app.Put("/profile", r.handlers.Users.Update)
+	app.Get("/settings", r.handlers.Settings)
 }
 
 func (r *Router) Start(addr string) error {

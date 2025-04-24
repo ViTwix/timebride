@@ -3,64 +3,57 @@ package user
 import (
 	"context"
 	"encoding/json"
-	"errors"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/datatypes"
+	"gorm.io/gorm"
 
 	"timebride/internal/models"
 	"timebride/internal/repositories"
 )
 
-type Service struct {
-	repo repositories.UserRepository
+type userService struct {
+	userRepo repositories.UserRepository
 }
 
-func NewService(repo repositories.UserRepository) *Service {
-	return &Service{
-		repo: repo,
+// NewUserService creates a new user service instance
+func NewUserService(userRepo repositories.UserRepository) IUserService {
+	return &userService{
+		userRepo: userRepo,
 	}
 }
 
-func (s *Service) Register(ctx context.Context, email, password, name, role string) (*models.User, error) {
+// Register реєструє нового користувача
+func (s *userService) Register(ctx context.Context, email, password, name, role string) (*models.User, error) {
 	// Хешуємо пароль
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
 
-	// Конвертуємо дозволи в JSON
-	permissions, err := json.Marshal(models.DefaultPermissions(role))
-	if err != nil {
-		return nil, err
-	}
-
 	// Створюємо користувача
 	user := &models.User{
-		ID:           uuid.New(),
 		Email:        email,
 		PasswordHash: string(hashedPassword),
-		Name:         name,
+		FullName:     name,
 		Role:         role,
-		Permissions:  permissions,
 	}
 
-	// Зберігаємо користувача
-	if err := s.repo.Create(ctx, user); err != nil {
+	if err := s.userRepo.Create(ctx, user); err != nil {
 		return nil, err
 	}
 
 	return user, nil
 }
 
-func (s *Service) Login(ctx context.Context, email, password string) (*models.User, error) {
-	// Отримуємо користувача за email
-	user, err := s.repo.GetByEmail(ctx, email)
+// Login виконує вхід користувача
+func (s *userService) Login(ctx context.Context, email, password string) (*models.User, error) {
+	user, err := s.userRepo.GetByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
 
-	// Перевіряємо пароль
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
 		return nil, err
 	}
@@ -68,27 +61,38 @@ func (s *Service) Login(ctx context.Context, email, password string) (*models.Us
 	return user, nil
 }
 
-func (s *Service) GetByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
-	return s.repo.GetByID(ctx, id)
+// GetByID отримує користувача за ID
+func (s *userService) GetByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+	return s.userRepo.GetByID(ctx, id)
 }
 
-// GetByEmail повертає користувача за його email
-func (s *Service) GetByEmail(ctx context.Context, email string) (*models.User, error) {
-	return s.repo.GetByEmail(ctx, email)
+// GetByEmail отримує користувача за email
+func (s *userService) GetByEmail(ctx context.Context, email string) (*models.User, error) {
+	users, err := s.userRepo.List(ctx, map[string]interface{}{"email": email})
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+	return users[0], nil
 }
 
-func (s *Service) Update(ctx context.Context, user *models.User) error {
-	return s.repo.Update(ctx, user)
+// Update оновлює існуючого користувача
+func (s *userService) Update(ctx context.Context, user *models.User) error {
+	return s.userRepo.Update(ctx, user)
 }
 
-func (s *Service) Delete(ctx context.Context, id uuid.UUID) error {
-	return s.repo.Delete(ctx, id)
+// Delete видаляє користувача
+func (s *userService) Delete(ctx context.Context, id uuid.UUID) error {
+	return s.userRepo.Delete(ctx, id)
 }
 
-func (s *Service) UpdatePassword(ctx context.Context, user *models.User, currentPassword, newPassword string) error {
+// UpdatePassword оновлює пароль користувача
+func (s *userService) UpdatePassword(ctx context.Context, user *models.User, currentPassword, newPassword string) error {
 	// Перевіряємо поточний пароль
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(currentPassword)); err != nil {
-		return errors.New("invalid current password")
+		return err
 	}
 
 	// Хешуємо новий пароль
@@ -97,7 +101,42 @@ func (s *Service) UpdatePassword(ctx context.Context, user *models.User, current
 		return err
 	}
 
-	// Оновлюємо пароль
 	user.PasswordHash = string(hashedPassword)
-	return s.repo.Update(ctx, user)
+	return s.userRepo.Update(ctx, user)
+}
+
+// UpdateSettings оновлює налаштування користувача
+func (s *userService) UpdateSettings(ctx context.Context, userID uuid.UUID, settings models.UserSettings) error {
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	settingsJSON, err := json.Marshal(settings)
+	if err != nil {
+		return err
+	}
+
+	user.Settings = datatypes.JSON(settingsJSON)
+	return s.userRepo.Update(ctx, user)
+}
+
+// GetSettings отримує налаштування користувача
+func (s *userService) GetSettings(ctx context.Context, userID uuid.UUID) (models.UserSettings, error) {
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return models.UserSettings{}, err
+	}
+
+	var settings models.UserSettings
+	if err := json.Unmarshal(user.Settings, &settings); err != nil {
+		return models.UserSettings{}, err
+	}
+
+	return settings, nil
+}
+
+// List отримує список користувачів
+func (s *userService) List(ctx context.Context) ([]*models.User, error) {
+	return s.userRepo.List(ctx, nil)
 }

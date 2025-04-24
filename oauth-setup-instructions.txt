@@ -1,0 +1,107 @@
+# Інструкції з налаштування OAuth для TimeBride
+
+## Виявлена проблема
+При спробі увійти через OAuth сервіси (Google, Facebook, Apple) ви отримуєте помилку "Missing required parameter: redirect_uri" або "Invalid OAuth Client Request". Це виникає тому, що:
+
+1. У файлі .env не встановлені необхідні змінні середовища для OAuth провайдерів
+2. В конфігураційному файлі відсутній розділ auth з налаштуваннями OAuth
+3. У локальному середовищі DB_HOST налаштований для Docker ("db"), а не для локальної розробки
+
+## Для коректної роботи авторизації через Google, Facebook та Apple потрібно виконати наступні кроки:
+
+### 1. Оновіть файл .env
+
+Змініть значення DB_HOST з "db" на "localhost" для роботи поза Docker:
+```
+DB_HOST=localhost
+```
+
+### 2. Додайте наступні значення до файлу .env:
+
+```
+# OAuth - Google
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URL=http://localhost:3000/oauth/google/callback
+
+# OAuth - Facebook
+FACEBOOK_CLIENT_ID=your-facebook-app-id
+FACEBOOK_CLIENT_SECRET=your-facebook-app-secret
+FACEBOOK_REDIRECT_URL=http://localhost:3000/oauth/facebook/callback
+
+# OAuth - Apple
+APPLE_CLIENT_ID=your-apple-service-id
+APPLE_CLIENT_SECRET=your-apple-private-key
+APPLE_REDIRECT_URL=http://localhost:3000/oauth/apple/callback
+```
+
+### 3. Переконайтеся, що в файлі config.yaml є наступний розділ:
+
+```yaml
+auth:
+  jwt_secret: "TimeBride-JWT-Secret-2024-Secure-Key"
+  access_token_expiry_minutes: 15
+  refresh_token_expiry_days: 7
+  google:
+    client_id: "your-google-client-id"
+    client_secret: "your-google-client-secret"
+    redirect_url: "http://localhost:3000/oauth/google/callback"
+  facebook:
+    client_id: "your-facebook-app-id"
+    client_secret: "your-facebook-app-secret"
+    redirect_url: "http://localhost:3000/oauth/facebook/callback"
+  apple:
+    client_id: "your-apple-service-id"
+    client_secret: "your-apple-private-key"
+    redirect_url: "http://localhost:3000/oauth/apple/callback"
+```
+
+### 4. Створіть проекти в консолях розробника для кожного провайдера:
+
+#### Google OAuth Setup
+1. Перейдіть на https://console.cloud.google.com/
+2. Створіть новий проект
+3. Перейдіть у "Credentials" (Облікові дані)
+4. Створіть "OAuth 2.0 Client ID"
+5. Додайте дозволений redirect URL: `http://localhost:3000/oauth/google/callback`
+6. Скопіюйте Client ID та Client Secret у ваш .env файл
+
+#### Facebook OAuth Setup
+1. Перейдіть на https://developers.facebook.com/
+2. Створіть новий додаток (тип: Website)
+3. Налаштуйте продукт "Facebook Login"
+4. Додайте URL для перенаправлення: `http://localhost:3000/oauth/facebook/callback`
+5. Скопіюйте App ID та App Secret у ваш .env файл
+
+#### Apple OAuth Setup
+1. Перейдіть на https://developer.apple.com/account/resources/identifiers/list/serviceId
+2. Створіть новий ідентифікатор Services ID
+3. Налаштуйте Sign In with Apple
+4. Додайте домен та URL для перенаправлення: `http://localhost:3000/oauth/apple/callback`
+5. Завантажте приватний ключ та налаштуйте Client ID (Service ID) у .env файлі
+
+### 5. Перезапустіть додаток
+
+```
+go run cmd/app/main.go
+```
+
+## Технічні деталі:
+
+- OAuth маршрути вже правильно встановлені у файлі router.go:
+  ```go
+  r.app.Get("/oauth/:provider", r.authHandler.OAuthRedirect)
+  r.app.Get("/oauth/:provider/callback", r.authHandler.OAuthCallback)
+  ```
+
+- Функція `OAuthRedirect` генерує URL для авторизації та встановлює cookie `oauth_state`
+- Функція `OAuthCallback` обробляє відповідь від провайдера та автентифікує користувача
+- При успішній автентифікації, система перевіряє, чи існує користувач з такою електронною адресою:
+  - Якщо так, перевіряє, що він використовує той самий провайдер
+  - Якщо ні, створює нового користувача з інформацією від провайдера
+
+## Важливо знати:
+- Для тестування Apple Sign In потрібен справжній домен (можете використовувати ngrok)
+- Для локальної розробки використовуйте тестові акаунти розробника
+- OAuth провайдери вимагають HTTPS у виробничому середовищі
+- Redirect URL повинен точно відповідати тому, що налаштований у консолі розробника провайдера 

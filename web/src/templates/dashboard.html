@@ -19,146 +19,124 @@
     <link rel="manifest" href="/img/site.webmanifest">
     <link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
     <link rel="shortcut icon" href="/img/favicon.ico">
-    
-    <!-- Inline стилі для темної бічної панелі -->
-    <style>
-        .navbar-dark {
-            background-color: #1e293b;
-        }
-        .navbar-dark .navbar-brand-autodark {
-            color: #fff;
-        }
-        .navbar-dark .nav-link {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        .navbar-dark .nav-link:hover,
-        .navbar-dark .nav-link.active {
-            color: #fff;
-        }
-        .navbar-dark .nav-link-icon {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        .navbar-dark .nav-item.active .nav-link-icon,
-        .navbar-dark .nav-link:hover .nav-link-icon {
-            color: rgba(255, 255, 255, 0.9);
-        }
-    </style>
 </head>
-<body class="layout-fluid">
+<body>
     <div class="page">
         <!-- Sidebar navigation -->
-        <aside class="navbar navbar-vertical navbar-expand-lg navbar-dark">
+        <aside class="navbar navbar-vertical navbar-expand-lg navbar-dark bg-sidebar">
             <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
                 <h1 class="navbar-brand navbar-brand-autodark">
                     <a href="/app">
                         <img src="/img/logo.svg" width="110" height="32" alt="TimeBride" class="navbar-brand-image">
                     </a>
                 </h1>
-                
-                <div class="collapse navbar-collapse" id="sidebar-menu">
-                    <ul class="navbar-nav pt-lg-3">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="/app">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <i class="ti ti-home"></i>
-                                </span>
-                                <span class="nav-link-title">
-                                    Головна
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/app/calendar">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <i class="ti ti-calendar"></i>
-                                </span>
-                                <span class="nav-link-title">
-                                    Календар
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/app/bookings">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <i class="ti ti-book"></i>
-                                </span>
-                                <span class="nav-link-title">
-                                    Бронювання
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/app/gallery">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <i class="ti ti-photo"></i>
-                                </span>
-                                <span class="nav-link-title">
-                                    Галерея
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/app/clients">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <i class="ti ti-users"></i>
-                                </span>
-                                <span class="nav-link-title">
-                                    Клієнти
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <i class="ti ti-file-invoice"></i>
-                                </span>
-                                <span class="nav-link-title">
-                                    Фінанси
-                                </span>
-                            </a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="/app/invoices">
-                                    Рахунки
+                <div class="offcanvas offcanvas-start bg-sidebar" tabindex="-1" id="navbar-menu" aria-labelledby="navbar-menu-label">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="navbar-menu-label">Меню</h5>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav pt-lg-3">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="/app">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <i class="ti ti-home"></i>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Головна
+                                    </span>
                                 </a>
-                                <a class="dropdown-item" href="/app/payments">
-                                    Платежі
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/app/calendar">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <i class="ti ti-calendar"></i>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Календар
+                                    </span>
                                 </a>
-                                <a class="dropdown-item" href="/app/reports">
-                                    Звіти
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/app/bookings">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <i class="ti ti-book"></i>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Бронювання
+                                    </span>
                                 </a>
-                            </div>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <i class="ti ti-file-text"></i>
-                                </span>
-                                <span class="nav-link-title">
-                                    Документи
-                                </span>
-                            </a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="/app/templates">
-                                    Шаблони
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/app/gallery">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <i class="ti ti-photo"></i>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Галерея
+                                    </span>
                                 </a>
-                                <a class="dropdown-item" href="/app/contracts">
-                                    Договори
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/app/clients">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <i class="ti ti-users"></i>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Клієнти
+                                    </span>
                                 </a>
-                            </div>
-                        </li>
-                    </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <i class="ti ti-file-invoice"></i>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Фінанси
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/app/invoices">
+                                        Рахунки
+                                    </a>
+                                    <a class="dropdown-item" href="/app/payments">
+                                        Платежі
+                                    </a>
+                                    <a class="dropdown-item" href="/app/reports">
+                                        Звіти
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <i class="ti ti-file-text"></i>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Документи
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/app/templates">
+                                        Шаблони
+                                    </a>
+                                    <a class="dropdown-item" href="/app/contracts">
+                                        Договори
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </aside>
         
         <div class="page-wrapper">
             <!-- Верхній header -->
-            <header class="navbar navbar-expand-md navbar-light d-print-none">
+            <header class="navbar navbar-expand-md">
                 <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     
@@ -255,7 +233,7 @@
             </header>
             
             <!-- Основний контент сторінки -->
-<div class="page-header d-print-none">
+            <div class="page-header">
     <div class="container-fluid">
         <div class="row g-2 align-items-center">
             <div class="col">
@@ -263,22 +241,22 @@
                             <h2 class="page-title">{{ if .PageTitle }}{{ .PageTitle }}{{ else }}Панель керування{{ end }}</h2>
             </div>
                         <!-- Кнопки дій -->
-            <div class="col-auto ms-auto d-print-none">
+                        <div class="col-auto ms-auto">
                 <div class="btn-list">
                                 {{ if .ActionButtons }}
                                     {{ .ActionButtons }}
                                 {{ else }}
                     <span class="d-none d-sm-inline">
-                                        <a href="/app/calendar" class="btn">
+                                    <a href="/app/calendar" class="btn">
                             <i class="ti ti-calendar"></i>
                             Календар
                         </a>
                     </span>
-                                    <a href="/app/bookings/create" class="btn btn-primary d-none d-sm-inline-block">
+                                <a href="/app/bookings/create" class="btn btn-primary d-none d-sm-inline-block">
                         <i class="ti ti-plus"></i>
                         Нове бронювання
                     </a>
-                                    <a href="/app/bookings/create" class="btn btn-primary d-sm-none btn-icon">
+                                <a href="/app/bookings/create" class="btn btn-primary d-sm-none btn-icon">
                         <i class="ti ti-plus"></i>
                     </a>
                                 {{ end }}
@@ -378,7 +356,7 @@
             </div>
 
             <!-- Футер -->
-            <footer class="footer footer-transparent mt-auto">
+            <footer class="footer footer-transparent">
                 <div class="container-fluid">
                     <div class="row text-center align-items-center flex-row-reverse">
                         <div class="col-lg-auto ms-lg-auto">

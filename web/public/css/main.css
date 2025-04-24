@@ -1,14 +1,13 @@
 /*
- * TimeBride - Додаткові стилі
- * Цей файл містить кастомізацію поверх tabler.min.css
- * tabler.min.css є базовим стилем для проекту
+ * TimeBride - Основні стилі
+ * Мінімалістична надбудова над Tabler UI
  */
 
 /* Google Fonts - Inter */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap&subset=cyrillic,cyrillic-ext');
 
 /*--------------------------------------------------------------
-# 1. Змінні
+# 1. Глобальні змінні кольорів і типографіка
 --------------------------------------------------------------*/
 :root {
   /* Основна палітра кольорів */
@@ -17,397 +16,297 @@
   --color-light-accent: #E3D5CA;
   --color-neutral-accent: #D6CCC2;
   --color-contrast-accent: #D5BDAF;
-  --color-accent-dark: #B69B8D;
-  
-  /* Текстові кольори */
-  --color-text-primary: #2a2a2a;
+  --color-text-primary: #2A2A2A;
   --color-text-secondary: #4A4744;
-  --color-text-muted: #6C757D;
-  --color-text-light: #FFFFFF;
-
-  /* Текстові кольори */
-  --color-text-primary-rgb: rgb(42, 42, 42);
-  --color-text-secondary-rgb: rgb(74, 71, 68);
   
-  /* Кольори кнопок */
-  --color-button-primary: #D5BDAF;
-  --color-button-primary-hover: #C9AE9D;
-  --color-button-primary-active: #C1A595;
-  --color-button-text: #FFFFFF;
-  --color-button-outline-hover: #D5BDAF;
-  --color-button-outline-active: #C9AE9D;
+  /* Функціональні кольори */
+  --color-success: #2FB344;
+  --color-warning: #F59F00;
+  --color-danger: #D63939;
+  --color-info: #4299E1;
   
-  /* Кольори для статусів */
-  --color-success: #C9AE9D;
-  --color-success-hover: #C9AE9D;
-  --color-success-active: #C9AE9D;
+  /* Інтеграція з Tabler */
+  --tblr-primary: var(--color-contrast-accent);
+  --tblr-primary-rgb: 213, 189, 175;
+  --tblr-secondary: var(--color-text-secondary);
+  --tblr-secondary-rgb: 74, 71, 68;
+  --tblr-success: var(--color-success);
+  --tblr-warning: var(--color-warning);
+  --tblr-danger: var(--color-danger);
+  --tblr-info: var(--color-info);
   
-  --color-danger: #dc3545;
-  --color-danger-hover: #e35d6a;
-  --color-danger-active: #bb2d3b;
+  /* Елементи інтерфейсу */
+  --color-sidebar-bg: var(--color-contrast-accent);
+  --color-sidebar-text: rgba(255, 255, 255, 0.9);
+  --color-sidebar-text-hover: white;
+  --color-sidebar-active-bg: rgba(255, 255, 255, 0.1);
+  --color-header-bg: white;
+  --color-card-bg: white;
+  --color-card-border: rgba(0, 0, 0, 0.05);
   
-  --color-warning: #ffc107;
-  --color-warning-hover: #ffca2c;
-  --color-warning-active: #d39e00;
-  
-  --color-info: #0dcaf0;
-  --color-info-hover: #31d2f2;
-  --color-info-active: #0aa1c0;
-  
-  /* Фоновий колір хедера і футера */
-  --color-header-bg: #D5BDAF;
-  --color-footer-bg: #D5BDAF;
-  
-  /* Колір іконок */
-  --color-icon-primary: #2A2A2A;
-  --color-icon-secondary: #6C757D;
-  
-  /* Шрифти */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Типографіка */
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+  --font-size-base: 0.875rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-lg: 1rem;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
   
-  /* Тіні */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
-  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.03);
-  --shadow-card-hover: 0 6px 12px rgba(0, 0, 0, 0.06);
-  --shadow-navbar: 0 2px 4px rgba(0, 0, 0, 0.03);
-  
-  /* Радіуси */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-rounded: 50%;
-  --radius-full: 9999px;
-  
-  /* Анімація */
-  --transition-speed: 0.2s;
-  --transition-timing: ease-in-out;
-  
   /* Відступи */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
-  --spacing: 1rem;
-  --spacing-md: 1.5rem;
-  --spacing-lg: 2rem;
-  --spacing-xl: 3rem;
-  --spacing-2xl: 4rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
   
-  /* Розміри */
-  --navbar-height: 70px;
-  --navbar-padding: 1rem;
-  --section-padding: 3rem;
-  
-  /* Z-індекси */
-  --z-index-navbar: 1030;
-  --z-index-dropdown: 1000;
-  --z-index-modal: 1050;
-  --z-index-tooltip: 1070;
-  
-  /* Placeholders */
-  --color-placeholder: #EFE8E2;
-  
-  /* Tabler змінні для інтеграції */
-  --tblr-primary: var(--color-contrast-accent);
-  --tblr-primary-rgb: 213, 189, 175;
-  --tblr-primary-hover: var(--color-neutral-accent);
-  --tblr-primary-hover-rgb: 214, 204, 194;
-  --tblr-primary-active: var(--color-light-accent);
-  --tblr-primary-active-rgb: 227, 213, 202;
-  --tblr-bg-surface: var(--color-background);
-  --tblr-bg-surface-secondary: var(--color-section-bg);
-  --tblr-bg-surface-tertiary: var(--color-light-accent);
-  --tblr-body-color: var(--color-text-primary);
-  --tblr-body-color-rgb: 42, 42, 42;
-  --tblr-secondary: var(--color-text-secondary);
-  --tblr-secondary-rgb: var(--color-text-secondary-rgb);
-  --tblr-secondary-color: var(--color-text-secondary);
-  --tblr-secondary-color-rgb: var(--color-text-secondary-rgb);
-  --tblr-border-color: var(--color-neutral-accent);
-  --tblr-border-color-translucent: rgba(214, 204, 194, 0.5);
-  --tblr-box-shadow: var(--shadow-md);
-  --tblr-box-shadow-sm: var(--shadow-sm);
-  --tblr-box-shadow-lg: var(--shadow-lg);
-  --tblr-border-radius: var(--radius-md);
-  --tblr-border-radius-sm: var(--radius-sm);
-  --tblr-border-radius-lg: var(--radius-lg);
-  --tblr-font-sans-serif: var(--font-family);
+  /* Тіні */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
 }
 
 /*--------------------------------------------------------------
-# 2. Шрифти
+# 2. Базові елементи
 --------------------------------------------------------------*/
-/* Локальні шрифти (для кращої продуктивності та офлайн-підтримки) */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/Inter-Regular.woff2') format('woff2'),
-       url('/fonts/Inter-Regular.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+body, html {
+  font-family: var(--font-family-base);
 }
 
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/fonts/Inter-Medium.woff2') format('woff2'),
-       url('/fonts/Inter-Medium.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+/* Карточки */
+.card {
+  background-color: var(--color-card-bg);
+  border-color: var(--color-card-border);
+  box-shadow: var(--shadow-sm);
 }
 
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/Inter-Bold.woff2') format('woff2'),
-       url('/fonts/Inter-Bold.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+.card-title {
+  font-weight: var(--font-weight-medium);
 }
 
-@font-face {
-  font-family: 'Inter';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/Inter-Italic.woff2') format('woff2'),
-       url('/fonts/Inter-Italic.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-
-/* Налаштування рендерингу шрифтів для кращої якості */
-.font-inter {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-/* Додаткові класи ваги шрифтів */
-.font-weight-medium, .fw-medium {
-  font-weight: 500 !important;
-}
-
-/* Утилітарний клас - виключаємо іконки з правила */
-.font-inter *:not(.ti):not([class^="ti-"]) {
-  font-family: var(--font-family) !important;
-}
-
-/* Забезпечуємо правильне застосування шрифту tabler-icons для іконок навіть у контексті font-inter */
-.ti, [class^="ti-"] {
-  font-family: "tabler-icons" !important;
-}
-
-/* Переопределение цветов текста (использование :root vars из Tabler) */
-.text-accent {
-  color: var(--color-contrast-accent) !important;
-}
-
-/*--------------------------------------------------------------
-# 3. Кнопки - унаслідуємо стилі від Tabler та перевизначаємо лише відмінності
---------------------------------------------------------------*/
+/* Кнопки */
 .btn-primary {
-  background-color: var(--color-button-primary) !important;
-  border-color: var(--color-button-primary) !important;
-  color: var(--color-button-text) !important;
+  background-color: var(--tblr-primary);
+  border-color: var(--tblr-primary);
 }
 
-.btn-primary:hover, 
-.btn-primary:focus {
-  background-color: var(--color-button-primary-hover) !important;
-  border-color: var(--color-button-primary-hover) !important;
-  color: var(--color-button-text) !important;
+/* Форми */
+.form-label {
+  font-weight: var(--font-weight-medium);
 }
 
-.btn-primary:active,
-.btn-primary.active {
-  background-color: var(--color-button-primary-active) !important;
-  border-color: var(--color-button-primary-active) !important;
-  color: var(--color-button-text) !important;
+/*--------------------------------------------------------------
+# 3. Сайдбар і навігація
+--------------------------------------------------------------*/
+/* Сайдбар */
+.navbar-vertical.bg-sidebar,
+.bg-sidebar {
+  background-color: var(--color-sidebar-bg) !important;
 }
 
-.btn-outline-primary {
-  color: var(--color-button-primary) !important;
-  border-color: var(--color-button-primary) !important;
-  background-color: transparent !important;
+/* Текст у сайдбарі */
+.bg-sidebar .nav-link-title,
+.bg-sidebar .nav-link-icon,
+.bg-sidebar .navbar-brand,
+.bg-sidebar .dropdown-item,
+.bg-sidebar .offcanvas-title {
+  color: var(--color-sidebar-text) !important;
 }
 
-.btn-outline-primary:hover,
-.btn-outline-primary:focus {
-  color: var(--color-button-text) !important;
-  background-color: var(--color-button-primary-hover) !important;
-  border-color: var(--color-button-primary-hover) !important;
+.bg-sidebar .nav-link:hover .nav-link-title,
+.bg-sidebar .nav-link:hover .nav-link-icon {
+  color: var(--color-sidebar-text-hover) !important;
 }
 
-.btn-outline-primary:active,
-.btn-outline-primary.active {
-  color: var(--color-button-text) !important;
-  background-color: var(--color-button-primary-active) !important;
-  border-color: var(--color-button-primary-active) !important;
+/* Логотип у сайдбарі */
+.bg-sidebar .navbar-brand-image {
+  filter: brightness(0) invert(1);
 }
 
-.btn-success {
-  background-color: var(--color-success) !important;
-  border-color: var(--color-success) !important;
+/* Бренд */
+.navbar-brand-image {
+  height: auto;
+  max-width: 100%;
+  width: auto;
 }
 
-.btn-success:hover,
-.btn-success:focus {
-  background-color: var(--color-success-hover) !important;
-  border-color: var(--color-success-hover) !important;
+.navbar-brand {
+  max-width: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.btn-success:active,
-.btn-success.active {
-  background-color: var(--color-success-active) !important;
-  border-color: var(--color-success-active) !important;
+/* Активні посилання в сайдбарі */
+.bg-sidebar .nav-item.active .nav-link {
+  background-color: var(--color-sidebar-active-bg);
 }
 
-.btn-danger {
-  background-color: var(--color-danger) !important;
-  border-color: var(--color-danger) !important;
+/* Хрестик закриття в мобільному меню */
+.bg-sidebar .offcanvas-header .btn-close {
+  filter: brightness(5);
 }
 
-.btn-danger:hover,
-.btn-danger:focus {
-  background-color: var(--color-danger-hover) !important;
-  border-color: var(--color-danger-hover) !important;
+/* Загальна навігація */
+.nav-link {
+  transition: all 0.2s ease;
 }
 
-.btn-danger:active,
-.btn-danger.active {
-  background-color: var(--color-danger-active) !important;
-  border-color: var(--color-danger-active) !important;
+/*--------------------------------------------------------------
+# 4. Сторінка логіну і реєстрації
+--------------------------------------------------------------*/
+.page-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-/* Використовуємо специфічні селектори для перевизначення, щоб уникнути конфліктів */
-.navbar .navbar-brand-image {
-  height: 32px;
+.auth-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-xl);
 }
 
-/* Page styles with higher specificity */
-.page .page-body {
-  padding: 1.5rem 0;
+.auth-logo-container img {
+  max-width: 200px;
+  margin: 0 auto;
 }
 
-/* Navbar with higher specificity */
-.page .navbar {
-  box-shadow: var(--shadow-navbar);
+.auth-card {
+  max-width: 450px;
+  width: 100%;
+  box-shadow: var(--shadow-md);
 }
 
-/* Card styles with higher specificity */
-.card.shadow {
-  box-shadow: var(--shadow-card) !important;
-  transition: box-shadow var(--transition-speed) var(--transition-timing);
+.auth-footer {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+  color: var(--color-text-secondary);
 }
 
-.card.shadow:hover {
-  box-shadow: var(--shadow-card-hover) !important;
+.auth-divider {
+  text-align: center;
+  position: relative;
+  margin: var(--spacing-md) 0;
 }
 
-/* Form controls with higher specificity */
-.form-control.custom {
-  border-color: var(--tblr-border-color);
-  border-radius: var(--tblr-border-radius);
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: var(--color-card-border);
 }
 
-.form-control.custom:focus {
-  border-color: var(--color-contrast-accent);
+.auth-divider::before {
+  left: 0;
+}
+
+.auth-divider::after {
+  right: 0;
+}
+
+/*--------------------------------------------------------------
+# 5. Дашборд
+--------------------------------------------------------------*/
+.stat-card {
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.avatar-list {
+  display: flex;
+}
+
+.avatar-list .avatar {
+  margin-left: -0.5rem;
+  border: 2px solid var(--color-card-bg);
+}
+
+.avatar-list .avatar:first-child {
+  margin-left: 0;
+}
+
+/*--------------------------------------------------------------
+# 6. Таблиці
+--------------------------------------------------------------*/
+.table-responsive {
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.table th {
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.03em;
+}
+
+/*--------------------------------------------------------------
+# 7. Адаптивні виправлення
+--------------------------------------------------------------*/
+@media (max-width: 991.98px) {
+  /* Мобільне меню */
+  .navbar-vertical.navbar-expand-lg {
+    margin: 0;
+  }
+  
+  /* Заголовок мобільного меню */
+  .offcanvas-header {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Кнопка закриття в мобільному меню */
+  .offcanvas .btn-close {
+    margin-right: 0;
+    background-color: white;
+    opacity: 0.8;
+  }
+  
+  /* Іконка гамбургера */
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+  
+  .auth-card {
+    margin: 0 var(--spacing-md);
+  }
+}
+
+/*--------------------------------------------------------------
+# 8. Утиліти
+--------------------------------------------------------------*/
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.transition-all {
+  transition: all 0.2s ease;
+}
+
+.hover-shadow:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.focus-ring:focus {
   box-shadow: 0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
-}
-
-/* Badge styles with higher specificity */
-.badge.bg-primary {
-  background-color: var(--color-contrast-accent) !important;
-}
-
-.badge.bg-secondary {
-  background-color: var(--color-text-secondary) !important;
-}
-
-.badge.bg-success {
-  background-color: var(--color-success) !important;
-}
-
-.badge.bg-warning {
-  background-color: var(--color-warning) !important;
-}
-
-.badge.bg-danger {
-  background-color: var(--color-danger) !important;
-}
-
-.badge.bg-info {
-  background-color: var(--color-info) !important;
-}
-
-/* Footer styles */
-.page .footer.footer-transparent {
-  border-top: 1px solid var(--tblr-border-color-translucent);
-  padding-top: 1.5rem;
-}
-
-/* Custom background classes */
-.bg-primary-light {
-  background-color: var(--color-light-accent) !important;
-}
-
-.color-footer-bg {
-  background-color: var(--color-footer-bg) !important;
-}
-
-/* Custom padding utility classes */
-.py-6 {
-  padding-top: 4rem !important;
-  padding-bottom: 4rem !important;
-}
-
-.py-7 {
-  padding-top: 5rem !important;
-  padding-bottom: 5rem !important;
-}
-
-.mt-7 {
-  margin-top: 5rem !important;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .py-6 {
-    padding-top: 3rem !important;
-    padding-bottom: 3rem !important;
-  }
-  
-  .py-7 {
-    padding-top: 3.5rem !important;
-    padding-bottom: 3.5rem !important;
-  }
-  
-  .mt-7 {
-    margin-top: 3.5rem !important;
-  }
-  
-  .page-title {
-    font-size: 1.75rem !important;
-  }
-  
-  .card-title {
-    font-size: 1.25rem !important;
-  }
-}
-
-/* Fonts loading state classes */
-.fonts-loading * {
-  visibility: hidden;
-}
-
-.fonts-loaded * {
-  visibility: visible;
-  opacity: 1;
-  transition: opacity 0.1s;
+  outline: none;
 } 

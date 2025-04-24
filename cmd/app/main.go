@@ -2,150 +2,272 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	awsconfig "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/template/html/v2"
+	"gorm.io/gorm"
 
 	"timebride/internal/config"
-	"timebride/internal/database"
+	"timebride/internal/db"
 	"timebride/internal/handlers"
-	"timebride/internal/models"
+	"timebride/internal/middleware"
 	"timebride/internal/repositories"
-	"timebride/internal/router"
 	"timebride/internal/services"
+	"timebride/internal/services/auth"
 	"timebride/internal/services/booking"
-	"timebride/internal/services/file"
+	"timebride/internal/services/client"
+	"timebride/internal/services/price"
+	"timebride/internal/services/storage"
+	"timebride/internal/services/team"
 	"timebride/internal/services/template"
 	"timebride/internal/services/user"
 )
 
-func main() {
-	ctx := context.Background()
+// AppModules містить основні модулі програми
+type AppModules struct {
+	Config     *config.Config
+	DB         *gorm.DB
+	Templates  *html.Engine
+	Static     string
+	Handlers   *handlers.Handlers
+	Services   *services.Services
+	Repos      *repositories.Repositories
+	Middleware *middleware.Middleware
+}
 
+func main() {
+	// Ініціалізуємо модулі
+	app, err := initializeApp()
+	if err != nil {
+		log.Fatalf("Failed to initialize app: %v", err)
+	}
+
+	// Налаштовуємо і запускаємо сервер
+	server := setupServer(app)
+
+	// Запускаємо сервер
+	go func() {
+		if err := server.Listen(app.Config.Server.Address); err != nil {
+			log.Printf("Server error: %v", err)
+		}
+	}()
+
+	// Очікуємо сигнал для graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	// Graceful shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := server.ShutdownWithContext(ctx); err != nil {
+		log.Printf("Server forced to shutdown: %v", err)
+	}
+
+	log.Println("Server exiting")
+}
+
+func initializeApp() (*AppModules, error) {
 	// Завантажуємо конфігурацію
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		return nil, err
 	}
 
 	// Підключаємося до бази даних
-	db, err := database.Connect(cfg.Database)
+	database, err := db.Connect(cfg.Database)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		return nil, err
 	}
 
-	// Виконуємо міграції бази даних
-	log.Println("Running database migrations...")
-	if err := database.RunMigrations(db); err != nil {
-		log.Fatalf("Failed to run migrations: %v", err)
-	}
-	log.Println("Migrations completed successfully")
+	// Ініціалізуємо репозиторії
+	repos := repositories.NewRepositories(database)
 
-	// Створення адміністратора, якщо він не існує
-	log.Println("Checking for admin user...")
-	var adminCount int64
-	if err := db.Model(&models.User{}).Where("role = ?", models.RoleAdmin).Count(&adminCount).Error; err != nil {
-		log.Printf("Error checking for admin user: %v", err)
-	} else if adminCount == 0 {
-		log.Println("Admin user not found, creating default admin...")
-		// Створення хешу паролю
-		passwordHash, err := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
-		if err != nil {
-			log.Printf("Error hashing password: %v", err)
-		} else {
-			// Конвертуємо дозволи в JSON
-			permissions, err := json.Marshal(models.DefaultPermissions(models.RoleAdmin))
-			if err != nil {
-				log.Printf("Error marshaling permissions: %v", err)
-				return
+	// Ініціалізуємо сервіси
+	storageService := storage.NewStorageService(cfg, repos.File)
+	authService := auth.NewAuthService(cfg, repos.User)
+	userService := user.NewUserService(repos.User)
+	clientService := client.NewService(repos.Client, repos.File, storageService)
+	teamService := team.NewTeamService(repos.Team)
+	priceService := price.NewPriceService(repos.Price)
+	templateService := template.NewTemplateService(repos.Template)
+	bookingService := booking.NewService(repos.Booking, repos.Client)
+
+	// Створюємо екземпляр Services
+	services := services.NewServices(
+		authService,
+		userService,
+		bookingService,
+		clientService,
+		teamService,
+		priceService,
+		storageService,
+		templateService,
+	)
+
+	// Ініціалізуємо middleware
+	middlewares := middleware.NewMiddleware(services)
+
+	// Ініціалізуємо обробники
+	handlers := handlers.NewHandlers(services)
+
+	return &AppModules{
+		Config:     cfg,
+		DB:         database,
+		Templates:  initTemplates(),
+		Static:     initStatic(),
+		Handlers:   handlers,
+		Services:   services,
+		Repos:      repos,
+		Middleware: middlewares,
+	}, nil
+}
+
+func setupServer(app *AppModules) *fiber.App {
+	// Налаштовуємо Fiber
+	server := fiber.New(fiber.Config{
+		Views:                 app.Templates,
+		ViewsLayout:           "layouts/main",
+		AppName:               "TimeBride",
+		BodyLimit:             50 * 1024 * 1024, // 50MB
+		DisableStartupMessage: true,             // Вимикаємо стартове повідомлення
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			code := fiber.StatusInternalServerError
+
+			// Визначаємо тип помилки та відповідний статус код
+			if e, ok := err.(*fiber.Error); ok {
+				code = e.Code
 			}
 
-			// Створення адміністратора
-			adminUser := models.User{
-				Email:        "admin@timebride.com",
-				PasswordHash: string(passwordHash),
-				Name:         "Адміністратор системи",
-				Role:         models.RoleAdmin,
-				Language:     "uk",
-				Permissions:  permissions,
-			}
-			if err := db.Create(&adminUser).Error; err != nil {
-				log.Printf("Error creating admin user: %v", err)
-			} else {
-				log.Println("Default admin user created successfully")
-			}
-		}
-	} else {
-		log.Println("Admin user already exists")
-	}
+			// Логуємо помилку
+			log.Printf("Error: %v, Path: %s, Method: %s", err, c.Path(), c.Method())
 
-	// Створюємо S3 клієнт
-	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-		return aws.Endpoint{
-			URL:               cfg.Storage.Backblaze.Endpoint,
-			SigningRegion:     cfg.Storage.Backblaze.Region,
-			HostnameImmutable: true,
-		}, nil
+			// Якщо це API запит, повертаємо JSON
+			if strings.HasPrefix(c.Path(), "/api") {
+				return c.Status(code).JSON(fiber.Map{
+					"error": err.Error(),
+				})
+			}
+
+			// Для веб-запитів рендеримо сторінку з помилкою
+			return c.Status(code).Render("error", fiber.Map{
+				"Error": err.Error(),
+				"Code":  code,
+			})
+		},
 	})
 
-	awsCfg, err := awsconfig.LoadDefaultConfig(ctx,
-		awsconfig.WithEndpointResolverWithOptions(customResolver),
-		awsconfig.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
-			cfg.Storage.Backblaze.AccountID,
-			cfg.Storage.Backblaze.ApplicationKey,
-			"",
-		)),
-	)
-	if err != nil {
-		log.Fatalf("Failed to create AWS config: %v", err)
+	// Middleware
+	server.Use(recover.New(recover.Config{
+		EnableStackTrace: true,
+	}))
+	server.Use(logger.New(logger.Config{
+		Format:     "${time} ${status} ${latency} ${method} ${path}\n",
+		TimeFormat: "2006-01-02 15:04:05",
+		TimeZone:   "Local",
+	}))
+	server.Use(cors.New(cors.Config{
+		AllowOrigins: strings.Join(app.Config.Server.CorsOrigins, ","),
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+	}))
+
+	// Статичні файли
+	server.Static("/static", app.Static, fiber.Static{
+		Compress:      true,
+		ByteRange:     true,
+		Browse:        false,
+		CacheDuration: 24 * time.Hour,
+	})
+
+	// Публічні маршрути
+	server.Get("/", app.Handlers.Home)
+	server.Get("/login", app.Handlers.Auth.ShowLoginPage)
+	server.Post("/login", app.Handlers.Auth.HandleLogin)
+	server.Get("/register", app.Handlers.Auth.ShowRegisterPage)
+	server.Post("/register", app.Handlers.Auth.HandleRegister)
+
+	// API маршрути
+	api := server.Group("/api", app.Middleware.Auth)
+	{
+		// Користувачі
+		users := api.Group("/users")
+		users.Get("/", app.Handlers.Users.List)
+		users.Get("/:id", app.Handlers.Users.Get)
+		users.Put("/:id", app.Handlers.Users.Update)
+		users.Delete("/:id", app.Handlers.Users.Delete)
+
+		// Бронювання
+		bookings := api.Group("/bookings")
+		bookings.Get("/", app.Handlers.Bookings.List)
+		bookings.Post("/", app.Handlers.Bookings.Create)
+		bookings.Get("/:id", app.Handlers.Bookings.Get)
+		bookings.Put("/:id", app.Handlers.Bookings.Update)
+		bookings.Delete("/:id", app.Handlers.Bookings.Delete)
+
+		// Клієнти
+		clients := api.Group("/clients")
+		clients.Get("/", app.Handlers.Clients.List)
+		clients.Post("/", app.Handlers.Clients.Create)
+		clients.Get("/:id", app.Handlers.Clients.Get)
+		clients.Put("/:id", app.Handlers.Clients.Update)
+		clients.Delete("/:id", app.Handlers.Clients.Delete)
+
+		// Команда
+		team := api.Group("/team")
+		team.Get("/", app.Handlers.Team.List)
+		team.Post("/", app.Handlers.Team.Create)
+		team.Get("/:id", app.Handlers.Team.Get)
+		team.Put("/:id", app.Handlers.Team.Update)
+		team.Delete("/:id", app.Handlers.Team.Delete)
+
+		// Прайс-листи
+		prices := api.Group("/prices")
+		prices.Get("/", app.Handlers.Prices.List)
+		prices.Post("/", app.Handlers.Prices.Create)
+		prices.Get("/:id", app.Handlers.Prices.Get)
+		prices.Put("/:id", app.Handlers.Prices.Update)
+		prices.Delete("/:id", app.Handlers.Prices.Delete)
+
+		// Сховище
+		storage := api.Group("/storage")
+		storage.Get("/", app.Handlers.Storage.List)
+		storage.Post("/upload", app.Handlers.Storage.Upload)
+		storage.Get("/:id", app.Handlers.Storage.Download)
+		storage.Delete("/:id", app.Handlers.Storage.Delete)
 	}
 
-	s3Client := s3.NewFromConfig(awsCfg)
-
-	// Створюємо репозиторії
-	userRepo := repositories.NewUserRepository(db)
-	bookingRepo := repositories.NewBookingRepository(db)
-	templateRepo := repositories.NewTemplateRepository(db)
-	fileRepo := repositories.NewFileRepository(db)
-
-	// Створюємо сервіси
-	userSvc := user.NewService(userRepo)
-	bookingSvc := booking.New(bookingRepo, userSvc, db)
-	templateSvc := template.NewService(templateRepo)
-	fileSvc := file.NewService(fileRepo, s3Client, cfg.Storage)
-	authSvc := services.NewAuthService(userRepo, cfg)
-
-	// Створюємо хендлери
-	authHandler := handlers.NewAuthHandler(authSvc)
-	dashboardHandler := handlers.NewDashboardHandler(userSvc, bookingSvc, templateSvc, fileSvc)
-	bookingHandler := handlers.NewBookingHandler(bookingSvc, userSvc)
-	templateHandler := handlers.NewTemplateHandler(templateSvc)
-	fileHandler := handlers.NewFileHandler(fileSvc)
-	userHandler := handlers.NewUserHandler(userSvc)
-
-	// Створюємо роутер
-	r := router.New(
-		authHandler,
-		dashboardHandler,
-		bookingHandler,
-		templateHandler,
-		fileHandler,
-		userHandler,
-	)
-
-	// Налаштовуємо маршрути
-	r.SetupRoutes()
-
-	// Запускаємо сервер
-	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
-	log.Printf("Server starting on %s", addr)
-	if err := r.Start(addr); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+	// Захищені веб-маршрути
+	protected := server.Group("/app", app.Middleware.Auth)
+	{
+		protected.Get("/", app.Handlers.Dashboard)
+		protected.Get("/calendar", app.Handlers.Calendar)
+		protected.Get("/bookings", app.Handlers.Bookings.List)
+		protected.Get("/team", app.Handlers.Team.List)
+		protected.Get("/clients", app.Handlers.Clients.List)
+		protected.Get("/prices", app.Handlers.Prices.List)
+		protected.Get("/storage", app.Handlers.Storage.List)
+		protected.Get("/settings", app.Handlers.Settings)
 	}
+
+	return server
+}
+
+func initTemplates() *html.Engine {
+	engine := html.New("./web/templates", ".html")
+	engine.Reload(true) // Enable template reloading for development
+	return engine
+}
+
+func initStatic() string {
+	return "./web/static"
 }
