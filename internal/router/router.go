@@ -22,7 +22,7 @@ type Router struct {
 
 func New(h *handlers.Handlers) *Router {
 	// Ініціалізуємо HTML шаблонізатор
-	engine := html.New("./web/src/templates", ".html")
+	engine := html.New("./web/templates", ".html")
 	engine.Reload(true) // Enable reload in development
 
 	// Додаємо helper функції до шаблонізатора
@@ -50,10 +50,10 @@ func New(h *handlers.Handlers) *Router {
 	}))
 
 	// Статичні файли
-	app.Static("/css", "./web/public/css")
-	app.Static("/js", "./web/public/js")
-	app.Static("/img", "./web/public/img")
-	app.Static("/fonts", "./web/public/fonts")
+	app.Static("/public/css", "/app/web/public/css")
+	app.Static("/public/js", "/app/web/public/js")
+	app.Static("/public/img", "/app/web/public/img")
+	app.Static("/public/fonts", "/app/web/public/fonts")
 
 	return &Router{
 		app:          app,

@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
-	"strings"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/gofiber/template/html/v2"
 	"gorm.io/gorm"
 
 	"timebride/internal/config"
@@ -30,18 +30,22 @@ import (
 	"timebride/internal/services/team"
 	"timebride/internal/services/template"
 	"timebride/internal/services/user"
+
+	"github.com/gofiber/template/html/v2"
 )
 
 // AppModules містить основні модулі програми
 type AppModules struct {
-	Config     *config.Config
-	DB         *gorm.DB
-	Templates  *html.Engine
-	Static     string
-	Handlers   *handlers.Handlers
-	Services   *services.Services
-	Repos      *repositories.Repositories
-	Middleware *middleware.Middleware
+	Config      *config.Config
+	DB          *gorm.DB
+	Templates   *html.Engine
+	Static      string
+	Controllers string
+	Public      string
+	Handlers    *handlers.Handlers
+	Services    *services.Services
+	Repos       *repositories.Repositories
+	Middleware  *middleware.Middleware
 }
 
 func main() {
@@ -94,14 +98,14 @@ func initializeApp() (*AppModules, error) {
 	repos := repositories.NewRepositories(database)
 
 	// Ініціалізуємо сервіси
-	storageService := storage.NewStorageService(cfg, repos.File)
 	authService := auth.NewAuthService(cfg, repos.User)
 	userService := user.NewUserService(repos.User)
+	storageService := storage.NewStorageService(cfg, repos.File)
 	clientService := client.NewService(repos.Client, repos.File, storageService)
+	bookingService := booking.NewService(repos.Booking, repos.Client)
 	teamService := team.NewTeamService(repos.Team)
 	priceService := price.NewPriceService(repos.Price)
 	templateService := template.NewTemplateService(repos.Template)
-	bookingService := booking.NewService(repos.Booking, repos.Client)
 
 	// Створюємо екземпляр Services
 	services := services.NewServices(
@@ -115,159 +119,197 @@ func initializeApp() (*AppModules, error) {
 		templateService,
 	)
 
-	// Ініціалізуємо middleware
-	middlewares := middleware.NewMiddleware(services)
+	// Ініціалізуємо шаблонізатор
+	templates := initTemplates()
 
-	// Ініціалізуємо обробники
+	// Ініціалізуємо статичні файли
+	static := initStatic()
+
+	// Ініціалізуємо контролери
+	controllers := initControllers()
+
+	// Ініціалізуємо публічні файли
+	public := initPublic()
+
+	// Ініціалізуємо middleware
+	middleware := middleware.NewMiddleware(services)
+
+	// Ініціалізуємо хендлери
 	handlers := handlers.NewHandlers(services)
 
 	return &AppModules{
-		Config:     cfg,
-		DB:         database,
-		Templates:  initTemplates(),
-		Static:     initStatic(),
-		Handlers:   handlers,
-		Services:   services,
-		Repos:      repos,
-		Middleware: middlewares,
+		Config:      cfg,
+		DB:          database,
+		Templates:   templates,
+		Static:      static,
+		Controllers: controllers,
+		Public:      public,
+		Handlers:    handlers,
+		Services:    services,
+		Repos:       repos,
+		Middleware:  middleware,
 	}, nil
 }
 
 func setupServer(app *AppModules) *fiber.App {
-	// Налаштовуємо Fiber
+	log.Println("Setting up server...")
+
+	// Створюємо новий екземпляр Fiber
 	server := fiber.New(fiber.Config{
-		Views:                 app.Templates,
-		ViewsLayout:           "layouts/main",
-		AppName:               "TimeBride",
-		BodyLimit:             50 * 1024 * 1024, // 50MB
-		DisableStartupMessage: true,             // Вимикаємо стартове повідомлення
-		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			code := fiber.StatusInternalServerError
-
-			// Визначаємо тип помилки та відповідний статус код
-			if e, ok := err.(*fiber.Error); ok {
-				code = e.Code
-			}
-
-			// Логуємо помилку
-			log.Printf("Error: %v, Path: %s, Method: %s", err, c.Path(), c.Method())
-
-			// Якщо це API запит, повертаємо JSON
-			if strings.HasPrefix(c.Path(), "/api") {
-				return c.Status(code).JSON(fiber.Map{
-					"error": err.Error(),
-				})
-			}
-
-			// Для веб-запитів рендеримо сторінку з помилкою
-			return c.Status(code).Render("error", fiber.Map{
-				"Error": err.Error(),
-				"Code":  code,
-			})
-		},
+		Views: app.Templates,
 	})
 
-	// Middleware
-	server.Use(recover.New(recover.Config{
-		EnableStackTrace: true,
-	}))
-	server.Use(logger.New(logger.Config{
-		Format:     "${time} ${status} ${latency} ${method} ${path}\n",
-		TimeFormat: "2006-01-02 15:04:05",
-		TimeZone:   "Local",
-	}))
-	server.Use(cors.New(cors.Config{
-		AllowOrigins: strings.Join(app.Config.Server.CorsOrigins, ","),
-		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
-	}))
+	// Налаштовуємо middleware
+	server.Use(recover.New())
+	server.Use(logger.New())
+	server.Use(cors.New())
 
-	// Статичні файли
-	server.Static("/static", app.Static, fiber.Static{
-		Compress:      true,
-		ByteRange:     true,
-		Browse:        false,
-		CacheDuration: 24 * time.Hour,
+	// Додаємо app до контексту запиту
+	server.Use(func(c *fiber.Ctx) error {
+		c.Locals("app", app)
+		return c.Next()
 	})
 
-	// Публічні маршрути
-	server.Get("/", app.Handlers.Home)
-	server.Get("/login", app.Handlers.Auth.ShowLoginPage)
-	server.Post("/login", app.Handlers.Auth.HandleLogin)
-	server.Get("/register", app.Handlers.Auth.ShowRegisterPage)
-	server.Post("/register", app.Handlers.Auth.HandleRegister)
-
-	// API маршрути
-	api := server.Group("/api", app.Middleware.Auth)
-	{
-		// Користувачі
-		users := api.Group("/users")
-		users.Get("/", app.Handlers.Users.List)
-		users.Get("/:id", app.Handlers.Users.Get)
-		users.Put("/:id", app.Handlers.Users.Update)
-		users.Delete("/:id", app.Handlers.Users.Delete)
-
-		// Бронювання
-		bookings := api.Group("/bookings")
-		bookings.Get("/", app.Handlers.Bookings.List)
-		bookings.Post("/", app.Handlers.Bookings.Create)
-		bookings.Get("/:id", app.Handlers.Bookings.Get)
-		bookings.Put("/:id", app.Handlers.Bookings.Update)
-		bookings.Delete("/:id", app.Handlers.Bookings.Delete)
-
-		// Клієнти
-		clients := api.Group("/clients")
-		clients.Get("/", app.Handlers.Clients.List)
-		clients.Post("/", app.Handlers.Clients.Create)
-		clients.Get("/:id", app.Handlers.Clients.Get)
-		clients.Put("/:id", app.Handlers.Clients.Update)
-		clients.Delete("/:id", app.Handlers.Clients.Delete)
-
-		// Команда
-		team := api.Group("/team")
-		team.Get("/", app.Handlers.Team.List)
-		team.Post("/", app.Handlers.Team.Create)
-		team.Get("/:id", app.Handlers.Team.Get)
-		team.Put("/:id", app.Handlers.Team.Update)
-		team.Delete("/:id", app.Handlers.Team.Delete)
-
-		// Прайс-листи
-		prices := api.Group("/prices")
-		prices.Get("/", app.Handlers.Prices.List)
-		prices.Post("/", app.Handlers.Prices.Create)
-		prices.Get("/:id", app.Handlers.Prices.Get)
-		prices.Put("/:id", app.Handlers.Prices.Update)
-		prices.Delete("/:id", app.Handlers.Prices.Delete)
-
-		// Сховище
-		storage := api.Group("/storage")
-		storage.Get("/", app.Handlers.Storage.List)
-		storage.Post("/upload", app.Handlers.Storage.Upload)
-		storage.Get("/:id", app.Handlers.Storage.Download)
-		storage.Delete("/:id", app.Handlers.Storage.Delete)
+	// Налаштовуємо статичні файли
+	log.Printf("Static files path: %s", app.Static)
+	if _, err := os.Stat(app.Static); os.IsNotExist(err) {
+		log.Printf("WARNING: Static directory does not exist: %s", app.Static)
+	} else {
+		log.Printf("Static directory exists: %s", app.Static)
+		// Перевірка наявності файлів в директорії
+		files, err := filepath.Glob(filepath.Join(app.Static, "**", "*"))
+		if err != nil {
+			log.Printf("Error listing static files: %v", err)
+		} else {
+			log.Printf("Static files: %v", files)
+		}
 	}
 
-	// Захищені веб-маршрути
-	protected := server.Group("/app", app.Middleware.Auth)
-	{
-		protected.Get("/", app.Handlers.Dashboard)
-		protected.Get("/calendar", app.Handlers.Calendar)
-		protected.Get("/bookings", app.Handlers.Bookings.List)
-		protected.Get("/team", app.Handlers.Team.List)
-		protected.Get("/clients", app.Handlers.Clients.List)
-		protected.Get("/prices", app.Handlers.Prices.List)
-		protected.Get("/storage", app.Handlers.Storage.List)
-		protected.Get("/settings", app.Handlers.Settings)
+	// Налаштовуємо статичні файли
+	server.Static("/static", app.Static)
+
+	// Налаштовуємо публічні файли
+	log.Printf("Public files path: %s", app.Public)
+	if _, err := os.Stat(app.Public); os.IsNotExist(err) {
+		log.Printf("WARNING: Public directory does not exist: %s", app.Public)
+	} else {
+		log.Printf("Public directory exists: %s", app.Public)
 	}
+	server.Static("/", app.Public)
+
+	// Налаштовуємо маршрути
+	setupRoutes(server, app)
 
 	return server
 }
 
+func setupRoutes(app *fiber.App, modules *AppModules) {
+	// Публічні маршрути
+	app.Get("/login", func(c *fiber.Ctx) error {
+		return c.Render("auth/login", fiber.Map{})
+	})
+
+	app.Post("/login", modules.Handlers.Auth.HandleLogin)
+
+	app.Get("/register", func(c *fiber.Ctx) error {
+		return c.Render("auth/register", fiber.Map{})
+	})
+
+	app.Post("/register", modules.Handlers.Auth.HandleRegister)
+
+	app.Get("/logout", modules.Handlers.Auth.HandleLogout)
+
+	// Захищені маршрути
+	api := app.Group("/dashboard", modules.Middleware.Auth)
+	{
+		// Дашборд
+		api.Get("/", func(c *fiber.Ctx) error {
+			return c.Render("dashboard/index", fiber.Map{})
+		})
+
+		// Клієнти
+		api.Get("/clients", func(c *fiber.Ctx) error {
+			return c.Render("dashboard/clients/index", fiber.Map{})
+		})
+
+		api.Post("/clients", modules.Handlers.Clients.Create)
+		api.Get("/clients/:id", modules.Handlers.Clients.Get)
+		api.Put("/clients/:id", modules.Handlers.Clients.Update)
+		api.Delete("/clients/:id", modules.Handlers.Clients.Delete)
+
+		// Бронювання
+		api.Get("/bookings", func(c *fiber.Ctx) error {
+			return c.Render("dashboard/bookings/index", fiber.Map{})
+		})
+
+		api.Post("/bookings", modules.Handlers.Bookings.Create)
+		api.Get("/bookings/:id", modules.Handlers.Bookings.Get)
+		api.Put("/bookings/:id", modules.Handlers.Bookings.Update)
+		api.Delete("/bookings/:id", modules.Handlers.Bookings.Delete)
+
+		// Профіль
+		api.Get("/profile", func(c *fiber.Ctx) error {
+			return c.Render("dashboard/profile", fiber.Map{})
+		})
+
+		api.Put("/profile", modules.Handlers.Users.Update)
+	}
+}
+
 func initTemplates() *html.Engine {
-	engine := html.New("./web/templates", ".html")
-	engine.Reload(true) // Enable template reloading for development
+	templateDir := os.Getenv("TEMPLATE_DIR")
+	if templateDir == "" {
+		templateDir = "./web/templates"
+	}
+	log.Printf("Initializing templates from directory: %s", templateDir)
+
+	engine := html.New(templateDir, ".html")
+
+	// Add debug logging for template loading
+	engine.AddFunc("debug", func(v interface{}) string {
+		log.Printf("Template debug: %v", v)
+		return fmt.Sprintf("%v", v)
+	})
+
+	if err := engine.Load(); err != nil {
+		log.Fatalf("Error loading templates: %v", err)
+	}
+
+	log.Printf("Templates loaded successfully")
 	return engine
 }
 
 func initStatic() string {
-	return "./web/static"
+	// Використовуємо змінну середовища для шляху до статичних файлів
+	staticDir := os.Getenv("STATIC_DIR")
+	if staticDir == "" {
+		staticDir = "./web/static" // Значення за замовчуванням
+	}
+	log.Printf("Static directory: %s", staticDir)
+	return staticDir
+}
+
+func initControllers() string {
+	// Використовуємо змінну середовища для шляху до контролерів
+	controllersDir := os.Getenv("CONTROLLERS_DIR")
+	if controllersDir == "" {
+		controllersDir = "./web/controllers" // Значення за замовчуванням
+	}
+	log.Printf("Controllers directory: %s", controllersDir)
+	return controllersDir
+}
+
+func initPublic() string {
+	// Використовуємо змінну середовища для шляху до публічних файлів
+	publicDir := os.Getenv("PUBLIC_DIR")
+	if publicDir == "" {
+		publicDir = "./web/public" // Значення за замовчуванням
+	}
+	log.Printf("Public directory: %s", publicDir)
+	return publicDir
+}
+
+func renderTemplate(c *fiber.Ctx, template string, data fiber.Map) error {
+	app := c.Locals("app").(*AppModules)
+	return app.Templates.Render(c, template, data)
 }

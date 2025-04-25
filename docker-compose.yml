@@ -37,12 +37,28 @@ services:
       - redis
     environment:
       - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=timebride
       - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - SERVER_PORT=3000
       - SERVER_HOST=0.0.0.0
       - JWT_SECRET=myTimeBrideSecretForJwtTokens123456
+      - TEMPLATE_DIR=./web/templates
+      - STATIC_DIR=./web/static
+      - PUBLIC_DIR=./web/public
+      - CONTROLLERS_DIR=./web/controllers
     ports:
       - "3000:3000"
+    volumes:
+      - ./web:/app/web:delegated
+      - ./config:/app/config:delegated
+      - ./migrations:/app/migrations:delegated
+      - ./internal:/app/internal:delegated
+      - ./.env:/app/.env:delegated
+      - /app/node_modules
     restart: unless-stopped
 
 volumes:

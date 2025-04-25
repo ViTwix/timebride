@@ -1,20 +1,427 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="TimeBride - CRM platform for photographers and videographers"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>TimeBride</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+<html lang="uk" data-bs-theme="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>TimeBride - Інтелектуальна CRM для фотографів та відеографів</title>
+    <!-- CSS files -->
+    <link href="/static/css/tabler.min.css" rel="stylesheet"/>
+    <link href="/static/css/tabler-icons.css" rel="stylesheet"/>
+    <link href="/static/css/custom.css" rel="stylesheet"/>
+    <style>
+        @import url('https://rsms.me/inter/inter.css');
+        :root {
+            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+        }
+        body {
+            font-feature-settings: "cv03", "cv04", "cv11";
+        }
+        
+        /* CSS Variables */
+        :root {
+            --white: #FFFFFF;
+            --background: #FFFFFF;
+            --section-bg: #F8F5F2;
+            --light-accent: #F5EBE0;
+            --neutral-accent: #E3D5CA;
+            --contrast-accent: #D5BDAF;
+            --text-color: #2A2A2A;
+            --secondary-text: #4A4744;
+            --primary-color: #6d5341;
+            --secondary-color: #97806e;
+        }
+        
+        /* Navigation Styles */
+        .navbar {
+            background-color: var(--neutral-accent);
+        }
+        
+        .navbar-nav .nav-item {
+            align-items: center;
+        }
+        
+        .navbar .nav-link-icon {
+            color: var(--secondary-text);
+        }
+        
+        .navbar .nav-link {
+            color: var(--secondary-text);
+        }
+        
+        .navbar .nav-link:hover {
+            color: var(--secondary-text);
+            opacity: 0.7;
+        }
+        
+        .navbar .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            height: 2.5rem;
+        }
+        
+        .navbar .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            height: 2.5rem;
+        }
+        
+        .navbar .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--white);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn-outline-dark {
+            color: var(--text-color);
+            border-color: var(--text-color);
+        }
+        
+        .btn-outline-dark:hover {
+            background-color: var(--text-color);
+            border-color: var(--text-color);
+            color: var(--white);
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .bg-primary-light {
+            background-color: var(--neutral-accent);
+        }
+        
+        .bg-secondary-light {
+            background-color: var(--secondary-color);
+        }
+        
+        .text-accent {
+            color: var(--accent-color);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/static/img/photography-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 0;
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            color: var(--contrast-accent);
+        }
+        
+        .testimonial-card {
+            border-left: 4px solid var(--contrast-accent);
+        }
+        
+        .pricing-card.popular {
+            border: 2px solid var(--contrast-accent);
+            transform: scale(1.05);
+        }
+        
+        .footer-dark {
+            background-color: var(--text-color);
+            color: white;
+        }
+        
+        .color-footer-bg {
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Navbar -->
+        <header class="navbar navbar-expand-md d-print-none">
+            <div class="container-xl">
+                <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+                    <a href=".">
+                        <img src="img/logo.svg" width="110" height="32" alt="TimeBride" class="navbar-brand-image">
+                    </a>
+                </h1>
+                <div class="navbar-collapse collapse" id="navbar-menu">
+                    <ul class="navbar-nav d-none d-md-flex">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#features">
+                                <span class="nav-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="5 12 3 12 12 3 21 12 19 12" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
+                                </span>
+                                <span class="nav-link-title">Можливості</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pricing">
+                                <span class="nav-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21h18" /><path d="M3 10h18" /><path d="M5 6l7 -3l7 3" /><path d="M4 10v11a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-1" /><path d="M6 10v11a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-11" /><path d="M9 10v11a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-11" /><path d="M12 10v11a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-11" /><path d="M15 10v11a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-11" /><path d="M18 10v11a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-11" /></svg>
+                                </span>
+                                <span class="nav-link-title">Ціни</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#testimonials">
+                                <span class="nav-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                                </span>
+                                <span class="nav-link-title">Відгуки</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#faq">
+                                <span class="nav-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12.01" y2="8" /><polyline points="11 12 12 12 12 16 13 16" /></svg>
+                                </span>
+                                <span class="nav-link-title">Питання</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-nav flex-row order-md-last ms-auto">
+                    <div class="nav-item d-flex flex-row">
+                        <a href="#" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#login-modal">Увійти</a>
+                        <a href="/register" class="btn btn-primary">Реєстрація</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-wrapper">
+            <!-- Hero Section -->
+            <section class="hero-section hero-has-navbar py-5 py-lg-6">
+                <div class="container-xl">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <h1 class="display-3 text-secondary fw-bold mb-4 mt-7">Просто<br>Швидко<br>Без зайвого</h1>
+                            <p class="fs-1 mb-5">TimeBride — інтелектуальна CRM система для фотографів та відеографів, що об'єднує всі аспекти вашого бізнесу в одному місці.</p>
+                            <div class="d-flex gap-3 mb-5">
+                                <a href="/register" class="btn btn-lg btn-primary">Почати безкоштовно</a>
+                                <a href="#features" class="btn btn-lg btn-outline-dark">Дізнатися більше</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-none d-lg-block">
+                            <img src="/static/img/dashboard-preview.png" alt="TimeBride Dashboard" class="img-fluid rounded shadow-lg">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Benefits Section -->
+            <section class="py-6 py-lg-7 bg-primary-light" id="benefits">
+                <div class="container-xl">
+                    <div class="text-center mb-5 mt-4">
+                        <h2 class="display-5 text-secondary fw-bold mb-4">Чому TimeBride?</h2>
+                        <p class="fs-4 mb-5">Система розроблена спеціально для фотографів та відеографів</p>
+                    </div>
+                    <div class="row g-4 g-lg-5">
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center p-4 p-lg-5">
+                                    <div class="display-4 feature-icon mb-4">
+                                        <i class="ti ti-calendar-time"></i>
+                                    </div>
+                                    <h3 class="card-title mb-3">Ефективне планування</h3>
+                                    <p class="card-text">Зручний календар для бронювань і зустрічей з можливістю синхронізації з Google Calendar</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center p-4 p-lg-5">
+                                    <div class="display-4 feature-icon mb-4">
+                                        <i class="ti ti-users"></i>
+                                    </div>
+                                    <h3 class="card-title mb-3">Управління клієнтами</h3>
+                                    <p class="card-text">Повна база клієнтів з історією замовлень, контактами та персональними примітками</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center p-4 p-lg-5">
+                                    <div class="display-4 feature-icon mb-4">
+                                        <i class="ti ti-file-dollar"></i>
+                                    </div>
+                                    <h3 class="card-title mb-3">Фінансовий облік</h3>
+                                    <p class="card-text">Автоматичне відстеження платежів, формування рахунків та фінансова звітність</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-6 py-lg-7 bg-white" id="features">
+                <div class="container-xl">
+                    <div class="text-center mb-5 mt-4">
+                        <h2 class="display-5 text-secondary fw-bold mb-4">Основні можливості</h2>
+                        <p class="fs-4 mb-5">Всі інструменти для успішного ведення фотобізнесу</p>
+                    </div>
+                    <div class="row g-4 align-items-center mb-5">
+                        <div class="col-md-6">
+                            <img src="/static/img/calendar-feature.png" alt="Календар бронювань" class="img-fluid rounded shadow">
+                        </div>
+                        <div class="col-md-6">
+                            <h3 class="fs-1 fw-bold mb-3">Розумний календар бронювань</h3>
+                            <p class="fs-5 mb-4">Візуальний календар допомагає уникнути накладок і ефективно планувати свій час. Автоматичні нагадування клієнтам зменшують кількість пропущених зустрічей.</p>
+                            <ul class="list-unstyled">
+                                <li class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    <span>Синхронізація з Google Calendar</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    <span>Автоматичні нагадування клієнтам</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-success me-2"><i class="ti ti-check"></i></span>
+                                    <span>Захист від подвійних бронювань</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="py-6 py-lg-7 bg-primary-light">
+                <div class="container-xl">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8 mx-auto text-center">
+                            <h2 class="display-5 text-secondary fw-bold mb-4">Готові спробувати TimeBride?</h2>
+                            <p class="fs-4 mb-5">Зареєструйтесь зараз і отримайте 14 днів безкоштовного доступу до всіх функцій</p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="/register" class="btn btn-lg btn-primary">Зареєструватися</a>
+                                <a href="/contact" class="btn btn-lg btn-outline-dark">Зв'язатися з нами</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="footer footer-transparent d-print-none">
+                <div class="container-xl">
+                    <div class="row text-center align-items-center flex-row-reverse">
+                        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                            <ul class="list-inline list-inline-dots mb-0">
+                                <li class="list-inline-item">
+                                    Copyright © 2024
+                                    <a href="/" class="link-secondary">TimeBride</a>.
+                                    Всі права захищені.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- Core -->
+    <script src="/static/js/tabler.min.js"></script>
+    <!-- Alpine Core -->
+    <script defer src="/static/js/alpine.min.js"></script>
+    <!-- Custom -->
+    <script src="/static/js/custom.js"></script>
+    
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password'),
+                remember: formData.get('remember') === 'on'
+            };
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    // Зберігаємо токен
+                    localStorage.setItem('token', result.token);
+                    // Перенаправляємо на dashboard
+                    window.location.href = '/dashboard';
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Помилка входу');
+                }
+            } catch (error) {
+                alert('Помилка при спробі входу');
+            }
+        });
+    </script>
+    
+    <!-- Login Modal -->
+    <div class="modal modal-blur fade" id="login-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Вхід до TimeBride</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="login-form" action="/login" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" placeholder="your@email.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Пароль</label>
+                            <input type="password" class="form-control" name="password" placeholder="Введіть ваш пароль" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check">
+                                <input type="checkbox" class="form-check-input" name="remember">
+                                <span class="form-check-label">Запам'ятати мене</span>
+                            </label>
+                        </div>
+                        <div class="form-footer">
+                            <button type="submit" class="btn btn-primary w-100">Увійти</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="text-center w-100">
+                        <a href="/forgot-password" class="text-muted">Забули пароль?</a>
+                        <span class="mx-2">·</span>
+                        <a href="/register" class="text-muted">Створити акаунт</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 </html> 

@@ -1,36 +1,51 @@
-# Binaries
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-main
-
-# Environment
-.env
-.env.*
-!.env.example
-
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Dependency directories
+vendor/
+node_modules/
+
+# Build
+/build
+/dist
+/tmp
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Dependencies
-vendor/
+# System Files
+.DS_Store
+Thumbs.db
 
-# Database
-*.db
-*.sqlite
-.env
+# Go specific
+*.test
+*.prof
+/debug
+/debug.test
+
+# Project specific
+/uploads
+/storage
+*.pem
+*.key
+*.crt

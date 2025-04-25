@@ -1,0 +1,42 @@
+{{ template "layout/base.html" . }}
+
+{{ define "title" }}Підтвердження email - TimeBride{{ end }}
+
+{{ define "content" }}
+<div class="container-tight py-4">
+    <div class="text-center mb-4">
+        <a href="/" class="navbar-brand navbar-brand-autodark">
+            <img src="/static/logo.svg" height="36" alt="">
+        </a>
+    </div>
+    <div class="card card-md">
+        <div class="card-body text-center py-4 p-sm-5">
+            {{ if .Verified }}
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-green mb-3" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M5 12l5 5l10 -10" />
+            </svg>
+            <h1 class="mt-2">Email підтверджено</h1>
+            <p class="text-muted">
+                Ваша email адреса була успішно підтверджена.<br>
+                Тепер ви можете увійти до свого облікового запису.
+            </p>
+            {{ else }}
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-red mb-3" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M18 6l-12 12" />
+                <path d="M6 6l12 12" />
+            </svg>
+            <h1 class="mt-2">Помилка підтвердження</h1>
+            <p class="text-muted">
+                На жаль, не вдалося підтвердити вашу email адресу.<br>
+                Можливо, посилання для підтвердження застаріло або недійсне.
+            </p>
+            {{ end }}
+        </div>
+        <div class="card-footer text-center">
+            <a href="/login" class="btn btn-primary">Перейти до входу</a>
+        </div>
+    </div>
+</div>
+{{ end }} 

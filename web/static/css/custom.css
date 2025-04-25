@@ -1,0 +1,106 @@
+:root {
+    /* Основні кольори */
+    --tblr-primary: #E3D5CA;
+    --tblr-primary-rgb: 213, 189, 175;
+    
+    /* Фонові кольори */
+    --tblr-body-bg: #FFFFFF;
+    --tblr-body-bg-rgb: 255, 255, 255;
+    --tblr-bg-surface: #F8F5F2;
+    --tblr-bg-surface-rgb: 248, 245, 242;
+    
+    /* Акцентні кольори */
+    --tblr-bg-surface-secondary: #E3D5CA;
+    --tblr-bg-surface-tertiary: #D6CCC2;
+    
+    /* Текстові кольори */
+    --tblr-body-color: #2A2A2A;
+    --tblr-body-color-rgb: 42, 42, 42;
+    --tblr-secondary-color: #4A4744;
+    --tblr-secondary-color-rgb: 74, 71, 68;
+    
+    /* Бічне меню */
+    --tblr-sidebar-bg: var(--tblr-primary);
+    --tblr-sidebar-color: rgba(255, 255, 255, 0.9);
+    --tblr-sidebar-link-color: rgba(255, 255, 255, 0.9);
+    --tblr-sidebar-link-hover-color: #FFFFFF;
+    --tblr-sidebar-link-active-color: #FFFFFF;
+    --tblr-sidebar-link-active-bg: rgba(255, 255, 255, 0.1);
+    
+    /* Кнопки */
+    --tblr-btn-primary-bg: #C4A99A;
+    --tblr-btn-primary-border-color: #8e7a6f;
+    --tblr-btn-primary-color: #000000;
+    --tblr-btn-primary-hover-bg: #ab9488;
+    --tblr-btn-primary-hover-border-color: #8e7a6f;
+    
+    /* Картки */
+    --tblr-card-bg: #FFFFFF;
+    --tblr-card-border-color: #E3D5CA;
+    
+    /* Таблиці */
+    --tblr-table-border-color: #E3D5CA;
+    --tblr-table-striped-bg: #F8F5F2;
+    
+    /* Форми */
+    --tblr-form-control-border-color: #D6CCC2;
+    --tblr-form-control-focus-border-color: var(--tblr-primary);
+    --tblr-form-control-focus-box-shadow: 0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
+}
+
+/* Додаткові стилі для темної теми */
+[data-bs-theme="dark"] {
+    --tblr-body-bg: #1A1A1A;
+    --tblr-body-bg-rgb: 26, 26, 26;
+    --tblr-bg-surface: #2A2A2A;
+    --tblr-bg-surface-rgb: 42, 42, 42;
+    
+    --tblr-body-color: #FFFFFF;
+    --tblr-body-color-rgb: 255, 255, 255;
+    --tblr-secondary-color: rgba(255, 255, 255, 0.7);
+    --tblr-secondary-color-rgb: 255, 255, 255;
+    
+    --tblr-card-bg: #2A2A2A;
+    --tblr-card-border-color: #3A3A3A;
+    
+    --tblr-table-border-color: #3A3A3A;
+    --tblr-table-striped-bg: #2A2A2A;
+    
+    --tblr-form-control-bg: #2A2A2A;
+    --tblr-form-control-border-color: #3A3A3A;
+}
+
+/* Додаткові утиліти */
+.bg-surface {
+    background-color: var(--tblr-bg-surface) !important;
+}
+
+.bg-surface-secondary {
+    background-color: var(--tblr-bg-surface-secondary) !important;
+}
+
+.bg-surface-tertiary {
+    background-color: var(--tblr-bg-surface-tertiary) !important;
+}
+
+.text-secondary {
+    color: var(--tblr-secondary-color) !important;
+}
+
+/* Стилі для бічного меню */
+.navbar-vertical {
+    background-color: var(--tblr-sidebar-bg) !important;
+}
+
+.navbar-vertical .nav-link {
+    color: var(--tblr-sidebar-link-color);
+}
+
+.navbar-vertical .nav-link:hover {
+    color: var(--tblr-sidebar-link-hover-color);
+}
+
+.navbar-vertical .nav-link.active {
+    color: var(--tblr-sidebar-link-active-color);
+    background-color: var(--tblr-sidebar-link-active-bg);
+}
